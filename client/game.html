@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="statsDiv" id="statsDiv"></div>
+    <div class="sidebar">
+      <div class="hora" id="clock"></div>
+      <a href="#"><i class="fa-solid fa-user"></i> </a>
+      <a href="#"><i class="fa-solid fa-briefcase"></i> </a>
+      <a href="#" onclick="preferencesOpen()"
+        ><i class="fa-solid fa-gear"></i>
+      </a>
+    </div>
+    <div
+      id="optionsMenu"
+      class="optionsMenu animate__animated animate__fadeIn"
+      style="display: none"
+    >
+      <div class="center">
+        <h2>Graphics Options</h2>
+      </div>
+      <div class="options">
+        <button class="close" onclick="preferencesClose();">X</button>
+        <input type="checkbox" id="enableFog" name="enableFog" value="1" />
+        <label for="enableFog"> Enable Fog</label><br />
+
+        <input type="checkbox" id="enableBloom" name="enableBloom" value="1" />
+        <label for="enableBloom"> Enable Bloom</label><br />
+        <input
+          type="checkbox"
+          id="enableShadows"
+          name="enableShadows"
+          value="1"
+        />
+        <label for="enableShadows"> Enable Shadows</label><br />
+        <input
+          type="checkbox"
+          id="enableObjectsGlow"
+          name="enableObjectsGlow"
+          value="1"
+        />
+        <label for="enableObjectsGlow"> Enable Objects Glow </label><br />
+        <!-- <input type="checkbox" id="shadowQualitySelected" name="shadowQualitySelected" value="3">
+            <label for="shadowQualitySelected"> Shadow Quality Selected</label><br> -->
+        <input
+          type="checkbox"
+          id="ultraGraphics"
+          name="ultraGraphics"
+          value="1"
+        />
+        <label for="ultraGraphics"> Enable Best Graphics</label><br />
+        <input type="checkbox" id="showStats" name="showStats" value="1" />
+        <label for="showStats"> Show Stats</label><br />
+      </div>
+      <br />
+      <div class="center">
+        <button class="botonSave" onclick="updateOptions()">Save</button>
+      </div>
+    </div>
+  </body>
+</html>
+<script src="js/menuDragInGame.js"></script>
+<script src="js/optionsMenu.js"></script>
+
+<script type="module">
+
+
+
+
+
+
+  // import {
+  //     enableFog,
+  //     enableBloom,
+  //     enableShadows,
+  //     enableObjectsGlow,
+  //     shadowQualitySelected,
+  //     ultraGraphics,
+  //     showStats,
+  //   } from "/js/userPreferences.js";
+
+
+  import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
+  import { OrbitControls } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js";  
+  import { GLTFLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
+  import { OBJLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/OBJLoader.js";
+
+ 
+
+
+  var stats = new Stats();
+  //   if (showStats == 1) {
+  var statsDiv = document.getElementById("statsDiv");
+  stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+  statsDiv.appendChild(stats.domElement);
+  //   }
+
+  import { KeyDisplay } from "./utils/utils.js";
+  import { CharacterControls } from "./utils/characterControls.js";
+
+  var gameTime = 1111104000000;
+
+  // SCENE
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xa8def0);
+
+  // CAMERA
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.y = 5;
+  camera.position.z = 5;
+  camera.position.x = 0;
+
+  // RENDERER
+  const renderer = new THREE.WebGLRenderer({ antialias: false });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+
+  // CONTROLS
+  const orbitControls = new OrbitControls(camera, renderer.domElement);
+  orbitControls.enableDamping = true;
+  orbitControls.minDistance = 1;
+  orbitControls.maxDistance = 15;
+  orbitControls.enablePan = false;
+  orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
+  orbitControls.update();
+
+  // LIGHTS
+  light();
+
+  // FLOOR
+  // generateFloor();
+  // generateFloorBasic();
+  var model;
+  // MODEL WITH ANIMATIONS
+  var characterControls;
+  new GLTFLoader().load("models/Soldier.glb", function (gltf) {
+     model = gltf.scene;
+    model.traverse(function (object) {
+      if (object.isMesh) object.castShadow = true;
+    });
+    model.userData.name = "jugador";
+    // model.position.set(1,1,1)
+    scene.add(model);
+
+    const gltfAnimations = gltf.animations;
+    const mixer = new THREE.AnimationMixer(model);
+    const animationsMap = new Map();
+    gltfAnimations
+      .filter((a) => a.name != "TPose")
+      .forEach((a) => {
+        animationsMap.set(a.name, mixer.clipAction(a));
+      });
+
+    characterControls = new CharacterControls(
+      model,
+      mixer,
+      animationsMap,
+      orbitControls,
+      camera,
+      "Idle"
+    );
+  });
+
+  //  new GLTFLoader().load("models/cc.glb", function (gltf) {
+  //     const model = gltf.scene;
+  //     model.traverse(function (object) {
+  //       if (object.isMesh) object.castShadow = true;
+  //     });
+  //     model.position.x = 18
+  //     model.position.y = 0
+  //     model.scale.set(1, 1, 1);
+  //     scene.add(model);
+
+  //   });
+
+  // new GLTFLoader().load("models/dos.glb", function (gltf) {
+  //   const model = gltf.scene;
+  //   model.traverse(function (object) {
+  //     if (object.isMesh) object.castShadow = true;
+  //   });
+  //   model.castShadow = true;
+  //   model.receiveShadow = true;
+  //   model.position.x = 10;
+  //   model.position.y = -0.4;
+
+  //   model.scale.set(1, 1, 1);
+  //   scene.add(model);
+  // });
+
+  //raycaster
+  const raycaster = new THREE.Raycaster();
+  const clicMouse = new THREE.Vector2();
+  const moveMouse = new THREE.Vector2();
+
+  var draggable;
+
+  window.addEventListener("click", (event) => {
+    if (draggable) {
+      console.log("soltando");
+      document.body.style.cursor = "default";
+      draggable = null;
+      return;
+    }
+
+    clicMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(clicMouse, camera);
+    const found = raycaster.intersectObjects(scene.children);
+
+    if (found.length > 0 && found[0].object.userData.draggable) {
+      draggable = found[0].object;
+      console.log(draggable.userData.name);
+      document.body.style.cursor = "grab";
+    }
+  });
+
+  window.addEventListener("mousemove", (event) => {
+    moveMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    moveMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(moveMouse, camera);
+    const found = raycaster.intersectObjects(scene.children);
+
+    if (draggable == null) {
+      document.body.style.cursor = "default";
+    }
+    if (found[0].object.userData.draggable && draggable == null) {
+      document.body.style.cursor = "pointer";
+    }
+  });
+
+  function draggObj() {
+    if (draggable != null) {
+      // chequearChoque()
+      raycaster.setFromCamera(moveMouse, camera);
+      const found = raycaster.intersectObjects(scene.children);
+      if (found.length > 0) {
+        for (let o of found) {
+          if (!o.object.userData.ground) {
+            draggable.position.x = o.point.x;
+            draggable.position.z = o.point.z;
+          }
+        }
+      }
+    }
+  }
+
+  // arrastrar un objeto
+  const geoBox = new THREE.BoxGeometry(1, 1, 1);
+  const matBox = new THREE.MeshPhongMaterial({ color: 0xfcfc90 });
+  const box = new THREE.Mesh(geoBox, matBox);
+  box.position.x = 0;
+  box.position.z = -5;
+  box.position.y = 0.5;
+  box.castShadow = true;
+  box.receiveShadow = true;
+  box.userData.draggable = true;
+  box.userData.name = "Caja";
+  scene.add(box);
+
+  const matBox2 = new THREE.MeshPhongMaterial({ color: 0xfc0090 });
+  const box2 = new THREE.Mesh(geoBox, matBox2);
+  box2.position.x = 0;
+  box2.position.z = -10;
+  box2.position.y = 0.5;
+  box2.castShadow = true;
+  box2.receiveShadow = true;
+  box2.userData.draggable = true;
+  box2.userData.name = "Caja2";
+  scene.add(box2);
+
+  const matBox3 = new THREE.MeshPhongMaterial({ color: 0x007090 });
+  const box3 = new THREE.Mesh(geoBox, matBox3);
+  box3.position.x = 0;
+  box3.position.z = -15;
+  box3.position.y = 0.5;
+  box3.castShadow = true;
+  box3.receiveShadow = true;
+  box3.userData.draggable = true;
+  box3.userData.name = "Caja3";
+  scene.add(box3);
+
+
+
+
+
+
+
+
+  // var asas = Math.floor(model.position.x)
+
+  function chequearChoque() {
+    var posx = Math.floor(box2.position.x);
+    var posx1 = Math.floor(box.position.x);
+
+    var posz = Math.floor(box2.position.z);
+    var posz1 = Math.floor(box.position.z);
+
+    // var sac =  Math.floor(model.position.x);
+
+
+    if (posx == posx1 && posz == posz1) {
+      console.log("posx, posx1", posx, posx1);
+      console.log("posz, posz1", posz, posz1);
+      console.log("crash!");
+
+       box2.position.x = box2.position.x  + 0.5
+
+      box2.position.z = box2.position.z  - 0.5
+
+        // console.log( "model", Math.floor(model.position.x))
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // var myleft = box.position.x;
+        // var myright = box.position.x + (box.scale.x);
+        // var mytop = box.position.y;
+        // var mybottom = box.position.y + (box.scale.y);
+
+        // var otherleft = model.position.x;
+        // var otherright = model.position.x + (model.scale.x);
+        // var othertop =  model.position.y;
+        // var otherbottom = model.position.y + (model.scale.y);
+
+        // var crash = true;
+        // if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+        //    console.log("no choco")
+        // }else{
+        //   console.log("choco")
+        // }
+        // return crash;
+
+  }
+
+    // var myleft = this.x;
+    //     var myright = this.x + (this.width);
+    //     var mytop = this.y;
+    //     var mybottom = this.y + (this.height);
+    //     var otherleft = otherobj.x;
+    //     var otherright = otherobj.x + (otherobj.width);
+    //     var othertop = otherobj.y;
+    //     var otherbottom = otherobj.y + (otherobj.height);
+    //     var crash = true;
+    //     if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+    //         crash = false;
+    //     }
+    //     return crash;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // const geometry = new THREE.SphereGeometry(10, 10, 10);
+  // const material = new THREE.MeshBasicMaterial({ color: 0xfcfc90 });
+  // const sphereSol = new THREE.Mesh(geometry, material);
+
+  // scene.add(sphereSol);
+
+  // CONTROL KEYS
+  const keysPressed = {};
+  const keyDisplayQueue = new KeyDisplay();
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      keyDisplayQueue.down(event.key);
+      if (event.shiftKey && characterControls) {
+        characterControls.switchRunToggle();
+      } else {
+        keysPressed[event.key.toLowerCase()] = true;
+      }
+    },
+    false
+  );
+  document.addEventListener(
+    "keyup",
+    (event) => {
+      keyDisplayQueue.up(event.key);
+      keysPressed[event.key.toLowerCase()] = false;
+    },
+    false
+  );
+
+  const clock = new THREE.Clock();
+
+  // RESIZE HANDLER
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    keyDisplayQueue.updatePosition();
+  }
+  window.addEventListener("resize", onWindowResize);
+
+  generateFloorBasic();
+
+  function generateFloorBasic() {
+    const geoPiso = new THREE.PlaneGeometry(100, 100, 100);
+    const matPiso = new THREE.MeshPhongMaterial({ color: 0x606060 });
+    const pisoSimple = new THREE.Mesh(geoPiso, matPiso);
+
+    pisoSimple.castShadow = true;
+    pisoSimple.receiveShadow = true;
+    pisoSimple.rotation.x = -Math.PI / 2;
+    pisoSimple.userData.ground = true;
+    // console.log(pisoSimple)
+    scene.add(pisoSimple);
+  }
+
+  // function generateFloor() {
+  //   // TEXTURES
+  //   const textureLoader = new THREE.TextureLoader();
+  //   const placeholder = textureLoader.load(
+  //     "./textures/placeholder/placeholder.png"
+  //   );
+  //   const sandBaseColor = textureLoader.load(
+  //     "./textures/sand/Sand 002_COLOR.jpg"
+  //   );
+  //   const testSuelo = textureLoader.load("./textures/1.jpg");
+  //   const sandNormalMap = textureLoader.load(
+  //     "./textures/sand/Sand 002_NRM.jpg"
+  //   );
+  //   const sandHeightMap = textureLoader.load(
+  //     "./textures/sand/Sand 002_DISP.jpg"
+  //   );
+  //   const sandAmbientOcclusion = textureLoader.load(
+  //     "./textures/sand/Sand 002_OCC.jpg"
+  //   );
+
+  //   const WIDTH = 4;
+  //   const LENGTH = 4;
+  //   const NUM_X = 15;
+  //   const NUM_Z = 15;
+
+  //   // const WIDTH = 1;
+  //   // const LENGTH = 1;
+  //   // const NUM_X = 50;
+  //   // const NUM_Z = 50;
+
+  //   const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 512, 512);
+  //   const material = new THREE.MeshStandardMaterial({
+  //     // map: sandBaseColor, normalMap: sandNormalMap,
+  //     // displacementMap: sandHeightMap, displacementScale: 0.1,
+  //     // aoMap: sandAmbientOcclusion
+
+  //     map: testSuelo,
+  //   });
+  //   // const material = new THREE.MeshPhongMaterial({ map: placeholder})
+
+  //   for (let i = 0; i < NUM_X; i++) {
+  //     for (let j = 0; j < NUM_Z; j++) {
+  //       const floor = new THREE.Mesh(geometry, material);
+  //       floor.receiveShadow = true;
+  //       floor.rotation.x = -Math.PI / 2;
+
+  //       floor.position.x = i * WIDTH - (NUM_X / 2) * WIDTH;
+  //       floor.position.z = j * LENGTH - (NUM_Z / 2) * LENGTH;
+
+  //       scene.add(floor);
+  //     }
+  //   }
+  // }
+
+  // console.log( Math.PI / 2 - 0.05)
+
+  function light() {
+    // scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+  }
+  // const ambienApoyo = new THREE.AmbientLight(0xffffff, 0.01);
+  // ambienApoyo.position.set(-100, 200, 0);
+  // ambienApoyo.castShadow = true;
+  // scene.add(ambienApoyo);
+
+  // sphereSol.position.set(-100, 200, 0);
+  // sphereSol.castShadow = true;
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+  dirLight.position.set(-50, 50, 0);
+  dirLight.castShadow = true;
+  dirLight.shadow.camera.top = 100;
+  dirLight.shadow.camera.bottom = -100;
+  dirLight.shadow.camera.left = -100;
+  dirLight.shadow.camera.right = 100;
+  dirLight.shadow.camera.near = 0.1;
+  dirLight.shadow.camera.far = 100;
+  dirLight.shadow.mapSize.width = 4096;
+  dirLight.shadow.mapSize.height = 4096;
+  scene.add(dirLight);
+  // scene.add( new THREE.CameraHelper(dirLight.shadow.camera))
+
+  var orbitaDelSol = 200;
+  var velMovSol = -0.00000015;
+
+  // ANIMATE
+  function animate() {
+    stats.begin();
+    draggObj();
+    chequearChoque();
+    horaActual();
+
+    let mixerUpdateDelta = clock.getDelta();
+    if (characterControls) {
+      characterControls.update(mixerUpdateDelta, keysPressed);
+    }
+
+    orbitControls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+    stats.end();
+  }
+  document.body.appendChild(renderer.domElement);
+  animate();
+
+  function horaActual() {
+    var speed = 10000;
+    let clockDiv = document.querySelector("#clock");
+
+    let sec = Math.floor(gameTime / 1000) % 60;
+    let min = Math.floor(gameTime / 60000) % 60;
+    let hour = Math.floor(gameTime / 3600000) % 24;
+    clockDiv.textContent = `${hour}:${min}`.replace(/\b\d\b/g, "0$&");
+    gameTime += speed;
+
+    // if (hour < 4 && hour > 18) {
+    //   sphereSol.position.set(0, -200, 0);
+    //   ambienApoyo.position.set(0, -200, 0);
+    //   dirLight.position.set(0, -200, 0);
+    // }
+
+    // if (hour > 4 && hour < 18) {
+    //       var horaDelJuego = (hour + min + sec + gameTime) * velMovSol ;
+
+    //       sphereSol.position.set(
+    //         Math.cos(horaDelJuego) * orbitaDelSol,
+    //         Math.sin(horaDelJuego) * orbitaDelSol,
+    //         0
+    //       );
+    //       dirLight.position.set(
+    //         Math.cos(horaDelJuego) * orbitaDelSol,
+    //         Math.sin(horaDelJuego) * orbitaDelSol,
+    //         0
+    //       );
+    //       ambienApoyo.position.set(
+    //         Math.cos(horaDelJuego) * orbitaDelSol,
+    //         Math.sin(horaDelJuego) * orbitaDelSol,
+    //         0
+    //       );
+    // }
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
