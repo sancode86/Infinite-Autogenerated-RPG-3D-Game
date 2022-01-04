@@ -146,7 +146,7 @@
   orbitControls.update();
 
   // LIGHTS
-  light();
+
 
   // FLOOR
   // generateFloor();
@@ -266,7 +266,10 @@
     }
   }
 
-  // arrastrar un objeto
+
+
+
+  // crear un objeto
   const geoBox = new THREE.BoxGeometry(1, 1, 1);
   const matBox = new THREE.MeshPhongMaterial({ color: 0xfcfc90 });
   const box = new THREE.Mesh(geoBox, matBox);
@@ -306,95 +309,27 @@
 
 
 
+  // function chequearChoque() {
+  //   var posx = Math.floor(box2.position.x);
+  //   var posx1 = Math.floor(box.position.x);
 
+  //   var posz = Math.floor(box2.position.z);
+  //   var posz1 = Math.floor(box.position.z);
 
-  // var asas = Math.floor(model.position.x)
+  //   // var sac =  Math.floor(model.position.x);
+  //   if (posx == posx1 && posz == posz1) {
+  //     console.log("posx, posx1", posx, posx1);
+  //     console.log("posz, posz1", posz, posz1);
+  //     console.log("crash!");
 
-  function chequearChoque() {
-    var posx = Math.floor(box2.position.x);
-    var posx1 = Math.floor(box.position.x);
+  //      box2.position.x = box2.position.x  + 0.5
 
-    var posz = Math.floor(box2.position.z);
-    var posz1 = Math.floor(box.position.z);
+  //     box2.position.z = box2.position.z  - 0.5
 
-    // var sac =  Math.floor(model.position.x);
+       
 
-
-    if (posx == posx1 && posz == posz1) {
-      console.log("posx, posx1", posx, posx1);
-      console.log("posz, posz1", posz, posz1);
-      console.log("crash!");
-
-       box2.position.x = box2.position.x  + 0.5
-
-      box2.position.z = box2.position.z  - 0.5
-
-        // console.log( "model", Math.floor(model.position.x))
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // var myleft = box.position.x;
-        // var myright = box.position.x + (box.scale.x);
-        // var mytop = box.position.y;
-        // var mybottom = box.position.y + (box.scale.y);
-
-        // var otherleft = model.position.x;
-        // var otherright = model.position.x + (model.scale.x);
-        // var othertop =  model.position.y;
-        // var otherbottom = model.position.y + (model.scale.y);
-
-        // var crash = true;
-        // if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-        //    console.log("no choco")
-        // }else{
-        //   console.log("choco")
-        // }
-        // return crash;
-
-  }
-
-    // var myleft = this.x;
-    //     var myright = this.x + (this.width);
-    //     var mytop = this.y;
-    //     var mybottom = this.y + (this.height);
-    //     var otherleft = otherobj.x;
-    //     var otherright = otherobj.x + (otherobj.width);
-    //     var othertop = otherobj.y;
-    //     var otherbottom = otherobj.y + (otherobj.height);
-    //     var crash = true;
-    //     if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-    //         crash = false;
-    //     }
-    //     return crash;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  //   }
+  // }
 
   // const geometry = new THREE.SphereGeometry(10, 10, 10);
   // const material = new THREE.MeshBasicMaterial({ color: 0xfcfc90 });
@@ -452,73 +387,6 @@
     scene.add(pisoSimple);
   }
 
-  // function generateFloor() {
-  //   // TEXTURES
-  //   const textureLoader = new THREE.TextureLoader();
-  //   const placeholder = textureLoader.load(
-  //     "./textures/placeholder/placeholder.png"
-  //   );
-  //   const sandBaseColor = textureLoader.load(
-  //     "./textures/sand/Sand 002_COLOR.jpg"
-  //   );
-  //   const testSuelo = textureLoader.load("./textures/1.jpg");
-  //   const sandNormalMap = textureLoader.load(
-  //     "./textures/sand/Sand 002_NRM.jpg"
-  //   );
-  //   const sandHeightMap = textureLoader.load(
-  //     "./textures/sand/Sand 002_DISP.jpg"
-  //   );
-  //   const sandAmbientOcclusion = textureLoader.load(
-  //     "./textures/sand/Sand 002_OCC.jpg"
-  //   );
-
-  //   const WIDTH = 4;
-  //   const LENGTH = 4;
-  //   const NUM_X = 15;
-  //   const NUM_Z = 15;
-
-  //   // const WIDTH = 1;
-  //   // const LENGTH = 1;
-  //   // const NUM_X = 50;
-  //   // const NUM_Z = 50;
-
-  //   const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 512, 512);
-  //   const material = new THREE.MeshStandardMaterial({
-  //     // map: sandBaseColor, normalMap: sandNormalMap,
-  //     // displacementMap: sandHeightMap, displacementScale: 0.1,
-  //     // aoMap: sandAmbientOcclusion
-
-  //     map: testSuelo,
-  //   });
-  //   // const material = new THREE.MeshPhongMaterial({ map: placeholder})
-
-  //   for (let i = 0; i < NUM_X; i++) {
-  //     for (let j = 0; j < NUM_Z; j++) {
-  //       const floor = new THREE.Mesh(geometry, material);
-  //       floor.receiveShadow = true;
-  //       floor.rotation.x = -Math.PI / 2;
-
-  //       floor.position.x = i * WIDTH - (NUM_X / 2) * WIDTH;
-  //       floor.position.z = j * LENGTH - (NUM_Z / 2) * LENGTH;
-
-  //       scene.add(floor);
-  //     }
-  //   }
-  // }
-
-  // console.log( Math.PI / 2 - 0.05)
-
-  function light() {
-    // scene.add(new THREE.AmbientLight(0xffffff, 0.25));
-  }
-  // const ambienApoyo = new THREE.AmbientLight(0xffffff, 0.01);
-  // ambienApoyo.position.set(-100, 200, 0);
-  // ambienApoyo.castShadow = true;
-  // scene.add(ambienApoyo);
-
-  // sphereSol.position.set(-100, 200, 0);
-  // sphereSol.castShadow = true;
-
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
   const dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -533,7 +401,7 @@
   dirLight.shadow.mapSize.width = 4096;
   dirLight.shadow.mapSize.height = 4096;
   scene.add(dirLight);
-  // scene.add( new THREE.CameraHelper(dirLight.shadow.camera))
+
 
   var orbitaDelSol = 200;
   var velMovSol = -0.00000015;
@@ -542,7 +410,7 @@
   function animate() {
     stats.begin();
     draggObj();
-    chequearChoque();
+    // chequearChoque();
     horaActual();
 
     let mixerUpdateDelta = clock.getDelta();
@@ -567,32 +435,6 @@
     let hour = Math.floor(gameTime / 3600000) % 24;
     clockDiv.textContent = `${hour}:${min}`.replace(/\b\d\b/g, "0$&");
     gameTime += speed;
-
-    // if (hour < 4 && hour > 18) {
-    //   sphereSol.position.set(0, -200, 0);
-    //   ambienApoyo.position.set(0, -200, 0);
-    //   dirLight.position.set(0, -200, 0);
-    // }
-
-    // if (hour > 4 && hour < 18) {
-    //       var horaDelJuego = (hour + min + sec + gameTime) * velMovSol ;
-
-    //       sphereSol.position.set(
-    //         Math.cos(horaDelJuego) * orbitaDelSol,
-    //         Math.sin(horaDelJuego) * orbitaDelSol,
-    //         0
-    //       );
-    //       dirLight.position.set(
-    //         Math.cos(horaDelJuego) * orbitaDelSol,
-    //         Math.sin(horaDelJuego) * orbitaDelSol,
-    //         0
-    //       );
-    //       ambienApoyo.position.set(
-    //         Math.cos(horaDelJuego) * orbitaDelSol,
-    //         Math.sin(horaDelJuego) * orbitaDelSol,
-    //         0
-    //       );
-    // }
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
