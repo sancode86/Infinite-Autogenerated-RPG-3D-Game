@@ -178,6 +178,8 @@
     raycaster.setFromCamera(moveMouse, camera);
     const found = raycaster.intersectObjects(scene.children);
 
+
+
     if (draggable == null) {
       document.body.style.cursor = "default";
     }
@@ -193,7 +195,7 @@
       const found = raycaster.intersectObjects(scene.children);
       if (found.length > 0) {
         for (let o of found) {
-          if (!o.object.userData.ground && o.object.userData.pared != true) {
+          if (!o.object.userData.ground && o.object.userData.pared != true && o.object.userData.nombre != "universo") {
             draggable.position.x = o.point.x;
             draggable.position.z = o.point.z;
           }
@@ -407,7 +409,7 @@
     pisoSimple.rotation.x = -Math.PI / 2;
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
-    console.log(pisoSimple)
+    
   }
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
@@ -459,5 +461,45 @@
     clockDiv.textContent = `${hour}:${min}`.replace(/\b\d\b/g, "0$&");
     gameTime += speed;
   }
+
+   crearSkybox();
+  function crearSkybox(){
+    let materialArray = [];
+    let texture_up = new THREE.TextureLoader().load("img/skybox/up.jpg");
+    let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.jpg");
+    let texture_lf = new THREE.TextureLoader().load("img/skybox/lf.jpg");
+    let texture_ft = new THREE.TextureLoader().load("img/skybox/ft.jpg");
+    let texture_dn = new THREE.TextureLoader().load("img/skybox/dn.jpg");
+    let texture_bk = new THREE.TextureLoader().load("img/skybox/bk.jpg");
+    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
+    for (let i = 0; i < 6; i++) materialArray[i].side = THREE.BackSide;
+    var tamaño = tamañoCuarto * 3
+    let skyboxGeo = new THREE.BoxGeometry(tamaño, tamaño, tamaño);
+    var skybox = new THREE.Mesh(skyboxGeo, materialArray);
+    skybox.castShadow = true;
+    skybox.receiveShadow = true;
+ 
+    skybox.userData = {
+      nombre: "universo",
+      tipo: "infinito",
+    };
+    scene.add(skybox);
+  }
+
+
+
+
+
+
+
+
+
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
