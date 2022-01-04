@@ -113,6 +113,7 @@ export class CharacterControls {
     }
 
      directionOffset(keysPressed) {
+        
         var directionOffset = 0 // w
 
         if (keysPressed[W]) {

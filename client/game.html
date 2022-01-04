@@ -47,6 +47,7 @@
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/OBJLoader.js";
 
 
+  var arrayCajas = []
   var gameTime = 1111104000000;
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
@@ -96,7 +97,9 @@
       if (object.isMesh) object.castShadow = true;
     });
     model.userData.name = "jugador";
-    // model.position.set(1,1,1)
+    model.position.set(0,0,0)
+    var modelGeometry = new THREE.BoxGeometry(2, 3, 2);
+          model.geometry = modelGeometry;
     scene.add(model);
 
     const gltfAnimations = gltf.animations;
@@ -152,6 +155,8 @@
   var draggable;
 
   window.addEventListener("click", (event) => {
+    // console.log(model.position)
+    // console.log(model)
     if (draggable) {
       console.log("soltando");
       document.body.style.cursor = "default";
@@ -190,7 +195,7 @@
 
   function draggObj() {
     if (draggable != null) {
-      // chequearChoque()
+     
       raycaster.setFromCamera(moveMouse, camera);
       const found = raycaster.intersectObjects(scene.children);
       if (found.length > 0) {
@@ -238,8 +243,6 @@
 
 
 
-
-
   var tamañoCuarto = 50;
 
 
@@ -269,6 +272,7 @@
       box.position.z =
         Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
       scene.add(box);
+      arrayCajas.push(box)
     }
   }
 
@@ -432,9 +436,10 @@
 
   // ANIMATE
   function animate() {
+   
     stats.begin();
     draggObj();
-    // chequearChoque();
+   
     horaActual();
 
     let mixerUpdateDelta = clock.getDelta();
@@ -445,6 +450,7 @@
     orbitControls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
+    chequearChoque();
     stats.end();
   }
 
@@ -494,6 +500,23 @@
 
 
 
+function chequearChoque(){
+
+  if(model?.position != undefined){
+    console.log(model.position)
+  }
+   
+
+
+
+
+
+//  for (let index = 0; index < arrayCajas.length; index++) {    
+//    var resultado = checkearSiSeTocan(model, arrayCajas[index])  
+//    }
+
+
+}
 
 
 
