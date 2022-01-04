@@ -46,7 +46,7 @@
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/OBJLoader.js";
 
-  var tamañoCuarto = 50;
+
   var gameTime = 1111104000000;
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
@@ -193,7 +193,7 @@
       const found = raycaster.intersectObjects(scene.children);
       if (found.length > 0) {
         for (let o of found) {
-          if (!o.object.userData.ground) {
+          if (!o.object.userData.ground && o.object.userData.pared != true) {
             draggable.position.x = o.point.x;
             draggable.position.z = o.point.z;
           }
@@ -238,7 +238,7 @@
 
 
 
-
+  var tamañoCuarto = 50;
 
 
   var spawnArea = tamañoCuarto / 2;
@@ -273,21 +273,89 @@
   
   function crearParedes(cantidadParedes) {
     var cantidad = cantidadParedes;
-    for (let j = 0; j < cantidad; j++) {
+
       // crear una pared
-      const geoBox = new THREE.BoxGeometry(1, 10, 1);    
+      const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);    
       var aparienciaColor = "0x101010";
-      const matBox = new THREE.MeshPhongMaterial({ color: parseInt(aparienciaColor) });
-      const pared = new THREE.Mesh(geoBox, matBox);
+      const matPared = new THREE.MeshPhongMaterial({ color: parseInt(aparienciaColor) });
+      const pared = new THREE.Mesh(geoBox, matPared);
       pared.castShadow = true;
       pared.receiveShadow = true;     
-      pared.userData.name = "Pared" + j;
-      pared.position.x =  Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
-      pared.position.y = 0.5;
-      pared.position.z =  Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+      pared.userData.name = "Pared";
+      pared.position.x =  0
+      pared.position.y = 0;
+      pared.position.z = tamañoCuarto/2
       scene.add(pared);
-    }
+      camera.updateProjectionMatrix();
+      const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);    
+      const pared2 = new THREE.Mesh(geoBox2, matPared);
+      pared2.castShadow = true;
+      pared2.receiveShadow = true;     
+      pared2.userData.name = "Pared2";
+      pared2.position.x =  tamañoCuarto/2
+      pared2.position.y = 0;
+      pared2.position.z = 0
+      scene.add(pared2);
+      camera.updateProjectionMatrix();
+      const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);  
+      const pared3 = new THREE.Mesh(geoBox3, matPared);
+      pared3.castShadow = true;
+      pared3.receiveShadow = true;     
+      pared3.userData.name = "Pared3";
+      pared3.position.x = -tamañoCuarto/2
+      pared3.position.y = 0;
+      pared3.position.z = 0;
+      scene.add(pared3);
+      camera.updateProjectionMatrix();
+      const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);  
+      const pared4 = new THREE.Mesh(geoBox4, matPared);
+      pared4.castShadow = true;
+      pared4.receiveShadow = true;     
+      pared4.userData.name = "Pared4";
+      pared4.position.x = 0;
+      pared4.position.y = 0;
+      pared4.position.z = -tamañoCuarto/2;
+      scene.add(pared4);
+
+      pared.userData.ground = false;
+      pared2.userData.ground = false;
+      pared3.userData.ground = false;
+      pared4.userData.ground = false;
+
+      pared.userData.pared = true;
+      pared2.userData.pared = true;
+      pared3.userData.pared = true;
+      pared4.userData.pared = true;
+
+
+
+  camera.updateProjectionMatrix();
+
+
+
+
+
+
+
+
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
   // CONTROL KEYS
   const keysPressed = {};
@@ -320,7 +388,7 @@
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    keyDisplayQueue.updatePosition();
+   
   }
   window.addEventListener("resize", onWindowResize);
 
@@ -339,6 +407,7 @@
     pisoSimple.rotation.x = -Math.PI / 2;
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
+    console.log(pisoSimple)
   }
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
