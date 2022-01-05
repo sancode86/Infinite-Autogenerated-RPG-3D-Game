@@ -46,7 +46,7 @@
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/OBJLoader.js";
 
-  var arrayCajas = [];
+  var arraySolidos = [];
   var gameTime = 1111104000000;
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
@@ -97,9 +97,10 @@
     });
     jugador.userData.name = "jugador";
     jugador.position.set(0, 0, 0);
-    var jugadorGeometry = new THREE.BoxGeometry(2, 3, 2);
+    var jugadorGeometry = new THREE.BoxGeometry(1, 3, 1);
     jugador.geometry = jugadorGeometry;
     scene.add(jugador);
+
 
     const gltfAnimations = gltf.animations;
     const mixer = new THREE.AnimationMixer(jugador);
@@ -223,13 +224,66 @@
     let f2 = d.position.z - d.geometry.parameters.depth / 2;
     let B2 = d.position.z + d.geometry.parameters.depth / 2;
 
-    if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {
-      posicionActualJugador = jugador.position
-    
+    if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {    
       return false;
     }
     
     return true;
+  }
+  function checkearSiSeTocaJugador(a, d) {    
+  
+
+    let r1 = a.position.x + a.geometry.parameters.width / 2;
+    let l1 = a.position.x - a.geometry.parameters.width / 2;
+    let f1 = a.position.z - a.geometry.parameters.depth / 2;
+    let B1 = a.position.z + a.geometry.parameters.depth / 2;
+  
+    
+    let r2 = d.position.x + d.geometry.parameters.width / 2;
+    let l2 = d.position.x - d.geometry.parameters.width / 2;
+    let f2 = d.position.z - d.geometry.parameters.depth / 2;
+    let B2 = d.position.z + d.geometry.parameters.depth / 2;
+
+    if ( r1 < l2 || l1 > r2 || f1 > B2 || B1 < f2) {    
+      return false;
+    }else{
+
+
+   
+      if(a.position.x > d.position.x){
+        console.log("derecha");
+        console.log(a.position.x)
+        return "derecha";
+      }   
+
+      if(a.position.z < d.position.z){
+        console.log("arriba");
+        console.log(a.position.z)
+        return "arriba";
+      }
+      if(a.position.z > d.position.z){
+        console.log("abajo");
+        console.log(a.position.z)
+        return "abajo";
+      }
+
+      if(a.position.x < d.position.x){
+        console.log("izquierda");
+        console.log(a.position.x)
+        return "izquierda";
+      }
+
+
+     
+
+
+
+
+    }
+
+
+
+    
   }
 
   var tamañoCuarto = 50;
@@ -262,7 +316,7 @@
       box.position.z =
         Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
       scene.add(box);
-      arrayCajas.push(box);
+      arraySolidos.push(box);
     }
   }
 
@@ -283,6 +337,7 @@
     pared.position.y = 0;
     pared.position.z = tamañoCuarto / 2;
     scene.add(pared);
+    arraySolidos.push(pared);
     camera.updateProjectionMatrix();
     const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
     const pared2 = new THREE.Mesh(geoBox2, matPared);
@@ -293,6 +348,7 @@
     pared2.position.y = 0;
     pared2.position.z = 0;
     scene.add(pared2);
+    arraySolidos.push(pared2);
     camera.updateProjectionMatrix();
     const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
     const pared3 = new THREE.Mesh(geoBox3, matPared);
@@ -303,6 +359,7 @@
     pared3.position.y = 0;
     pared3.position.z = 0;
     scene.add(pared3);
+    arraySolidos.push(pared3);
     camera.updateProjectionMatrix();
     const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
     const pared4 = new THREE.Mesh(geoBox4, matPared);
@@ -313,6 +370,7 @@
     pared4.position.y = 0;
     pared4.position.z = -tamañoCuarto / 2;
     scene.add(pared4);
+    arraySolidos.push(pared4);
 
     pared.userData.ground = false;
     pared2.userData.ground = false;
@@ -460,18 +518,29 @@
 
   function chequearChoque() {
     if (jugador?.position != undefined) {
-      for (let index = 0; index < arrayCajas.length; index++) {
-        var resultado = checkearSiSeTocan(jugador, arrayCajas[index]);
+      for (let index = 0; index < arraySolidos.length; index++) {
+        var resultado = checkearSiSeTocaJugador(jugador, arraySolidos[index]);
 
-        if (resultado) {
-          // console.log("jugador 🖐️ box");
-          // console.log(jugador.position);
-          jugador.position.set(posicionActualJugador.x,posicionActualJugador.y,posicionActualJugador.z )
-          console.log("posicionActualJugador", posicionActualJugador)
-          console.log( "jugador.position", jugador.position)
-          // const frenar = new THREE.Vector3(0.1,0,0);
-          // jugador.position.add(frenar);
+        if (resultado == "derecha") { 
+           const frenar = new THREE.Vector3(0.1,0,0);
+         jugador.position.add(frenar);
         }
+        if (resultado == "izquierda") { 
+           const frenar = new THREE.Vector3(-0.1,0,0);
+         jugador.position.add(frenar);
+        }
+        if (resultado == "arriba") { 
+           const frenar = new THREE.Vector3(0,0,-0.1);
+         jugador.position.add(frenar);
+        }
+        if (resultado == "abajo") { 
+           const frenar = new THREE.Vector3(0,0,0.1);
+         jugador.position.add(frenar);
+        }
+
+
+
+
       }
     }
   }
