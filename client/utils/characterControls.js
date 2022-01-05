@@ -3,7 +3,7 @@ import { DIRECTIONS, W, A, S, D, SHIFT } from './utils.js';
 import * as THREE from  "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
 export class CharacterControls {
 
-    model
+    jugador
     mixer
     animationsMap= new Map() // Walk, Run, Idle
     orbitControl
@@ -24,11 +24,11 @@ export class CharacterControls {
     runVelocity = 5
     walkVelocity = 2
 
-    constructor(model,
+    constructor(jugador,
         mixer, animationsMap,
         orbitControl, camera,
         currentAction) {
-        this.model = model
+        this.jugador = jugador
         this.mixer = mixer
         this.animationsMap = animationsMap
         this.currentAction = currentAction
@@ -73,14 +73,14 @@ export class CharacterControls {
         if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
             // calculate towards camera direction
             var angleYCameraDirection = Math.atan2(
-                    (this.camera.position.x - this.model.position.x), 
-                    (this.camera.position.z - this.model.position.z))
+                    (this.camera.position.x - this.jugador.position.x), 
+                    (this.camera.position.z - this.jugador.position.z))
             // diagonal movement angle offset
             var directionOffset = this.directionOffset(keysPressed)
 
-            // rotate model
+            // rotate jugador
             this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset)
-            this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2)
+            this.jugador.quaternion.rotateTowards(this.rotateQuarternion, 0.2)
 
             // calculate direction
             this.camera.getWorldDirection(this.walkDirection)
@@ -91,11 +91,11 @@ export class CharacterControls {
             // run/walk velocity
             const velocity = this.currentAction == 'Run' ? this.runVelocity : this.walkVelocity
 
-            // move model & camera
+            // move jugador & camera
             const moveX = this.walkDirection.x * velocity * delta
             const moveZ = this.walkDirection.z * velocity * delta
-            this.model.position.x += moveX
-            this.model.position.z += moveZ
+            this.jugador.position.x += moveX
+            this.jugador.position.z += moveZ
             this.updateCameraTarget(moveX, moveZ)
         }
     }
@@ -106,9 +106,9 @@ export class CharacterControls {
         this.camera.position.z += moveZ
 
         // update camera target
-        this.cameraTarget.x = this.model.position.x
-        this.cameraTarget.y = this.model.position.y + 1
-        this.cameraTarget.z = this.model.position.z
+        this.cameraTarget.x = this.jugador.position.x
+        this.cameraTarget.y = this.jugador.position.y + 1
+        this.cameraTarget.z = this.jugador.position.z
         this.orbitControl.target = this.cameraTarget
     }
 

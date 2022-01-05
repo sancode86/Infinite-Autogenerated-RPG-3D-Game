@@ -46,8 +46,7 @@
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/OBJLoader.js";
 
-
-  var arrayCajas = []
+  var arrayCajas = [];
   var gameTime = 1111104000000;
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
@@ -88,22 +87,22 @@
   orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
   orbitControls.update();
 
-  var model;
-  // MODEL WITH ANIMATIONS
+  var jugador;
+  // jugador WITH ANIMATIONS
   var characterControls;
   new GLTFLoader().load("models/Soldier.glb", function (gltf) {
-    model = gltf.scene;
-    model.traverse(function (object) {
+    jugador = gltf.scene;
+    jugador.traverse(function (object) {
       if (object.isMesh) object.castShadow = true;
     });
-    model.userData.name = "jugador";
-    model.position.set(0,0,0)
-    var modelGeometry = new THREE.BoxGeometry(2, 3, 2);
-          model.geometry = modelGeometry;
-    scene.add(model);
+    jugador.userData.name = "jugador";
+    jugador.position.set(0, 0, 0);
+    var jugadorGeometry = new THREE.BoxGeometry(2, 3, 2);
+    jugador.geometry = jugadorGeometry;
+    scene.add(jugador);
 
     const gltfAnimations = gltf.animations;
-    const mixer = new THREE.AnimationMixer(model);
+    const mixer = new THREE.AnimationMixer(jugador);
     const animationsMap = new Map();
     gltfAnimations
       .filter((a) => a.name != "TPose")
@@ -112,7 +111,7 @@
       });
 
     characterControls = new CharacterControls(
-      model,
+      jugador,
       mixer,
       animationsMap,
       orbitControls,
@@ -121,30 +120,30 @@
     );
   });
 
-  //  new GLTFLoader().load("models/cc.glb", function (gltf) {
-  //     const model = gltf.scene;
-  //     model.traverse(function (object) {
+  //  new GLTFLoader().load("jugadors/cc.glb", function (gltf) {
+  //     const jugador = gltf.scene;
+  //     jugador.traverse(function (object) {
   //       if (object.isMesh) object.castShadow = true;
   //     });
-  //     model.position.x = 18
-  //     model.position.y = 0
-  //     model.scale.set(1, 1, 1);
-  //     scene.add(model);
+  //     jugador.position.x = 18
+  //     jugador.position.y = 0
+  //     jugador.scale.set(1, 1, 1);
+  //     scene.add(jugador);
 
   //   });
 
-  // new GLTFLoader().load("models/dos.glb", function (gltf) {
-  //   const model = gltf.scene;
-  //   model.traverse(function (object) {
+  // new GLTFLoader().load("jugadors/dos.glb", function (gltf) {
+  //   const jugador = gltf.scene;
+  //   jugador.traverse(function (object) {
   //     if (object.isMesh) object.castShadow = true;
   //   });
-  //   model.castShadow = true;
-  //   model.receiveShadow = true;
-  //   model.position.x = 10;
-  //   model.position.y = -0.4;
+  //   jugador.castShadow = true;
+  //   jugador.receiveShadow = true;
+  //   jugador.position.x = 10;
+  //   jugador.position.y = -0.4;
 
-  //   model.scale.set(1, 1, 1);
-  //   scene.add(model);
+  //   jugador.scale.set(1, 1, 1);
+  //   scene.add(jugador);
   // });
 
   //raycaster
@@ -155,8 +154,8 @@
   var draggable;
 
   window.addEventListener("click", (event) => {
-    // console.log(model.position)
-    // console.log(model)
+    // console.log(jugador.position)
+    // console.log(jugador)
     if (draggable) {
       console.log("soltando");
       document.body.style.cursor = "default";
@@ -183,8 +182,6 @@
     raycaster.setFromCamera(moveMouse, camera);
     const found = raycaster.intersectObjects(scene.children);
 
-
-
     if (draggable == null) {
       document.body.style.cursor = "default";
     }
@@ -195,12 +192,15 @@
 
   function draggObj() {
     if (draggable != null) {
-     
       raycaster.setFromCamera(moveMouse, camera);
       const found = raycaster.intersectObjects(scene.children);
       if (found.length > 0) {
         for (let o of found) {
-          if (!o.object.userData.ground && o.object.userData.pared != true && o.object.userData.nombre != "universo") {
+          if (
+            !o.object.userData.ground &&
+            o.object.userData.pared != true &&
+            o.object.userData.nombre != "universo"
+          ) {
             draggable.position.x = o.point.x;
             draggable.position.z = o.point.z;
           }
@@ -227,28 +227,11 @@
     return true;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   var tamañoCuarto = 50;
-
 
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 10;
-  
+
   crearCajas();
   crearParedes(4);
 
@@ -260,7 +243,9 @@
       var r2 = Math.floor(Math.random() * (80 - 10)) + 10;
       var r3 = Math.floor(Math.random() * (80 - 10)) + 10;
       var aparienciaColor = "0x" + r1 + r2 + r3;
-      const matBox = new THREE.MeshPhongMaterial({ color: parseInt(aparienciaColor) });
+      const matBox = new THREE.MeshPhongMaterial({
+        color: parseInt(aparienciaColor),
+      });
       const box = new THREE.Mesh(geoBox, matBox);
       box.castShadow = true;
       box.receiveShadow = true;
@@ -272,96 +257,70 @@
       box.position.z =
         Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
       scene.add(box);
-      arrayCajas.push(box)
+      arrayCajas.push(box);
     }
   }
 
-  
   function crearParedes(cantidadParedes) {
     var cantidad = cantidadParedes;
 
-      // crear una pared
-      const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);    
-      var aparienciaColor = "0x101010";
-      const matPared = new THREE.MeshPhongMaterial({ color: parseInt(aparienciaColor) });
-      const pared = new THREE.Mesh(geoBox, matPared);
-      pared.castShadow = true;
-      pared.receiveShadow = true;     
-      pared.userData.name = "Pared";
-      pared.position.x =  0
-      pared.position.y = 0;
-      pared.position.z = tamañoCuarto/2
-      scene.add(pared);
-      camera.updateProjectionMatrix();
-      const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);    
-      const pared2 = new THREE.Mesh(geoBox2, matPared);
-      pared2.castShadow = true;
-      pared2.receiveShadow = true;     
-      pared2.userData.name = "Pared2";
-      pared2.position.x =  tamañoCuarto/2
-      pared2.position.y = 0;
-      pared2.position.z = 0
-      scene.add(pared2);
-      camera.updateProjectionMatrix();
-      const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);  
-      const pared3 = new THREE.Mesh(geoBox3, matPared);
-      pared3.castShadow = true;
-      pared3.receiveShadow = true;     
-      pared3.userData.name = "Pared3";
-      pared3.position.x = -tamañoCuarto/2
-      pared3.position.y = 0;
-      pared3.position.z = 0;
-      scene.add(pared3);
-      camera.updateProjectionMatrix();
-      const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);  
-      const pared4 = new THREE.Mesh(geoBox4, matPared);
-      pared4.castShadow = true;
-      pared4.receiveShadow = true;     
-      pared4.userData.name = "Pared4";
-      pared4.position.x = 0;
-      pared4.position.y = 0;
-      pared4.position.z = -tamañoCuarto/2;
-      scene.add(pared4);
+    // crear una pared
+    const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
+    var aparienciaColor = "0x101010";
+    const matPared = new THREE.MeshPhongMaterial({
+      color: parseInt(aparienciaColor),
+    });
+    const pared = new THREE.Mesh(geoBox, matPared);
+    pared.castShadow = true;
+    pared.receiveShadow = true;
+    pared.userData.name = "Pared";
+    pared.position.x = 0;
+    pared.position.y = 0;
+    pared.position.z = tamañoCuarto / 2;
+    scene.add(pared);
+    camera.updateProjectionMatrix();
+    const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
+    const pared2 = new THREE.Mesh(geoBox2, matPared);
+    pared2.castShadow = true;
+    pared2.receiveShadow = true;
+    pared2.userData.name = "Pared2";
+    pared2.position.x = tamañoCuarto / 2;
+    pared2.position.y = 0;
+    pared2.position.z = 0;
+    scene.add(pared2);
+    camera.updateProjectionMatrix();
+    const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
+    const pared3 = new THREE.Mesh(geoBox3, matPared);
+    pared3.castShadow = true;
+    pared3.receiveShadow = true;
+    pared3.userData.name = "Pared3";
+    pared3.position.x = -tamañoCuarto / 2;
+    pared3.position.y = 0;
+    pared3.position.z = 0;
+    scene.add(pared3);
+    camera.updateProjectionMatrix();
+    const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
+    const pared4 = new THREE.Mesh(geoBox4, matPared);
+    pared4.castShadow = true;
+    pared4.receiveShadow = true;
+    pared4.userData.name = "Pared4";
+    pared4.position.x = 0;
+    pared4.position.y = 0;
+    pared4.position.z = -tamañoCuarto / 2;
+    scene.add(pared4);
 
-      pared.userData.ground = false;
-      pared2.userData.ground = false;
-      pared3.userData.ground = false;
-      pared4.userData.ground = false;
+    pared.userData.ground = false;
+    pared2.userData.ground = false;
+    pared3.userData.ground = false;
+    pared4.userData.ground = false;
 
-      pared.userData.pared = true;
-      pared2.userData.pared = true;
-      pared3.userData.pared = true;
-      pared4.userData.pared = true;
+    pared.userData.pared = true;
+    pared2.userData.pared = true;
+    pared3.userData.pared = true;
+    pared4.userData.pared = true;
 
-
-
-  camera.updateProjectionMatrix();
-
-
-
-
-
-
-
-
+    camera.updateProjectionMatrix();
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 
   // CONTROL KEYS
   const keysPressed = {};
@@ -394,7 +353,6 @@
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-   
   }
   window.addEventListener("resize", onWindowResize);
 
@@ -413,7 +371,6 @@
     pisoSimple.rotation.x = -Math.PI / 2;
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
-    
   }
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
@@ -436,10 +393,9 @@
 
   // ANIMATE
   function animate() {
-   
     stats.begin();
     draggObj();
-   
+
     horaActual();
 
     let mixerUpdateDelta = clock.getDelta();
@@ -468,8 +424,8 @@
     gameTime += speed;
   }
 
-   crearSkybox();
-  function crearSkybox(){
+  crearSkybox();
+  function crearSkybox() {
     let materialArray = [];
     let texture_up = new THREE.TextureLoader().load("img/skybox/up.jpg");
     let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.jpg");
@@ -484,12 +440,12 @@
     materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
     materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
     for (let i = 0; i < 6; i++) materialArray[i].side = THREE.BackSide;
-    var tamaño = tamañoCuarto * 3
+    var tamaño = tamañoCuarto * 3;
     let skyboxGeo = new THREE.BoxGeometry(tamaño, tamaño, tamaño);
     var skybox = new THREE.Mesh(skyboxGeo, materialArray);
     skybox.castShadow = true;
     skybox.receiveShadow = true;
- 
+
     skybox.userData = {
       nombre: "universo",
       tipo: "infinito",
@@ -497,32 +453,16 @@
     scene.add(skybox);
   }
 
-
-
-
-function chequearChoque(){
-
-  if(model?.position != undefined){
-    console.log(model.position)
+  function chequearChoque() {
+    if (jugador?.position != undefined) {
+      for (let index = 0; index < arrayCajas.length; index++) {
+        var resultado = checkearSiSeTocan(jugador, arrayCajas[index]);
+        if (resultado) {
+          console.log("jugador 🖐️ box");
+          console.log(jugador.position);
+        }
+      }
+    }
   }
-   
-
-
-
-
-
-//  for (let index = 0; index < arrayCajas.length; index++) {    
-//    var resultado = checkearSiSeTocan(model, arrayCajas[index])  
-//    }
-
-
-}
-
-
-
-
-
-
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
