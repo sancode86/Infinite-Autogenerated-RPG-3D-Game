@@ -50,7 +50,7 @@
   var gameTime = 1111104000000;
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
-  var posicionActualJugador = new THREE.Vector3(0,0,0);
+  var posicionActualJugador = new THREE.Vector3(0, 0, 0);
   stats.showPanel(0);
   statsDiv.appendChild(stats.domElement);
 
@@ -101,7 +101,6 @@
     jugador.geometry = jugadorGeometry;
     scene.add(jugador);
 
-
     const gltfAnimations = gltf.animations;
     const mixer = new THREE.AnimationMixer(jugador);
     const animationsMap = new Map();
@@ -121,17 +120,48 @@
     );
   });
 
-  //  new GLTFLoader().load("jugadors/cc.glb", function (gltf) {
-  //     const jugador = gltf.scene;
-  //     jugador.traverse(function (object) {
-  //       if (object.isMesh) object.castShadow = true;
-  //     });
-  //     jugador.position.x = 18
-  //     jugador.position.y = 0
-  //     jugador.scale.set(1, 1, 1);
-  //     scene.add(jugador);
+  new GLTFLoader().load("models/horse.glb", function (gltf) {
+    const test123 = gltf.scene;
+    test123.traverse(function (object) {
+      if (object.isMesh) object.castShadow = true;
+    });
+    var geo = new THREE.BoxGeometry(3, 3, 3);
+    test123.geometry = geo;
+    test123.position.x = 9;
+    test123.position.y = 0;
+    // test123.rotation.y = Math.PI / 2;
+    test123.scale.set(1, 1, 1);
+    scene.add(test123);
+console.log(test123)
+    arraySolidos.push(test123)
+  });
+  new GLTFLoader().load("models/columna.glb", function (gltf) {
+    const test = gltf.scene;
+    test.traverse(function (object) {
+      if (object.isMesh) object.castShadow = true;
+    });
+    var geo = new THREE.BoxGeometry(1.5, 3, 1.5);
+    test.geometry = geo;
+    test.position.x = 5;
+    test.position.y = 0;
+    // test.rotation.y = Math.PI / 2;
+    test.scale.set(1, 1, 1);
+    scene.add(test);
+    console.log(test)
+   arraySolidos.push(test)
+  });
 
-  //   });
+  //   new GLTFLoader().load("models/test.gltf", function (gltf) {
+  //      const test = gltf.scene;
+  //      test.traverse(function (object) {
+  //        if (object.isMesh) object.castShadow = true;
+  //      });
+  //      test.position.x = 5
+  //      test.position.y = 0
+  //      test.scale.set(1.7, 1.7, 1.7);
+  //     scene.add(test);
+
+  //  });
 
   // new GLTFLoader().load("jugadors/dos.glb", function (gltf) {
   //   const jugador = gltf.scene;
@@ -155,8 +185,7 @@
   var draggable;
 
   window.addEventListener("click", (event) => {
-    // console.log(jugador.position)
-    // console.log(jugador)
+  
     if (draggable) {
       console.log("soltando");
       document.body.style.cursor = "default";
@@ -224,66 +253,49 @@
     let f2 = d.position.z - d.geometry.parameters.depth / 2;
     let B2 = d.position.z + d.geometry.parameters.depth / 2;
 
-    if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {    
+    if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {
       return false;
     }
-    
+
     return true;
   }
-  function checkearSiSeTocaJugador(a, d) {    
-  
-
+  function checkearSiSeTocaJugador(a, d) {
     let r1 = a.position.x + a.geometry.parameters.width / 2;
     let l1 = a.position.x - a.geometry.parameters.width / 2;
     let f1 = a.position.z - a.geometry.parameters.depth / 2;
     let B1 = a.position.z + a.geometry.parameters.depth / 2;
-  
-    
+
     let r2 = d.position.x + d.geometry.parameters.width / 2;
     let l2 = d.position.x - d.geometry.parameters.width / 2;
     let f2 = d.position.z - d.geometry.parameters.depth / 2;
     let B2 = d.position.z + d.geometry.parameters.depth / 2;
 
-    if ( r1 < l2 || l1 > r2 || f1 > B2 || B1 < f2) {    
+    if (r1 < l2 || l1 > r2 || f1 > B2 || B1 < f2) {
       return false;
-    }else{
-
-
-   
-      if(a.position.x > d.position.x){
-        console.log("derecha");
-        console.log(a.position.x)
+    } else {
+      if (a.position.x > d.position.x) {
+        // console.log("derecha");
+        // console.log(a.position.x);
         return "derecha";
-      }   
+      }
 
-      if(a.position.z < d.position.z){
-        console.log("arriba");
-        console.log(a.position.z)
+      if (a.position.z < d.position.z) {
+        // console.log("arriba");
+        // console.log(a.position.z);
         return "arriba";
       }
-      if(a.position.z > d.position.z){
-        console.log("abajo");
-        console.log(a.position.z)
+      if (a.position.z > d.position.z) {
+        // console.log("abajo");
+        // console.log(a.position.z);
         return "abajo";
       }
 
-      if(a.position.x < d.position.x){
-        console.log("izquierda");
-        console.log(a.position.x)
+      if (a.position.x < d.position.x) {
+        // console.log("izquierda");
+        // console.log(a.position.x);
         return "izquierda";
       }
-
-
-     
-
-
-
-
     }
-
-
-
-    
   }
 
   var tamañoCuarto = 50;
@@ -521,26 +533,22 @@
       for (let index = 0; index < arraySolidos.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arraySolidos[index]);
 
-        if (resultado == "derecha") { 
-           const frenar = new THREE.Vector3(0.1,0,0);
-         jugador.position.add(frenar);
+        if (resultado == "derecha") {
+          const frenar = new THREE.Vector3(0.1, 0, 0);
+          jugador.position.add(frenar);
         }
-        if (resultado == "izquierda") { 
-           const frenar = new THREE.Vector3(-0.1,0,0);
-         jugador.position.add(frenar);
+        if (resultado == "izquierda") {
+          const frenar = new THREE.Vector3(-0.1, 0, 0);
+          jugador.position.add(frenar);
         }
-        if (resultado == "arriba") { 
-           const frenar = new THREE.Vector3(0,0,-0.1);
-         jugador.position.add(frenar);
+        if (resultado == "arriba") {
+          const frenar = new THREE.Vector3(0, 0, -0.1);
+          jugador.position.add(frenar);
         }
-        if (resultado == "abajo") { 
-           const frenar = new THREE.Vector3(0,0,0.1);
-         jugador.position.add(frenar);
+        if (resultado == "abajo") {
+          const frenar = new THREE.Vector3(0, 0, 0.1);
+          jugador.position.add(frenar);
         }
-
-
-
-
       }
     }
   }
