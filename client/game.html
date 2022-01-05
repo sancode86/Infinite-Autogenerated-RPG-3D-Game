@@ -120,7 +120,7 @@
     );
   });
 
-  new GLTFLoader().load("models/horse.glb", function (gltf) {
+  new GLTFLoader().load("models/puerta.glb", function (gltf) {
     const test123 = gltf.scene;
     test123.traverse(function (object) {
       if (object.isMesh) object.castShadow = true;
@@ -132,8 +132,7 @@
     // test123.rotation.y = Math.PI / 2;
     test123.scale.set(1, 1, 1);
     scene.add(test123);
-console.log(test123)
-    arraySolidos.push(test123)
+    arraySolidos.push(test123);
   });
   new GLTFLoader().load("models/columna.glb", function (gltf) {
     const test = gltf.scene;
@@ -147,8 +146,7 @@ console.log(test123)
     // test.rotation.y = Math.PI / 2;
     test.scale.set(1, 1, 1);
     scene.add(test);
-    console.log(test)
-   arraySolidos.push(test)
+    arraySolidos.push(test);
   });
 
   //   new GLTFLoader().load("models/test.gltf", function (gltf) {
@@ -185,7 +183,6 @@ console.log(test123)
   var draggable;
 
   window.addEventListener("click", (event) => {
-  
     if (draggable) {
       console.log("soltando");
       document.body.style.cursor = "default";
