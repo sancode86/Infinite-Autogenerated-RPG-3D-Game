@@ -50,7 +50,7 @@
   var gameTime = 1111104000000;
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
-
+  var posicionActualJugador = new THREE.Vector3(0,0,0);
   stats.showPanel(0);
   statsDiv.appendChild(stats.domElement);
 
@@ -215,15 +215,20 @@
     let l1 = a.position.x - a.geometry.parameters.width / 2;
     let f1 = a.position.z - a.geometry.parameters.depth / 2;
     let B1 = a.position.z + a.geometry.parameters.depth / 2;
+
     let b2 = d.position.y - d.geometry.parameters.height / 2;
     let t2 = d.position.y + d.geometry.parameters.height / 2;
     let r2 = d.position.x + d.geometry.parameters.width / 2;
     let l2 = d.position.x - d.geometry.parameters.width / 2;
     let f2 = d.position.z - d.geometry.parameters.depth / 2;
     let B2 = d.position.z + d.geometry.parameters.depth / 2;
+
     if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {
+      posicionActualJugador = jugador.position
+    
       return false;
     }
+    
     return true;
   }
 
@@ -457,9 +462,15 @@
     if (jugador?.position != undefined) {
       for (let index = 0; index < arrayCajas.length; index++) {
         var resultado = checkearSiSeTocan(jugador, arrayCajas[index]);
+
         if (resultado) {
-          console.log("jugador 🖐️ box");
-          console.log(jugador.position);
+          // console.log("jugador 🖐️ box");
+          // console.log(jugador.position);
+          jugador.position.set(posicionActualJugador.x,posicionActualJugador.y,posicionActualJugador.z )
+          console.log("posicionActualJugador", posicionActualJugador)
+          console.log( "jugador.position", jugador.position)
+          // const frenar = new THREE.Vector3(0.1,0,0);
+          // jugador.position.add(frenar);
         }
       }
     }
