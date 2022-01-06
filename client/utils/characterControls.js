@@ -1,5 +1,5 @@
 
-import { DIRECTIONS, W, A, S, D, SHIFT } from './utils.js';
+import { DIRECTIONS, W, A, S, D, JUNTAR, SHIFT, ATACAR } from './utils.js';
 import * as THREE from  "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
 export class CharacterControls {
 
@@ -21,7 +21,7 @@ export class CharacterControls {
     
     // constants
     fadeDuration = 0.2
-    runVelocity = 5
+    runVelocity = 10
     walkVelocity = 2
 
     constructor(jugador,
@@ -46,8 +46,16 @@ export class CharacterControls {
         this.toggleRun = !this.toggleRun
     }
 
+    switchAtacar() {
+        console.log("atacar")
+        this.atacar = !this.atacar
+   
+    }
+
      update(delta, keysPressed) {
         const directionPressed = DIRECTIONS.some(key => keysPressed[key] == true)
+        const juntar = JUNTAR.some(key => keysPressed[key] == true)
+        const atacar = ATACAR.some(key => keysPressed[key] == true)
 
         var play = '';
         if (directionPressed && this.toggleRun) {
@@ -55,7 +63,17 @@ export class CharacterControls {
         } else if (directionPressed) {
             play = 'Walk'
         } else {
-            play = 'Idle'
+            play = 'Idle_Attacking'
+        }
+
+        if (juntar){            
+            play = 'PickUp'
+      
+        }
+        
+        if (this.atacar){            
+            play = 'Sword_Attack'
+        
         }
 
         if (this.currentAction != play) {
@@ -92,8 +110,8 @@ export class CharacterControls {
             const velocity = this.currentAction == 'Run' ? this.runVelocity : this.walkVelocity
 
             // move jugador & camera
-            const moveX = this.walkDirection.x * velocity * delta
-            const moveZ = this.walkDirection.z * velocity * delta
+            const moveX = - this.walkDirection.x * velocity * delta
+            const moveZ = - this.walkDirection.z * velocity * delta
             this.jugador.position.x += moveX
             this.jugador.position.z += moveZ
             this.updateCameraTarget(moveX, moveZ)
@@ -116,23 +134,23 @@ export class CharacterControls {
         
         var directionOffset = 0 // w
 
-        if (keysPressed[W]) {
-            if (keysPressed[A]) {
+        if (keysPressed[S]) {
+            if (keysPressed[D]) {
                 directionOffset = Math.PI / 4 // w+a
-            } else if (keysPressed[D]) {
+            } else if (keysPressed[A]) {
                 directionOffset = - Math.PI / 4 // w+d
             }
-        } else if (keysPressed[S]) {
-            if (keysPressed[A]) {
+        } else if (keysPressed[W]) {
+            if (keysPressed[D]) {
                 directionOffset = Math.PI / 4 + Math.PI / 2 // s+a
-            } else if (keysPressed[D]) {
+            } else if (keysPressed[A]) {
                 directionOffset = -Math.PI / 4 - Math.PI / 2 // s+d
             } else {
                 directionOffset = Math.PI // s
             }
-        } else if (keysPressed[A]) {
-            directionOffset = Math.PI / 2 // a
         } else if (keysPressed[D]) {
+            directionOffset = Math.PI / 2 // a
+        } else if (keysPressed[A]) {
             directionOffset = - Math.PI / 2 // d
         }
 
