@@ -186,7 +186,7 @@
   window.addEventListener("click", (event) => {
     camera.updateProjectionMatrix();
     if (draggable) {
-      console.log("soltando");
+      // console.log("soltando");
       document.body.style.cursor = "default";
       draggable = null;
       return;
@@ -202,8 +202,8 @@
       draggable = found[0].object;
       document.body.style.cursor = "grab";
     }
-    if (found.length > 0){
-     var objFound = found[0].object;
+    var objFound = found[0].object;
+    if (found.length > 0 && objFound.userData.name != undefined){
       console.log(objFound.userData.name);
     }
 
@@ -354,11 +354,11 @@
           const cofre = gltf.scene;
           cofre.traverse(function (object) {
             if (object.isMesh) object.castShadow = true;      
-          object.name = "cofrecito"     
+          object.name = "Cofre " + j    
           object.userData.draggable = true; 
           object.userData = {
             draggable: false,   
-            name: "cofre" + j   
+            name: "Cofre " + j   
           };
           }); 
           cofre.geometry = geo;        
@@ -368,11 +368,11 @@
           cofre.userData.draggable = true;
           cofre.userData = {
             draggable: false,
-            name: "cofre" + j
+            name: "Cofre " + j
           }
           // cofre.userData.draggable = true;
           // cofre.userData.name = "cofre" + j;
-          cofre.name = "COFRE!"
+          cofre.name = "Cofre " + j
           cofre.position.x = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
           cofre.position.y = 0;
           cofre.position.z = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;

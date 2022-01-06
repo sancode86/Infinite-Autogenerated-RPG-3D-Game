@@ -50,32 +50,32 @@ export class CharacterControls {
   }
 
   switchAtacar() {
-    console.log("atacar");
+    // console.log("atacar");
     this.atacar = 1;
   }
 
   switchAtacarStop() {
-    console.log("stop atacar");
+    // console.log("stop atacar");
     this.atacar = 0;
   }
 
   switchRoll() {
-    console.log("switchRoll");
+    // console.log("switchRoll");
     this.roll = 1;
   }
 
   
   switchRollStop() {
-    console.log("switchRoll");
+    // console.log("switchRoll");
     this.roll = 0;
   }
 
   switchJuntar() {
-    console.log("juntar");
+    // console.log("juntar");
     this.juntar = 1;
   }
   switchJuntarStop() {
-    console.log("juntar");
+    // console.log("juntar");
     this.juntar = 0;
   }
 
