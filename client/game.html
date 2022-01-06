@@ -397,11 +397,10 @@
 
   // CONTROL KEYS
   const keysPressed = {};
- 
+
   document.addEventListener(
     "keydown",
     (event) => {
-  
       if (event.shiftKey && characterControls) {
         characterControls.switchRunToggle();
       } else {
@@ -411,39 +410,37 @@
     false
   );
 
+  //   document.addEventListener('keydown', (event) => {
+  //   const keyName = event.key;
+  //   alert('keydown event\n\n' + 'key: ' + keyName);
+  // });
 
+  // document.body.onkeyup = function(e){
+  //     if(e.keyCode == 32){
 
-//   document.addEventListener('keydown', (event) => {
-//   const keyName = event.key;
-//   alert('keydown event\n\n' + 'key: ' + keyName);
-// });
+  //         console.log("esaaaaaaaa")
+  //         characterControls.switchAtacar();
 
-document.body.onkeyup = function(e){
-    if(e.keyCode == 32){
-  
-        console.log("esaaaaaaaa")
-        characterControls.switchAtacar();
-    
-       }
-     }
+  //        }
+  //      }
 
+  document.body.onkeydown = function (e) {
+    if (e.keyCode == 32) {
+      console.log("down space");
+      characterControls.switchAtacar();
+    }
+  };
 
-
-
-
-
-
-
-
-
-
-
-
+  document.body.onkeyup = function (e) {
+    if (e.keyCode == 32) {
+      console.log("up space");
+      characterControls.switchAtacarStop();
+    }
+  };
 
   document.addEventListener(
     "keyup",
     (event) => {
-   
       keysPressed[event.key.toLowerCase()] = false;
     },
     false
