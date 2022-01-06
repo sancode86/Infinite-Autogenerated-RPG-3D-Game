@@ -41,10 +41,10 @@
 <script src="js/optionsMenu.js"></script>
 
 <script type="module">
-  import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
-  import { OrbitControls } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js";
-  import { GLTFLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
-  import { OBJLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/OBJLoader.js";
+  import * as THREE from "https://cdn.skypack.dev/three@0.133.1/build/three.module.js";
+  import { OrbitControls } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/controls/OrbitControls.js";
+  import { GLTFLoader } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/loaders/GLTFLoader.js";
+  import { OBJLoader } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/loaders/OBJLoader.js";
 
   var arraySolidos = [];
   var gameTime = 1111104000000;
@@ -184,6 +184,7 @@
   var draggable;
 
   window.addEventListener("click", (event) => {
+    camera.updateProjectionMatrix();
     if (draggable) {
       console.log("soltando");
       document.body.style.cursor = "default";
@@ -195,17 +196,17 @@
     clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(clicMouse, camera);
     const found = raycaster.intersectObjects(scene.children);    
-
-    console.log(found)
-    console.log(scene)
-
-
+   
 
     if (found.length > 0 && found[0].object.userData.draggable) {
       draggable = found[0].object;
-      console.log(draggable.userData.name);
       document.body.style.cursor = "grab";
     }
+    if (found.length > 0){
+     var objFound = found[0].object;
+      console.log(objFound.userData.name);
+    }
+
   });
 
   window.addEventListener("mousemove", (event) => {
@@ -346,43 +347,41 @@
 
 
   function crearCofres() {
-    var geo = new THREE.BoxGeometry(2, 2, 2);
     for (let j = 0; j < cantidadCofres; j++) {
+      var geo = new THREE.BoxGeometry(2, 2, 2);
       // crear un cofre
       new GLTFLoader().load("models/cofre.glb", function (gltf) {
           const cofre = gltf.scene;
           cofre.traverse(function (object) {
-            if (object.isMesh){            
-              object.userData.draggable = true;
-              object.castShadow = true;             
-            } 
+            if (object.isMesh) object.castShadow = true;      
+          object.name = "cofrecito"     
+          object.userData.draggable = true; 
+          object.userData = {
+            draggable: false,   
+            name: "cofre" + j   
+          };
           }); 
-          cofre.geometry = geo;
-          cofre.geometry.userData.draggable = true;
+          cofre.geometry = geo;        
           cofre.scale.set(1, 1, 1);      
           cofre.castShadow = true;
           cofre.receiveShadow = true;
           cofre.userData.draggable = true;
-          cofre.userData.name = "cofre" + j;
-          cofre.name = "COFREEEEEEEEEEEEEEEEE"
+          cofre.userData = {
+            draggable: false,
+            name: "cofre" + j
+          }
+          // cofre.userData.draggable = true;
+          // cofre.userData.name = "cofre" + j;
+          cofre.name = "COFRE!"
           cofre.position.x = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
           cofre.position.y = 0;
           cofre.position.z = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
           scene.add(cofre);
-          arraySolidos.push(cofre);
+          arraySolidos.push(cofre);        
+          camera.updateProjectionMatrix();
         });
     }
   }
-
-
-
-
-
-
-
-
-
-
 
 
 
