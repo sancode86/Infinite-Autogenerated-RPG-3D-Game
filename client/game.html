@@ -54,7 +54,7 @@
   stats.showPanel(0);
   statsDiv.appendChild(stats.domElement);
 
-  import { KeyDisplay } from "./utils/utils.js";
+
   import { CharacterControls } from "./utils/characterControls.js";
 
   // SCENE
@@ -194,7 +194,12 @@
     clicMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(clicMouse, camera);
-    const found = raycaster.intersectObjects(scene.children);
+    const found = raycaster.intersectObjects(scene.children);    
+
+    console.log(found)
+    console.log(scene)
+
+
 
     if (found.length > 0 && found[0].object.userData.draggable) {
       draggable = found[0].object;
@@ -300,9 +305,16 @@
 
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 10;
+  var cantidadCofres = 10;
 
   crearCajas();
   crearParedes(4);
+
+  crearCofres();
+
+
+
+
 
   function crearCajas() {
     for (let j = 0; j < cantidadCajas; j++) {
@@ -329,6 +341,55 @@
       arraySolidos.push(box);
     }
   }
+
+
+
+
+  function crearCofres() {
+    var geo = new THREE.BoxGeometry(2, 2, 2);
+    for (let j = 0; j < cantidadCofres; j++) {
+      // crear un cofre
+      new GLTFLoader().load("models/cofre.glb", function (gltf) {
+          const cofre = gltf.scene;
+          cofre.traverse(function (object) {
+            if (object.isMesh){            
+              object.userData.draggable = true;
+              object.castShadow = true;             
+            } 
+          }); 
+          cofre.geometry = geo;
+          cofre.geometry.userData.draggable = true;
+          cofre.scale.set(1, 1, 1);      
+          cofre.castShadow = true;
+          cofre.receiveShadow = true;
+          cofre.userData.draggable = true;
+          cofre.userData.name = "cofre" + j;
+          cofre.name = "COFREEEEEEEEEEEEEEEEE"
+          cofre.position.x = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+          cofre.position.y = 0;
+          cofre.position.z = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+          scene.add(cofre);
+          arraySolidos.push(cofre);
+        });
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   function crearParedes(cantidadParedes) {
     var cantidad = cantidadParedes;
@@ -417,7 +478,7 @@
 
 
 
-
+// ESCUCHANDO TECLAS
 
   document.body.onkeydown = function (e) {
     if (e.keyCode == 32) {   
@@ -425,6 +486,12 @@
     }
     if (e.keyCode == 17) {   
       characterControls.switchRoll();
+    }
+    if (e.keyCode == 69) {   //E
+      characterControls.switchJuntar();
+    }
+    if (e.keyCode == 73) {   //I (inventario)
+      abrirInventario();
     }
   };
 
@@ -435,12 +502,14 @@
     if (e.keyCode == 17) {    
       characterControls.switchRollStop();
     }
+    if (e.keyCode == 69) {   //E
+      characterControls.switchJuntarStop();
+    }
   };
 
 
 
-
-
+  
 
 
 
@@ -573,23 +642,31 @@
         var resultado = checkearSiSeTocaJugador(jugador, arraySolidos[index]);
 
         if (resultado == "derecha") {
-          const frenar = new THREE.Vector3(0.1, 0, 0);
+          const frenar = new THREE.Vector3(0.5, 0, 0);
           jugador.position.add(frenar);
         }
         if (resultado == "izquierda") {
-          const frenar = new THREE.Vector3(-0.1, 0, 0);
+          const frenar = new THREE.Vector3(-0.5, 0, 0);
           jugador.position.add(frenar);
         }
         if (resultado == "arriba") {
-          const frenar = new THREE.Vector3(0, 0, -0.1);
+          const frenar = new THREE.Vector3(0, 0, -0.5);
           jugador.position.add(frenar);
         }
         if (resultado == "abajo") {
-          const frenar = new THREE.Vector3(0, 0, 0.1);
+          const frenar = new THREE.Vector3(0, 0, 0.5);
           jugador.position.add(frenar);
         }
       }
     }
   }
+
+
+
+function abrirInventario(){
+  console.log("mostrando inventario")
+}
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>

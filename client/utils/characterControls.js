@@ -1,4 +1,4 @@
-import { DIRECTIONS, W, A, S, D, JUNTAR, SHIFT, ATACAR } from "./utils.js";
+import { DIRECTIONS, W, A, S, D, SHIFT } from "./utils.js";
 import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
 export class CharacterControls {
   jugador;
@@ -70,11 +70,18 @@ export class CharacterControls {
     this.roll = 0;
   }
 
+  switchJuntar() {
+    console.log("juntar");
+    this.juntar = 1;
+  }
+  switchJuntarStop() {
+    console.log("juntar");
+    this.juntar = 0;
+  }
+
 
   update(delta, keysPressed) {
-    const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);
-    const juntar = JUNTAR.some((key) => keysPressed[key] == true);
-    const atacar = ATACAR.some((key) => keysPressed[key] == true);
+    const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);  
 
     var play = "";
     if (directionPressed && this.toggleRun) {
@@ -84,7 +91,7 @@ export class CharacterControls {
     } else {
       play = "Idle_Attacking";
     }
-    if (juntar) {
+    if (this.juntar == 1) {
       play = "PickUp";
     }
     if (this.atacar == 1) {
