@@ -54,7 +54,6 @@
   stats.showPanel(0);
   statsDiv.appendChild(stats.domElement);
 
-
   import { CharacterControls } from "./utils/characterControls.js";
 
   // SCENE
@@ -195,18 +194,20 @@
     clicMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(clicMouse, camera);
-    const found = raycaster.intersectObjects(scene.children);    
-   
+    const found = raycaster.intersectObjects(scene.children);
 
     if (found.length > 0 && found[0].object.userData.draggable) {
       draggable = found[0].object;
       document.body.style.cursor = "grab";
     }
     var objFound = found[0].object;
-    if (found.length > 0 && objFound.userData.name != undefined){
+    if (found.length > 0 && objFound.userData.name != undefined) {
       console.log(objFound.userData.name);
     }
-
+    if (found.length > 0 && objFound.userData.tipo == "cofre" && objFound.userData.estado == "cerrado") {
+      console.log("Abriendo Cofre!");
+      abrirCofre(objFound.userData.name, objFound);
+    }
   });
 
   window.addEventListener("mousemove", (event) => {
@@ -313,10 +314,6 @@
 
   crearCofres();
 
-
-
-
-
   function crearCajas() {
     for (let j = 0; j < cantidadCajas; j++) {
       // crear una caja
@@ -343,52 +340,47 @@
     }
   }
 
-
-
-
   function crearCofres() {
     for (let j = 0; j < cantidadCofres; j++) {
       var geo = new THREE.BoxGeometry(2, 2, 2);
       // crear un cofre
       new GLTFLoader().load("models/cofre.glb", function (gltf) {
-          const cofre = gltf.scene;
-          cofre.traverse(function (object) {
-            if (object.isMesh) object.castShadow = true;      
-          object.name = "Cofre " + j    
-          object.userData.draggable = true; 
+        var random =  (Math.floor(Math.random() * (800 - 0)) + 0) + j;
+        const cofre = gltf.scene;
+        cofre.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+
+          object.userData.draggable = true;
+          object.name = "Cofre" + random;
           object.userData = {
-            draggable: false,   
-            name: "Cofre " + j   
-          };
-          }); 
-          cofre.geometry = geo;        
-          cofre.scale.set(1, 1, 1);      
-          cofre.castShadow = true;
-          cofre.receiveShadow = true;
-          cofre.userData.draggable = true;
-          cofre.userData = {
             draggable: false,
-            name: "Cofre " + j
-          }
-          // cofre.userData.draggable = true;
-          // cofre.userData.name = "cofre" + j;
-          cofre.name = "Cofre " + j
-          cofre.position.x = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
-          cofre.position.y = 0;
-          cofre.position.z = Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
-          scene.add(cofre);
-          arraySolidos.push(cofre);        
-          camera.updateProjectionMatrix();
+            name: "Cofre" + random,
+            tipo: "cofre",
+            estado: "cerrado",
+          };
         });
+        cofre.geometry = geo;
+        cofre.scale.set(1, 1, 1);
+        cofre.castShadow = true;
+        cofre.receiveShadow = true;
+        // cofre.userData = {
+        //   draggable: true,
+        //   name: "Cofre" + j + fecha
+        // }
+        // cofre.name = "Cofre" + j + fecha
+        // cofre.userData.draggable = true;
+        // cofre.userData.name = "cofre" + j;
+        cofre.position.x =
+          Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+        cofre.position.y = 0;
+        cofre.position.z =
+          Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+        scene.add(cofre);
+        arraySolidos.push(cofre);
+        camera.updateProjectionMatrix();
+      });
     }
   }
-
-
-
-
-
-
-
 
   function crearParedes(cantidadParedes) {
     var cantidad = cantidadParedes;
@@ -470,55 +462,37 @@
     false
   );
 
-
-
-
-
-
-
-
-// ESCUCHANDO TECLAS
+  // ESCUCHANDO TECLAS
 
   document.body.onkeydown = function (e) {
-    if (e.keyCode == 32) {   
+    if (e.keyCode == 32) {
       characterControls.switchAtacar();
     }
-    if (e.keyCode == 17) {   
+    if (e.keyCode == 17) {
       characterControls.switchRoll();
     }
-    if (e.keyCode == 69) {   //E
+    if (e.keyCode == 69) {
+      //E
       characterControls.switchJuntar();
     }
-    if (e.keyCode == 73) {   //I (inventario)
+    if (e.keyCode == 73) {
+      //I (inventario)
       abrirInventario();
     }
   };
 
   document.body.onkeyup = function (e) {
-    if (e.keyCode == 32) {    
+    if (e.keyCode == 32) {
       characterControls.switchAtacarStop();
     }
-    if (e.keyCode == 17) {    
+    if (e.keyCode == 17) {
       characterControls.switchRollStop();
     }
-    if (e.keyCode == 69) {   //E
+    if (e.keyCode == 69) {
+      //E
       characterControls.switchJuntarStop();
     }
   };
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
 
   document.addEventListener(
     "keyup",
@@ -660,12 +634,29 @@
     }
   }
 
+  function abrirInventario() {
+    console.log("mostrando inventario");
+  }
+
+  function abrirCofre(objeto, informacion) {
 
 
-function abrirInventario(){
-  console.log("mostrando inventario")
-}
 
 
+
+
+    var selectedObject = scene.getObjectByName(objeto);
+    scene.remove(selectedObject);
+
+
+
+
+
+
+
+
+
+
+  }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
