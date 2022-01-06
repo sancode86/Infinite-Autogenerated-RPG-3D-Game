@@ -410,33 +410,47 @@
     false
   );
 
-  //   document.addEventListener('keydown', (event) => {
-  //   const keyName = event.key;
-  //   alert('keydown event\n\n' + 'key: ' + keyName);
-  // });
 
-  // document.body.onkeyup = function(e){
-  //     if(e.keyCode == 32){
 
-  //         console.log("esaaaaaaaa")
-  //         characterControls.switchAtacar();
 
-  //        }
-  //      }
+
+
+
+
+
 
   document.body.onkeydown = function (e) {
-    if (e.keyCode == 32) {
-      console.log("down space");
+    if (e.keyCode == 32) {   
       characterControls.switchAtacar();
+    }
+    if (e.keyCode == 17) {   
+      characterControls.switchRoll();
     }
   };
 
   document.body.onkeyup = function (e) {
-    if (e.keyCode == 32) {
-      console.log("up space");
+    if (e.keyCode == 32) {    
       characterControls.switchAtacarStop();
     }
+    if (e.keyCode == 17) {    
+      characterControls.switchRollStop();
+    }
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   document.addEventListener(
     "keyup",

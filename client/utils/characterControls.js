@@ -21,6 +21,7 @@ export class CharacterControls {
   fadeDuration = 0.2;
   runVelocity = 10;
   walkVelocity = 2;
+  rollVelocity = 12;
 
   constructor(
     jugador,
@@ -58,6 +59,18 @@ export class CharacterControls {
     this.atacar = 0;
   }
 
+  switchRoll() {
+    console.log("switchRoll");
+    this.roll = 1;
+  }
+
+  
+  switchRollStop() {
+    console.log("switchRoll");
+    this.roll = 0;
+  }
+
+
   update(delta, keysPressed) {
     const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);
     const juntar = JUNTAR.some((key) => keysPressed[key] == true);
@@ -71,13 +84,14 @@ export class CharacterControls {
     } else {
       play = "Idle_Attacking";
     }
-
     if (juntar) {
       play = "PickUp";
     }
-
     if (this.atacar == 1) {
       play = "Sword_Attack";
+    }
+    if (directionPressed && this.roll == 1) {
+      play = "Roll";
     }
 
     if (this.currentAction != play) {
@@ -92,7 +106,7 @@ export class CharacterControls {
 
     this.mixer.update(delta);
 
-    if (this.currentAction == "Run" || this.currentAction == "Walk") {
+    if (this.currentAction == "Run" || this.currentAction == "Walk" || this.currentAction == "Roll") {
       // calculate towards camera direction
       var angleYCameraDirection = Math.atan2(
         this.camera.position.x - this.jugador.position.x,
@@ -115,8 +129,13 @@ export class CharacterControls {
       this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
 
       // run/walk velocity
-      const velocity =
+      var velocity =
         this.currentAction == "Run" ? this.runVelocity : this.walkVelocity;
+
+        if(this.currentAction == "Roll" ) {
+          velocity = this.rollVelocity;
+
+        }
 
       // move jugador & camera
       const moveX = -this.walkDirection.x * velocity * delta;
