@@ -189,7 +189,6 @@
 
       var selectedObject = scene.getObjectByName(objFound.userData.name);
 
-      console.log("selectedObject", selectedObject);
       // console.log("posX", posX, "posZ", posZ);
       abrirCofre(selectedObject);
     }
@@ -631,7 +630,7 @@
       cofre.castShadow = true;
       cofre.receiveShadow = true;
       scene.add(cofre);
-      console.log("cofre abierto, ", cofre);
+
       camera.updateProjectionMatrix();
     });
     camera.updateProjectionMatrix();
@@ -640,6 +639,8 @@
 
   function crearLoot(objeto, cantidad) {
     for (let index = 0; index < cantidad; index++) {
+      var posX = objeto.position.x;
+      var posZ = objeto.position.z;
       var randomItem = Math.floor(Math.random() * (5 - 1)) + 1;
 
       var resultadoItem = devolverItemParaLoot(randomItem);
@@ -647,18 +648,19 @@
       new GLTFLoader().load(
         "models/armadura/" + resultadoItem + ".glb",
         function (gltf) {
-          const test123 = gltf.scene;
-          test123.traverse(function (object) {
+          const loot = gltf.scene;
+          loot.traverse(function (object) {
             if (object.isMesh) object.castShadow = true;
           });
+          var randomPosX = Math.floor(Math.random() * (3 - -3)) + -3;
+          var randomPosZ = Math.floor(Math.random() * (3 - -3)) + -3;
           var geo = new THREE.BoxGeometry(3, 3, 3);
-          test123.geometry = geo;
-          test123.position.x = 9;
-          test123.position.y = 1;
+          loot.position.set(posX + randomPosX, 1, posZ + randomPosZ);
+          loot.geometry = geo;
           // test123.rotation.y = Math.PI / 2;
-          test123.scale.set(1, 1, 1);
-          scene.add(test123);
-          arraySolidos.push(test123);
+          loot.scale.set(1, 1, 1);
+          scene.add(loot);
+          arraySolidos.push(loot);
         }
       );
     }
