@@ -182,7 +182,7 @@
     }
     var objFound = found[0].object;
     if (found.length > 0 && objFound.userData.name != undefined) {
-      console.log(objFound.userData.name);
+      // console.log(objFound.userData.name);
     }
 
     if (
@@ -198,9 +198,10 @@
     }
 
     if (found.length > 0 && objFound.parent.userData.tipo == "recurso") {
-      // console.log(objFound.parent.userData);
+      //  console.log(objFound.parent.userData);      
       varSiPuedeLevantarLoot(objFound);
     }
+    
   });
 
   window.addEventListener("mousemove", (event) => {
@@ -679,8 +680,9 @@
       new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
         const loot = gltf.scene;
         loot.traverse(function (object) {
-          if (object.isMesh) object.castShadow = true;
-          object.name = "objeto" + (Math.floor(Math.random() * (999999 - 0)) + 0)*(Math.floor(Math.random() * (10 - 1)) + 1); 
+          if (object.isMesh) object.castShadow = true;   
+        
+            
         });
         var randomPosX = Math.floor(Math.random() * (3 - -3)) + -3;
         var randomPosZ = Math.floor(Math.random() * (3 - -3)) + -3;
@@ -756,8 +758,8 @@
             categoria: "anillo"
           };
         }
-  
-                
+        var nombreRandomParaBorrar = "objeto" + (Math.floor(Math.random() * (999999 - 0)) + 0)*(Math.floor(Math.random() * (10 - 1)) + 1);      
+        loot.name = nombreRandomParaBorrar     
     
         scene.add(loot);
         // arraySolidos.push(loot);
@@ -766,7 +768,7 @@
   }
 
   function tipoLootSegunNombreObjeto3D(objeto) {
-    console.log(objeto);
+    
     if (objeto.includes("Ingots")) {
       return "moneda";
     }
@@ -908,9 +910,16 @@
 function varSiPuedeLevantarLoot(objeto){
 
 
-console.log(objeto)
+console.log("objeto", objeto)
+inventario.push(objeto)
 
 
+var selectedObject = scene.getObjectByName(objeto.parent.name);
+scene.remove(selectedObject);
+
+
+
+console.log("inventario", inventario)
 }
 
 
