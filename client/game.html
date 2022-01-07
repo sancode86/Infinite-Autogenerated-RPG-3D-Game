@@ -200,13 +200,17 @@
       draggable = found[0].object;
       document.body.style.cursor = "grab";
     }
-    var objFound = found[0].object;
+    var objFound = found[0].object;  
     if (found.length > 0 && objFound.userData.name != undefined) {
       console.log(objFound.userData.name);
     }
     if (found.length > 0 && objFound.userData.tipo == "cofre" && objFound.userData.estado == "cerrado") {
       console.log("Abriendo Cofre!");
-      abrirCofre(objFound.userData.name, objFound);
+      var posX = objFound.position.x
+      var posZ = objFound.position.z
+      // console.log("objFound",objFound);
+      // console.log("posX", posX, "posZ", posZ);
+      abrirCofre(objFound.userData.name);
     }
   });
 
@@ -350,6 +354,7 @@
         cofre.traverse(function (object) {
           if (object.isMesh) object.castShadow = true;
 
+       
           object.userData.draggable = true;
           object.name = "Cofre" + random;
           object.userData = {
@@ -362,20 +367,14 @@
         cofre.geometry = geo;
         cofre.scale.set(1, 1, 1);
         cofre.castShadow = true;
-        cofre.receiveShadow = true;
-        // cofre.userData = {
-        //   draggable: true,
-        //   name: "Cofre" + j + fecha
-        // }
-        // cofre.name = "Cofre" + j + fecha
-        // cofre.userData.draggable = true;
-        // cofre.userData.name = "cofre" + j;
+        cofre.receiveShadow = true;    
         cofre.position.x =
           Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
         cofre.position.y = 0;
         cofre.position.z =
           Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
-        scene.add(cofre);
+        
+        scene.add(cofre);      
         arraySolidos.push(cofre);
         camera.updateProjectionMatrix();
       });
@@ -638,25 +637,63 @@
     console.log("mostrando inventario");
   }
 
-  function abrirCofre(objeto, informacion) {
-
-
-
-
-
-
+  function abrirCofre(objeto) {
     var selectedObject = scene.getObjectByName(objeto);
+   
+    var geo = new THREE.BoxGeometry(2, 2, 2);
+      // crear un cofre
+      new GLTFLoader().load("models/cofreabierto.glb", function (gltf) {
+        var random =  (Math.floor(Math.random() * (800 - 0)) + 0);
+        const cofre = gltf.scene;
+ 
+        cofre.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+        
+          object.userData.draggable = true;
+          object.name = "Cofre" + random;
+          object.position.x = selectedObject.position.x
+          object.position.y = 0;
+          object.position.z = selectedObject.position.z
+          object.userData = {
+            draggable: false,
+            name: "Cofre" + random,
+            tipo: "cofre",
+            estado: "abierto",
+          };
+        });
+        cofre.name = "Cofre" + random;
+     
+        cofre.geometry = geo;
+        cofre.scale.set(1, 1, 1);
+        cofre.castShadow = true;
+        cofre.receiveShadow = true;
+        cofre.position.x = selectedObject.position.x
+        cofre.position.y = 0;
+        cofre.position.z = selectedObject.position.z
+        scene.add(cofre);       
+        camera.updateProjectionMatrix();
+      
+      });
+
+      camera.updateProjectionMatrix();
+    
+
     scene.remove(selectedObject);
 
 
 
-
-
-
-
-
-
-
   }
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
