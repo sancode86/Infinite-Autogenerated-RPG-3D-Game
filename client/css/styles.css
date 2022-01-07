@@ -106,7 +106,7 @@ h2 {
   cursor: grab;
   border: 1px solid #ffffff8f;
   background-color: #ffffffb3;
-  width: 230px;
+  width: 450px;
   height: fit-content;
   margin: auto;
   line-height: 2;
@@ -179,4 +179,15 @@ h2 {
   font-weight: 800;
   padding: 4px;
   padding-top: 10px;
+}
+
+.casillero{
+  width: 50px;
+  height: 50px;
+  border: 1px solid grey;
+  border-radius: 3px;
+}
+.divInventario{
+  margin: 0px;
+  padding: 0px;
 }
