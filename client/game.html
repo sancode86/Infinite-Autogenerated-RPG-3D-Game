@@ -208,9 +208,13 @@
       console.log("Abriendo Cofre!");
       var posX = objFound.position.x
       var posZ = objFound.position.z
-      // console.log("objFound",objFound);
+
+
+      var selectedObject = scene.getObjectByName(objFound.userData.name);
+
+       console.log("selectedObject",selectedObject);
       // console.log("posX", posX, "posZ", posZ);
-      abrirCofre(objFound.userData.name);
+      abrirCofre(selectedObject);
     }
   });
 
@@ -638,9 +642,15 @@
   }
 
   function abrirCofre(objeto) {
-    var selectedObject = scene.getObjectByName(objeto);
+    // var selectedObject = scene.getObjectByName(objeto);
    
     var geo = new THREE.BoxGeometry(2, 2, 2);
+
+
+    var posX = objeto.position.x;
+  
+    var posZ  = objeto.position.z;
+
       // crear un cofre
       new GLTFLoader().load("models/cofreabierto.glb", function (gltf) {
         var random =  (Math.floor(Math.random() * (800 - 0)) + 0);
@@ -651,9 +661,7 @@
         
           object.userData.draggable = true;
           object.name = "Cofre" + random;
-          object.position.x = selectedObject.position.x
-          object.position.y = 0;
-          object.position.z = selectedObject.position.z
+          cofre.position.set(posX, 0, posZ);
           object.userData = {
             draggable: false,
             name: "Cofre" + random,
@@ -665,12 +673,12 @@
      
         cofre.geometry = geo;
         cofre.scale.set(1, 1, 1);
+        cofre.position.set(posX, 0, posZ);
         cofre.castShadow = true;
-        cofre.receiveShadow = true;
-        cofre.position.x = selectedObject.position.x
-        cofre.position.y = 0;
-        cofre.position.z = selectedObject.position.z
-        scene.add(cofre);       
+        cofre.receiveShadow = true;   
+        scene.add(cofre);   
+        console.log("cofre abierto, ", cofre)
+        
         camera.updateProjectionMatrix();
       
       });
@@ -678,7 +686,7 @@
       camera.updateProjectionMatrix();
     
 
-    scene.remove(selectedObject);
+    scene.remove(objeto);
 
 
 
