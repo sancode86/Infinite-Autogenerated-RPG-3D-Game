@@ -643,7 +643,7 @@
       var posZ = objeto.position.z;
       var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
 
-      var tipoDeItem = Math.floor(Math.random() * (4 - 1)) + 1;
+      var tipoDeItem = Math.floor(Math.random() * (6 - 1)) + 1;
       if (tipoDeItem == 1) {
         var resultadoItem = devolverItemParaLootArmadura(randomItem);
       }
@@ -656,6 +656,13 @@
       if (tipoDeItem == 4) {
         var resultadoItem = devolverItemParaLootCollar(randomItem);
       }
+      if (tipoDeItem == 5) {
+        var resultadoItem = devolverItemParaLootPocion(randomItem);
+      }
+      if (tipoDeItem == 6) {
+        var resultadoItem = devolverItemParaLootMoneda(randomItem);
+      }
+  
 
       new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
         const loot = gltf.scene;
@@ -762,6 +769,28 @@
         resultadoItem = "models/collar/collar1";
     }
 
+    return resultadoItem;
+  }
+  function devolverItemParaLootPocion(randomItem) {
+    var resultadoItem;
+    switch (randomItem) {
+      case 1:
+        resultadoItem = "models/pocion/pocion";
+        break;     
+      default:
+        resultadoItem = "models/pocion/pocion";
+    }
+    return resultadoItem;
+  }
+  function devolverItemParaLootMoneda(randomItem) {
+    var resultadoItem;
+    switch (randomItem) {
+      case 1:
+        resultadoItem = "models/moneda/moneda1";
+        break;     
+      default:
+        resultadoItem = "models/moneda/moneda2";
+    }
     return resultadoItem;
   }
 </script>
