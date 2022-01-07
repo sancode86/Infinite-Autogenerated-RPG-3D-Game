@@ -120,20 +120,20 @@
     );
   });
 
-  new GLTFLoader().load("models/puerta.glb", function (gltf) {
-    const test123 = gltf.scene;
-    test123.traverse(function (object) {
-      if (object.isMesh) object.castShadow = true;
-    });
-    var geo = new THREE.BoxGeometry(3, 3, 3);
-    test123.geometry = geo;
-    test123.position.x = 9;
-    test123.position.y = 0;
-    // test123.rotation.y = Math.PI / 2;
-    test123.scale.set(1, 1, 1);
-    scene.add(test123);
-    arraySolidos.push(test123);
-  });
+  // new GLTFLoader().load("models/armadura/metal.glb", function (gltf) {
+  //   const test123 = gltf.scene;
+  //   test123.traverse(function (object) {
+  //     if (object.isMesh) object.castShadow = true;
+  //   });
+  //   var geo = new THREE.BoxGeometry(3, 3, 3);
+  //   test123.geometry = geo;
+  //   test123.position.x = 9;
+  //   test123.position.y = 1;
+  //   // test123.rotation.y = Math.PI / 2;
+  //   test123.scale.set(1, 1, 1);
+  //   scene.add(test123);
+  //   arraySolidos.push(test123);
+  // });
   new GLTFLoader().load("models/columna.glb", function (gltf) {
     const test = gltf.scene;
     test.traverse(function (object) {
@@ -148,32 +148,6 @@
     scene.add(test);
     arraySolidos.push(test);
   });
-
-  //   new GLTFLoader().load("models/test.gltf", function (gltf) {
-  //      const test = gltf.scene;
-  //      test.traverse(function (object) {
-  //        if (object.isMesh) object.castShadow = true;
-  //      });
-  //      test.position.x = 5
-  //      test.position.y = 0
-  //      test.scale.set(1.7, 1.7, 1.7);
-  //     scene.add(test);
-
-  //  });
-
-  // new GLTFLoader().load("jugadors/dos.glb", function (gltf) {
-  //   const jugador = gltf.scene;
-  //   jugador.traverse(function (object) {
-  //     if (object.isMesh) object.castShadow = true;
-  //   });
-  //   jugador.castShadow = true;
-  //   jugador.receiveShadow = true;
-  //   jugador.position.x = 10;
-  //   jugador.position.y = -0.4;
-
-  //   jugador.scale.set(1, 1, 1);
-  //   scene.add(jugador);
-  // });
 
   //raycaster
   const raycaster = new THREE.Raycaster();
@@ -200,19 +174,22 @@
       draggable = found[0].object;
       document.body.style.cursor = "grab";
     }
-    var objFound = found[0].object;  
+    var objFound = found[0].object;
     if (found.length > 0 && objFound.userData.name != undefined) {
       console.log(objFound.userData.name);
     }
-    if (found.length > 0 && objFound.userData.tipo == "cofre" && objFound.userData.estado == "cerrado") {
+    if (
+      found.length > 0 &&
+      objFound.userData.tipo == "cofre" &&
+      objFound.userData.estado == "cerrado"
+    ) {
       console.log("Abriendo Cofre!");
-      var posX = objFound.position.x
-      var posZ = objFound.position.z
-
+      var posX = objFound.position.x;
+      var posZ = objFound.position.z;
 
       var selectedObject = scene.getObjectByName(objFound.userData.name);
 
-       console.log("selectedObject",selectedObject);
+      console.log("selectedObject", selectedObject);
       // console.log("posX", posX, "posZ", posZ);
       abrirCofre(selectedObject);
     }
@@ -353,12 +330,11 @@
       var geo = new THREE.BoxGeometry(2, 2, 2);
       // crear un cofre
       new GLTFLoader().load("models/cofre.glb", function (gltf) {
-        var random =  (Math.floor(Math.random() * (800 - 0)) + 0) + j;
+        var random = Math.floor(Math.random() * (800 - 0)) + 0 + j;
         const cofre = gltf.scene;
         cofre.traverse(function (object) {
           if (object.isMesh) object.castShadow = true;
 
-       
           object.userData.draggable = true;
           object.name = "Cofre" + random;
           object.userData = {
@@ -369,16 +345,16 @@
           };
         });
         cofre.geometry = geo;
-        cofre.scale.set(1, 1, 1);
+        cofre.scale.set(1.5, 1.5, 1.5);
         cofre.castShadow = true;
-        cofre.receiveShadow = true;    
+        cofre.receiveShadow = true;
         cofre.position.x =
           Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
         cofre.position.y = 0;
         cofre.position.z =
           Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
-        
-        scene.add(cofre);      
+
+        scene.add(cofre);
         arraySolidos.push(cofre);
         camera.updateProjectionMatrix();
       });
@@ -449,10 +425,8 @@
 
     camera.updateProjectionMatrix();
   }
-
   // CONTROL KEYS
   const keysPressed = {};
-
   document.addEventListener(
     "keydown",
     (event) => {
@@ -464,9 +438,7 @@
     },
     false
   );
-
   // ESCUCHANDO TECLAS
-
   document.body.onkeydown = function (e) {
     if (e.keyCode == 32) {
       characterControls.switchAtacar();
@@ -483,7 +455,6 @@
       abrirInventario();
     }
   };
-
   document.body.onkeyup = function (e) {
     if (e.keyCode == 32) {
       characterControls.switchAtacarStop();
@@ -496,7 +467,6 @@
       characterControls.switchJuntarStop();
     }
   };
-
   document.addEventListener(
     "keyup",
     (event) => {
@@ -506,7 +476,6 @@
   );
 
   const clock = new THREE.Clock();
-
   // RESIZE HANDLER
   function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -514,9 +483,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
   window.addEventListener("resize", onWindowResize);
-
   generateFloorBasic();
-
   function generateFloorBasic() {
     const geoPiso = new THREE.PlaneGeometry(
       tamañoCuarto,
@@ -531,9 +498,7 @@
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
   }
-
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-
   const dirLight = new THREE.DirectionalLight(0xffffff, 1);
   dirLight.position.set(-50, 50, 0);
   dirLight.castShadow = true;
@@ -568,9 +533,7 @@
     chequearChoque();
     stats.end();
   }
-
   animate();
-
   document.body.appendChild(renderer.domElement);
 
   function horaActual() {
@@ -636,72 +599,94 @@
       }
     }
   }
-
   function abrirInventario() {
     console.log("mostrando inventario");
   }
-
   function abrirCofre(objeto) {
-    // var selectedObject = scene.getObjectByName(objeto);
-   
+    var randomCantidad = Math.floor(Math.random() * (3 - 1)) + 1;
+    crearLoot(objeto, randomCantidad);
     var geo = new THREE.BoxGeometry(2, 2, 2);
-
-
     var posX = objeto.position.x;
-  
-    var posZ  = objeto.position.z;
-
-      // crear un cofre
-      new GLTFLoader().load("models/cofreabierto.glb", function (gltf) {
-        var random =  (Math.floor(Math.random() * (800 - 0)) + 0);
-        const cofre = gltf.scene;
- 
-        cofre.traverse(function (object) {
-          if (object.isMesh) object.castShadow = true;
-        
-          object.userData.draggable = true;
-          object.name = "Cofre" + random;
-          cofre.position.set(posX, 0, posZ);
-          object.userData = {
-            draggable: false,
-            name: "Cofre" + random,
-            tipo: "cofre",
-            estado: "abierto",
-          };
-        });
-        cofre.name = "Cofre" + random;
-     
-        cofre.geometry = geo;
-        cofre.scale.set(1, 1, 1);
+    var posZ = objeto.position.z;
+    // crear un cofre
+    new GLTFLoader().load("models/cofreabierto.glb", function (gltf) {
+      var random = Math.floor(Math.random() * (800 - 0)) + 0;
+      const cofre = gltf.scene;
+      cofre.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+        object.userData.draggable = true;
+        object.name = "Cofre" + random;
         cofre.position.set(posX, 0, posZ);
-        cofre.castShadow = true;
-        cofre.receiveShadow = true;   
-        scene.add(cofre);   
-        console.log("cofre abierto, ", cofre)
-        
-        camera.updateProjectionMatrix();
-      
+        object.userData = {
+          draggable: false,
+          name: "Cofre" + random,
+          tipo: "cofre",
+          estado: "abierto",
+        };
       });
-
+      cofre.name = "Cofre" + random;
+      cofre.geometry = geo;
+      cofre.scale.set(1.5, 1.5, 1.5);
+      cofre.position.set(posX, 0, posZ);
+      cofre.castShadow = true;
+      cofre.receiveShadow = true;
+      scene.add(cofre);
+      console.log("cofre abierto, ", cofre);
       camera.updateProjectionMatrix();
-    
-
+    });
+    camera.updateProjectionMatrix();
     scene.remove(objeto);
-
-
-
   }
 
+  function crearLoot(objeto, cantidad) {
+    for (let index = 0; index < cantidad; index++) {
+      var randomItem = Math.floor(Math.random() * (5 - 1)) + 1;
 
+      var resultadoItem = devolverItemParaLoot(randomItem);
 
+      new GLTFLoader().load(
+        "models/armadura/" + resultadoItem + ".glb",
+        function (gltf) {
+          const test123 = gltf.scene;
+          test123.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
+          });
+          var geo = new THREE.BoxGeometry(3, 3, 3);
+          test123.geometry = geo;
+          test123.position.x = 9;
+          test123.position.y = 1;
+          // test123.rotation.y = Math.PI / 2;
+          test123.scale.set(1, 1, 1);
+          scene.add(test123);
+          arraySolidos.push(test123);
+        }
+      );
+    }
+  }
 
+  function devolverItemParaLoot(randomItem) {
+    var resultadoItem;
+    switch (randomItem) {
+      case 1:
+        resultadoItem = "acero";
+        break;
+      case 2:
+        resultadoItem = "negra";
 
+      case 3:
+        resultadoItem = "piel";
+        break;
+      case 4:
+        resultadoItem = "oro";
+        break;
+      case 5:
+        resultadoItem = "metal";
+        break;
+      default:
+        resultadoItem = "metal";
+    }
 
-
-
-
-
-
-
+    return resultadoItem;
+  }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
