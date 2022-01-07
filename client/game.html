@@ -343,6 +343,8 @@
             estado: "cerrado",
           };
         });
+        var random = Math.floor(Math.random() * (250 - 0)) + 0;
+        cofre.rotation.y = random;
         cofre.geometry = geo;
         cofre.scale.set(1.5, 1.5, 1.5);
         cofre.castShadow = true;
@@ -624,6 +626,7 @@
         };
       });
       cofre.name = "Cofre" + random;
+      cofre.rotation.y = objeto.rotation.y
       cofre.geometry = geo;
       cofre.scale.set(1.5, 1.5, 1.5);
       cofre.position.set(posX, 0, posZ);
@@ -676,6 +679,8 @@
         loot.geometry = geo;
         // test123.rotation.y = Math.PI / 2;
         loot.scale.set(0.8, 0.8, 0.8);
+        var random = Math.floor(Math.random() * (250 - 0)) + 0;
+        loot.rotation.y = random;
         scene.add(loot);
         arraySolidos.push(loot);
       });
