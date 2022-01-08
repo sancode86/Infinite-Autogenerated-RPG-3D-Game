@@ -742,6 +742,12 @@
           loot.rotation.x = -Math.PI / 2;
           loot.rotation.z = random;
         }
+        if (tipo == "anillo") {
+          loot.scale.set(0.4, 0.4, 0.4);
+        }
+        if (tipo == "pocion") {
+          loot.scale.set(0.4, 0.4, 0.4);
+        }
 
         if (tipo == "moneda") {
           loot.userData = {
@@ -962,7 +968,7 @@
     return resultadoItem;
   }
   function varSiPuedeLevantarLoot(objeto) {
-    sonidoJuntar()
+    sonidoJuntar();
     inventario.push(objeto);
     var selectedObject = scene.getObjectByName(objeto.parent.name);
     scene.remove(selectedObject);
@@ -976,32 +982,28 @@
   var audioCofre = new Audio("audio/cofre.mp3");
   var audioRoll = new Audio("audio/roll.mp3");
   var musica = new Audio("audio/musica.mp3");
-  var audioArmadura= new Audio("audio/dropArmadura.mp3");
-  var audioArma= new Audio("audio/dropArma.mp3");
-  var audioAnillo= new Audio("audio/dropAnillo.mp3");
-  var audioCollar= new Audio("audio/dropCollar.mp3");
-  var audioPocion= new Audio("audio/dropPocion.mp3");
-  var audioMoneda= new Audio("audio/dropMoneda.mp3");
-  var audioJuntar= new Audio("audio/juntar.mp3");
-
+  var audioArmadura = new Audio("audio/dropArmadura.mp3");
+  var audioArma = new Audio("audio/dropArma.mp3");
+  var audioAnillo = new Audio("audio/dropAnillo.mp3");
+  var audioCollar = new Audio("audio/dropCollar.mp3");
+  var audioPocion = new Audio("audio/dropPocion.mp3");
+  var audioMoneda = new Audio("audio/dropMoneda.mp3");
+  var audioJuntar = new Audio("audio/juntar.mp3");
 
   function sonidoCaminar() {
     if (sonidoCorrerFlag == 1) {
       audioCaminar.play();
     }
   }
-
   function sonidoCaminarStop() {
     audioCaminar.pause();
     sonidoCorrerFlag = 0;
   }
-
   function sonidoAtacar() {
     if (sonidoAtacarFlag == 1) {
       audioAtacar.play();
     }
   }
-
   function sonidoAtacarStop() {
     audioAtacar.pause();
     sonidoAtacarFlag = 0;
@@ -1014,34 +1016,28 @@
   }
   function musicaPlay() {
     musica.play();
+    musica.loop=true;
   }
   function sonidoJuntar() {
     audioJuntar.play();
   }
   function sonidoDropArmadura() {
-  audioArmadura.play();
+    audioArmadura.play();
   }
-
   function sonidoDropArma() {
     audioArma.play();
   }
-
   function sonidoDropAnillo() {
     audioAnillo.play();
   }
-
   function sonidoDropCollar() {
     audioCollar.play();
   }
-
   function sonidoDropPocion() {
     audioPocion.play();
   }
-
   function sonidoDropMoneda() {
     audioMoneda.play();
   }
-
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
