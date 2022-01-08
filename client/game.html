@@ -454,6 +454,10 @@
       //I (inventario)
       abrirInventario();
     }
+    if (e.keyCode == 27) {
+      //ESC (cerrar inventario)
+      preferencesClose();
+    }
 
     if (
       e.keyCode == 65 ||
@@ -957,12 +961,14 @@
   }
 
 
-
+  musicaPlay()
 
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
   var audioCofre = new Audio("audio/cofre.mp3");
   var audioRoll = new Audio("audio/roll.mp3");
+  var musica = new Audio("audio/musica.mp3");
+
   function sonidoCaminar() {
     if (sonidoCorrerFlag == 1) {     
       audioCaminar.play();
@@ -989,6 +995,9 @@
   }
   function sonidoRoll() {   
     audioRoll.play(); 
+  }
+  function musicaPlay() {   
+    musica.play(); 
   }
 
 
