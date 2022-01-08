@@ -16,6 +16,12 @@
     />
     <title>Infinite RPG</title>
   </head>
+  <script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"
+  ></script>
+
   <body>
     <div class="statsDiv" id="statsDiv"></div>
     <div class="sidebar">
@@ -25,21 +31,35 @@
       </a>
     </div>
     <div
+      data-tilt
+      data-tilt-max-glare="1"
+      data-tilt-glare="true"
+      data-tilt-perspective="1000"
+      data-tilt-scale="1"
+      data-tilt-speed="400"
       id="optionsMenu"
       class="optionsMenu animate__animated animate__fadeIn center"
       style="display: none"
     ></div>
+    <script src="utils/tilt.js"></script>
   </body>
 </html>
+
 <script src="js/menuDragInGame.js"></script>
 <script src="js/optionsMenu.js"></script>
-
+<script>
+  $(".js-tilt").tilt({
+    glare: true,
+    maxGlare: 0.5,
+  });
+</script>
 <script type="module">
   import * as THREE from "https://cdn.skypack.dev/three@0.133.1/build/three.module.js";
   import { OrbitControls } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/controls/OrbitControls.js";
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/loaders/OBJLoader.js";
-
+  var sonidoCorrerFlag = 0;
+  var sonidoAtacarFlag = 0;
   var inventario = [];
   var arraySolidos = [];
   var gameTime = 1111104000000;
@@ -419,6 +439,8 @@
   document.body.onkeydown = function (e) {
     if (e.keyCode == 32) {
       characterControls.switchAtacar();
+      sonidoAtacarFlag = 1;
+      sonidoAtacar();
     }
     if (e.keyCode == 17) {
       characterControls.switchRoll();
@@ -431,10 +453,22 @@
       //I (inventario)
       abrirInventario();
     }
+
+    if (
+      e.keyCode == 65 ||
+      e.keyCode == 83 ||
+      e.keyCode == 68 ||
+      e.keyCode == 87
+    ) {
+      //A S D W
+      sonidoCorrerFlag = 1;
+      sonidoCaminar();
+    }
   };
   document.body.onkeyup = function (e) {
     if (e.keyCode == 32) {
       characterControls.switchAtacarStop();
+      sonidoAtacarStop();
     }
     if (e.keyCode == 17) {
       characterControls.switchRollStop();
@@ -442,6 +476,16 @@
     if (e.keyCode == 69) {
       //E
       characterControls.switchJuntarStop();
+    }
+
+    if (
+      e.keyCode == 65 ||
+      e.keyCode == 83 ||
+      e.keyCode == 68 ||
+      e.keyCode == 87
+    ) {
+      //A S D W
+      sonidoCaminarStop();
     }
   };
   document.addEventListener(
@@ -580,31 +624,22 @@
     var cartel = document.getElementById("optionsMenu");
     cartel.innerHTML = "";
 
-
     var div = document.createElement("div");
     div.setAttribute("class", "divInventario");
     div.setAttribute("id", "divInventario");
     cartel.appendChild(div);
     var divInventarioId = document.getElementById("divInventario");
-    
+
     for (let index = 0; index < inventario.length; index++) {
-
-
-
       var casillero = document.createElement("button");
       casillero.setAttribute("class", "casillero");
-      casillero.style.backgroundImage  = "url(" +JSON.stringify(inventario[index].parent.userData.imagen) + ")";
-      casillero.style.backgroundSize= "contain"; 
-      casillero.style.backgroundRepeat= "no-repeat"; 
-      casillero.style.backgroundPosition= "center"; 
-
-
-
-
+      casillero.style.backgroundImage =
+        "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
+      casillero.style.backgroundSize = "contain";
+      casillero.style.backgroundRepeat = "no-repeat";
+      casillero.style.backgroundPosition = "center";
 
       divInventarioId.appendChild(casillero);
-
-
     }
     var boton = document.createElement("button");
     boton.setAttribute("class", "botonSave");
@@ -617,6 +652,7 @@
     cartel.style.display = "block";
   }
   function abrirCofre(objeto) {
+    sonidoCofre();
     var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
     crearLoot(objeto, randomCantidad);
     var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -777,7 +813,7 @@
           (Math.floor(Math.random() * (999999 - 0)) + 0) *
             (Math.floor(Math.random() * (10 - 1)) + 1);
         loot.name = nombreRandomParaBorrar;
-        scene.add(loot);      
+        scene.add(loot);
       });
     }
   }
@@ -918,5 +954,39 @@
     scene.remove(selectedObject);
     cargarInventario();
   }
+
+
+
+
+  var audioCaminar = new Audio("audio/caminar.mp3");
+  var audioAtacar = new Audio("audio/espada.mp3");
+  var audioCofre = new Audio("audio/cofre.mp3");
+  function sonidoCaminar() {
+    if (sonidoCorrerFlag == 1) {     
+      audioCaminar.play();
+    }
+  }
+
+  function sonidoCaminarStop() {
+    audioCaminar.pause();
+    sonidoCorrerFlag = 0;
+  }
+
+  function sonidoAtacar() {
+    if (sonidoAtacarFlag == 1) {     
+      audioAtacar.play();
+    }
+  }
+
+  function sonidoAtacarStop() {
+    audioAtacar.pause();
+    sonidoAtacarFlag = 0;
+  }
+  function sonidoCofre() {   
+      audioCofre.play(); 
+  }
+
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
