@@ -110,6 +110,7 @@
   // jugador WITH ANIMATIONS
   var characterControls;
   new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
+    musicaPlay();
     jugador = gltf.scene;
     jugador.traverse(function (object) {
       if (object.isMesh) object.castShadow = true;
@@ -446,6 +447,7 @@
       characterControls.switchRoll();
       sonidoRoll();
     }
+
     if (e.keyCode == 69) {
       //E
       characterControls.switchJuntar();
@@ -700,21 +702,27 @@
       var tipoDeItem = Math.floor(Math.random() * (7 - 1)) + 1;
       if (tipoDeItem == 1) {
         var resultadoItem = devolverItemParaLootArmadura(randomItem);
+        sonidoDropArmadura();
       }
       if (tipoDeItem == 2) {
         var resultadoItem = devolverItemParaLootArma(randomItem);
+        sonidoDropArma();
       }
       if (tipoDeItem == 3) {
         var resultadoItem = devolverItemParaLootAnillo(randomItem);
+        sonidoDropAnillo();
       }
       if (tipoDeItem == 4) {
         var resultadoItem = devolverItemParaLootCollar(randomItem);
+        sonidoDropCollar();
       }
       if (tipoDeItem == 5) {
         var resultadoItem = devolverItemParaLootPocion(randomItem);
+        sonidoDropPocion();
       }
       if (tipoDeItem == 6) {
         var resultadoItem = devolverItemParaLootMoneda(randomItem);
+        sonidoDropMoneda();
       }
       new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
         const loot = gltf.scene;
@@ -954,23 +962,31 @@
     return resultadoItem;
   }
   function varSiPuedeLevantarLoot(objeto) {
+    sonidoJuntar()
     inventario.push(objeto);
     var selectedObject = scene.getObjectByName(objeto.parent.name);
     scene.remove(selectedObject);
     cargarInventario();
   }
 
-
-  musicaPlay()
+  // musicaPlay()
 
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
   var audioCofre = new Audio("audio/cofre.mp3");
   var audioRoll = new Audio("audio/roll.mp3");
   var musica = new Audio("audio/musica.mp3");
+  var audioArmadura= new Audio("audio/dropArmadura.mp3");
+  var audioArma= new Audio("audio/dropArma.mp3");
+  var audioAnillo= new Audio("audio/dropAnillo.mp3");
+  var audioCollar= new Audio("audio/dropCollar.mp3");
+  var audioPocion= new Audio("audio/dropPocion.mp3");
+  var audioMoneda= new Audio("audio/dropMoneda.mp3");
+  var audioJuntar= new Audio("audio/juntar.mp3");
+
 
   function sonidoCaminar() {
-    if (sonidoCorrerFlag == 1) {     
+    if (sonidoCorrerFlag == 1) {
       audioCaminar.play();
     }
   }
@@ -981,7 +997,7 @@
   }
 
   function sonidoAtacar() {
-    if (sonidoAtacarFlag == 1) {     
+    if (sonidoAtacarFlag == 1) {
       audioAtacar.play();
     }
   }
@@ -990,16 +1006,41 @@
     audioAtacar.pause();
     sonidoAtacarFlag = 0;
   }
-  function sonidoCofre() {   
-      audioCofre.play(); 
+  function sonidoCofre() {
+    audioCofre.play();
   }
-  function sonidoRoll() {   
-    audioRoll.play(); 
+  function sonidoRoll() {
+    audioRoll.play();
   }
-  function musicaPlay() {   
-    musica.play(); 
+  function musicaPlay() {
+    musica.play();
+  }
+  function sonidoJuntar() {
+    audioJuntar.play();
+  }
+  function sonidoDropArmadura() {
+  audioArmadura.play();
   }
 
+  function sonidoDropArma() {
+    audioArma.play();
+  }
+
+  function sonidoDropAnillo() {
+    audioAnillo.play();
+  }
+
+  function sonidoDropCollar() {
+    audioCollar.play();
+  }
+
+  function sonidoDropPocion() {
+    audioPocion.play();
+  }
+
+  function sonidoDropMoneda() {
+    audioMoneda.play();
+  }
 
 
 </script>
