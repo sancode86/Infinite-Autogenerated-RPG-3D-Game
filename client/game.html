@@ -1212,6 +1212,36 @@
 
     arrayFuegos.push(sphere);
     scene.add(sphere);
+    crearColumna(posX - despazamientoFuegoX, posZ - despazamientoFuegoZ);
   }
+  function crearColumna(posX, posZ) {
+    new GLTFLoader().load("models/columna.glb", function (gltf) {
+      const test = gltf.scene;
+      test.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+        var loader = new THREE.TextureLoader();
+        var textura = loader.load("img/test.jpg", function (texture) {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+          texture.offset.set(0, 0);
+          texture.repeat.set(500, 500);
+        });
+        var texturaMapeada = new THREE.MeshPhongMaterial({
+          specular: 0x111111,
+          shininess: 0.2,
+          map: textura,
+        });
+        object.material = texturaMapeada;
+      });
+      var geo = new THREE.BoxGeometry(1, 2, 1);
+      test.geometry = geo;
+      test.position.x = posX;
+      test.position.z = posZ;   
+      test.scale.set(1, 1.24, 1);
+      scene.add(test);
+      arraySolidos.push(test);
+    });
+  }
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
