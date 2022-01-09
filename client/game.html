@@ -585,14 +585,29 @@
   dirLight.shadow.mapSize.height = 4096;
   scene.add(dirLight);
 
-  var orbitaDelSol = 200;
-  var velMovSol = -0.00000015;
+
+
+
+
+
+  var luz = new THREE.SpotLight(0xE69138, 1);
+  luz.position.set(0, 1, 0);
+  luz.castShadow = true;
+  scene.add(luz); 
+
+
+
+
+
+
+
+
 
   // ANIMATE
   function animate() {
     stats.begin();
     draggObj();
-
+    lucesAnimar();
     horaActual();
 
     let mixerUpdateDelta = clock.getDelta();
@@ -1084,5 +1099,38 @@
   function sonidoDropMoneda() {
     audioMoneda.play();
   }
+
+
+  crearLuces();
+
+
+
+  function crearLuces(){
+  //   var luz = new THREE.SpotLight(0xE69138, 1);
+  // luz.position.set(0, 1, 0);
+  // luz.castShadow = true;
+  // scene.add(luz); 
+}
+var fg = 1;
+function lucesAnimar(){
+  if(luz.intensity < 3 && fg == 1){
+    luz.intensity += 0.01;
+    if(luz.intensity >= 3){
+      fg = 0
+    }
+  }
+  if(fg == 0){
+    luz.intensity -= 0.01;
+    if(luz.intensity <= 0){
+      fg = 1
+    }
+  }
+}
+
+
+
+
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
