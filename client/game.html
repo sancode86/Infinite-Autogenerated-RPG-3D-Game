@@ -546,7 +546,7 @@
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
   }
-  scene.add(new THREE.AmbientLight(0xffffff, 0));
+  scene.add(new THREE.AmbientLight(0x3D85C6, 0.5));
   const dirLight = new THREE.DirectionalLight(0xffffff, 0);
   dirLight.position.set(-50, 50, 0);
   dirLight.castShadow = true;
@@ -1057,20 +1057,21 @@
   }
 
   function crearLuces() {
-    var anguloLuz = 1;
+  var anguloLuz = 1;
+    
     var luz1 = new THREE.SpotLight(0xe69138, 0.01);
     luz1.position.set(tamañoCuarto / 2 - 1, 2, tamañoCuarto / 2 - 1);
-
-    luz1.shadowCameraFar = 50;
-    luz1.shadowCameraNear = 0.01;
+    luz1.shadow.camera.far = 50;
+    luz1.shadow.camera.near = 0.01;
     luz1.castShadow = true;
     luz1.angle = anguloLuz;
-
-    luz1.shadowCameraFar = 800;
-    luz1.shadowCameraFov = 15;
     luz1.castShadow = true;
     arrayLuces.push(luz1);
     scene.add(luz1);
+    var rotacion =  2 * Math.PI * (135 / 360);  
+    var despazamientoFuegoX = - 0.5
+    var despazamientoFuegoZ =  - 0.5
+    crearAntorcha(tamañoCuarto / 2 - 1,  tamañoCuarto / 2 - 1, rotacion, despazamientoFuegoX, despazamientoFuegoZ);
 
     var luz2 = new THREE.SpotLight(0xe69138, 0.3);
     luz2.position.set(-(tamañoCuarto / 2 - 1), 2, -(tamañoCuarto / 2 - 1));
@@ -1078,68 +1079,77 @@
     luz2.shadow.camera.near = 0.01;
     luz2.angle = anguloLuz;
     luz2.castShadow = true;
-    luz2.castShadow = true;
     arrayLuces.push(luz2);
     scene.add(luz2);
+    var rotacion =  2 * Math.PI * (-45 / 360);  
+    var despazamientoFuegoX = + 0.5
+    var despazamientoFuegoZ =  + 0.5
+    crearAntorcha(-(tamañoCuarto / 2 - 1), -(tamañoCuarto / 2 - 1), rotacion, despazamientoFuegoX, despazamientoFuegoZ);
 
     var luz3 = new THREE.SpotLight(0xe69138, 1.5);
     luz3.position.set(tamañoCuarto / 2 - 1, 2, -(tamañoCuarto / 2 - 1));
-    luz3.shadowCameraFar = 50;
-    luz3.shadowCameraNear = 0.01;
+    luz3.shadow.camera.far = 50;
+    luz3.shadow.camera.near = 0.01;
     luz3.angle = anguloLuz;
-    luz3.castShadow = true;
-
-    luz3.shadowCameraFar = 800;
-    luz3.shadowCameraFov = 15;
-    luz3.castShadow = true;
+    luz3.castShadow = true;  
     arrayLuces.push(luz3);
     scene.add(luz3);
+    var rotacion =  2 * Math.PI * (225 / 360);  
+    var despazamientoFuegoX = - 0.5
+    var despazamientoFuegoZ =  + 0.5
+    crearAntorcha(tamañoCuarto / 2 - 1, -(tamañoCuarto / 2 - 1), rotacion, despazamientoFuegoX, despazamientoFuegoZ);
 
     var luz4 = new THREE.SpotLight(0xe69138, 0.7);
     luz4.position.set(-(tamañoCuarto / 2 - 1), 2, tamañoCuarto / 2 - 1);
-    luz4.shadowCameraFar = 50;
-    luz4.shadowCameraNear = 0.01;
+    luz4.shadow.camera.far = 50;
+    luz4.shadow.camera.near = 0.01;
     luz4.angle = anguloLuz;
-    luz4.castShadow = true;
-
-    luz4.shadowCameraFar = 800;
-    luz4.shadowCameraFov = 15;
-    luz4.castShadow = true;
+    luz4.castShadow = true; 
     arrayLuces.push(luz4);
     scene.add(luz4);
+    var rotacion = Math.PI / 4;
+    var despazamientoFuegoX = 0.5
+    var despazamientoFuegoZ = -0.5
+    crearAntorcha(-(tamañoCuarto / 2 - 1),  tamañoCuarto / 2 - 1, rotacion, despazamientoFuegoX, despazamientoFuegoZ);
   }
 
   function lucesAnimar() {
     for (let i = 0; i < arrayLuces.length; i++) {
       var colorLuz;
+      var intensidad;
       var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
       if (randomColorLuz == 1) {
         colorLuz = "0xCC0000";
+        intensidad = 0.6
       }
       if (randomColorLuz == 2) {
         colorLuz = "0xE69138";
+        intensidad = 0.4
       }
       if (randomColorLuz == 3) {
         colorLuz = "0xFFD966";
+        intensidad = 0.6
       } else {
         colorLuz = "0xF6B26B";
+        intensidad = 0.6
       }
       arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
+      arrayLuces[i].intensity = intensidad
 
-      if (arrayLuces[i].intensity < 1.8 && fg == 1) {
-        arrayLuces[i].intensity += 0.01;
+      // if (arrayLuces[i].intensity < 1.8 && fg == 1) {
+      //   arrayLuces[i].intensity += 0.01;
 
-        if (arrayLuces[i].intensity >= 1.8) {
-          fg = 0;
-        }
-      }
-      if (fg == 0) {
-        arrayLuces[i].intensity -= 0.01;
+      //   if (arrayLuces[i].intensity >= 1.8) {
+      //     fg = 0;
+      //   }
+      // }
+      // if (fg == 0) {
+      //   arrayLuces[i].intensity -= 0.01;
 
-        if (arrayLuces[i].intensity <= 0) {
-          fg = 1;
-        }
-      }
+      //   if (arrayLuces[i].intensity <= 0) {
+      //     fg = 1;
+      //   }
+      // }
 
       for (let w = 0; w < arrayFuegos.length; w++) {
         var materialFuego = new THREE.MeshPhongMaterial({
@@ -1162,12 +1172,10 @@
     }
   }
 
-  var posX = 5;
-  var posZ = 5;
 
-  crearAntorcha(posX, posZ);
+ 
 
-  function crearAntorcha(posX, posZ) {
+  function crearAntorcha(posX, posZ, rotacion, despazamientoFuegoX, despazamientoFuegoZ) {
     new GLTFLoader().load("models/torch.glb", function (gltf) {
       const test = gltf.scene;
       test.traverse(function (object) {
@@ -1190,7 +1198,7 @@
       test.position.x = posX;
       test.position.z = posZ;
       test.position.y = 3;
-      // test.rotation.y = Math.PI / 2;
+      test.rotation.y = rotacion;
       test.scale.set(0.8, 0.8, 0.8);
       scene.add(test);
       arraySolidos.push(test);
@@ -1198,9 +1206,10 @@
     const geometry = new THREE.SphereGeometry(0.2, 0.1, 0.1);
     const material = new THREE.MeshPhongMaterial({ color: 0xffff00 });
     const sphere = new THREE.Mesh(geometry, material);
-    sphere.position.x = posX + 0.7;
-    sphere.position.z = posZ;
+    sphere.position.x = posX + despazamientoFuegoX;
+    sphere.position.z = posZ + despazamientoFuegoZ;
     sphere.position.y = 3.6;
+
     arrayFuegos.push(sphere);
     scene.add(sphere);
   }
