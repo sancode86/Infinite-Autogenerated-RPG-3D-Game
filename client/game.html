@@ -365,10 +365,26 @@
     // crear una pared
     const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
     var aparienciaColor = "0x101010";
-    const matPared = new THREE.MeshPhongMaterial({
-      color: parseInt(aparienciaColor),
-    });
-    const pared = new THREE.Mesh(geoBox, matPared);
+    // const matPared = new THREE.MeshPhongMaterial({
+    //   color: parseInt(aparienciaColor),
+    // });
+
+    var loader = new THREE.TextureLoader();
+    var texture2 = loader.load( 'img/pared.jpg', function ( texture ) {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.offset.set( 0, 0 );
+    texture.repeat.set( 20, 5 );
+    } );
+    var materialPared = new THREE.MeshPhongMaterial( {
+    color: 0xffffff,
+    specular:0x111111,
+    shininess: 10,
+    map: texture2
+    } );
+
+
+
+    const pared = new THREE.Mesh(geoBox, materialPared);
     pared.castShadow = true;
     pared.receiveShadow = true;
     pared.userData.name = "Pared";
@@ -379,7 +395,7 @@
     arraySolidos.push(pared);
     camera.updateProjectionMatrix();
     const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
-    const pared2 = new THREE.Mesh(geoBox2, matPared);
+    const pared2 = new THREE.Mesh(geoBox2, materialPared);
     pared2.castShadow = true;
     pared2.receiveShadow = true;
     pared2.userData.name = "Pared2";
@@ -390,7 +406,7 @@
     arraySolidos.push(pared2);
     camera.updateProjectionMatrix();
     const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
-    const pared3 = new THREE.Mesh(geoBox3, matPared);
+    const pared3 = new THREE.Mesh(geoBox3, materialPared);
     pared3.castShadow = true;
     pared3.receiveShadow = true;
     pared3.userData.name = "Pared3";
@@ -401,7 +417,7 @@
     arraySolidos.push(pared3);
     camera.updateProjectionMatrix();
     const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
-    const pared4 = new THREE.Mesh(geoBox4, matPared);
+    const pared4 = new THREE.Mesh(geoBox4, materialPared);
     pared4.castShadow = true;
     pared4.receiveShadow = true;
     pared4.userData.name = "Pared4";
@@ -519,7 +535,36 @@
       tamañoCuarto
     );
     const matPiso = new THREE.MeshPhongMaterial({ color: 0x606060 });
-    const pisoSimple = new THREE.Mesh(geoPiso, matPiso);
+    var loader = new THREE.TextureLoader();
+    var material = new THREE.MeshLambertMaterial({
+      map: loader.load("img/piso.jpg"),
+    });   
+   
+
+
+
+
+
+    var texture = loader.load( 'img/piso2.jpg', function ( texture ) {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.offset.set( 0, 0 );
+    texture.repeat.set( 20, 20 );
+    } );
+    var materialPiso = new THREE.MeshPhongMaterial( {
+    color: 0xffffff,
+    specular:0x111111,
+    shininess: 10,
+    map: texture
+    } );
+
+
+
+
+
+
+
+
+    const pisoSimple = new THREE.Mesh(geoPiso, materialPiso);
     pisoSimple.castShadow = true;
     pisoSimple.receiveShadow = true;
     pisoSimple.rotation.x = -Math.PI / 2;
