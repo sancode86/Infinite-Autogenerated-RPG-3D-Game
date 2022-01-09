@@ -637,12 +637,12 @@
   crearSkybox();
   function crearSkybox() {
     let materialArray = [];
-    let texture_up = new THREE.TextureLoader().load("img/skybox/up.jpg");
-    let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.jpg");
-    let texture_lf = new THREE.TextureLoader().load("img/skybox/lf.jpg");
-    let texture_ft = new THREE.TextureLoader().load("img/skybox/ft.jpg");
-    let texture_dn = new THREE.TextureLoader().load("img/skybox/dn.jpg");
-    let texture_bk = new THREE.TextureLoader().load("img/skybox/bk.jpg");
+    let texture_up = new THREE.TextureLoader().load("img/skybox/up.png");
+    let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.png");
+    let texture_lf = new THREE.TextureLoader().load("img/skybox/lf.png");
+    let texture_ft = new THREE.TextureLoader().load("img/skybox/ft.png");
+    let texture_dn = new THREE.TextureLoader().load("img/skybox/dn.png");
+    let texture_bk = new THREE.TextureLoader().load("img/skybox/bk.png");
     materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
     materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
     materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
