@@ -54,14 +54,13 @@
   });
 </script>
 <script type="module">
-  import * as THREE from "https://cdn.skypack.dev/three@0.133.1/build/three.module.js";
-  import { OrbitControls } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/controls/OrbitControls.js";
-  import { GLTFLoader } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/loaders/GLTFLoader.js";
-  import { OBJLoader } from "https://cdn.skypack.dev/three@0.133.1/examples/jsm/loaders/OBJLoader.js";
-
-
-
-
+  import * as THREE from "https://cdn.skypack.dev/three@0.136.0/build/three.module.js";
+  import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js";
+  import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
+  import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
+  var fg = 1;
+  var arrayLuces = [];
+  var arrayFuegos = [];
   var sonidoCorrerFlag = 0;
   var sonidoAtacarFlag = 0;
   var inventario = [];
@@ -144,86 +143,6 @@
       "Idle"
     );
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  testObj();
-  function testObj() {
-    new GLTFLoader().load("models/luzPie.glb", function (gltf) {
-      const test = gltf.scene;
-      test.traverse(function (object) {
-        if (object.isMesh) object.castShadow = true;
-        var loader = new THREE.TextureLoader();
-        var textura = loader.load("img/metal.jpg", function (texture) {
-          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-          texture.offset.set(0, 0);
-          texture.repeat.set(100, 100);
-        });
-        var texturaMapeada = new THREE.MeshPhongMaterial({
-          specular: 0x111111,
-          shininess: 10,
-          map: textura,
-        });
-        object.material = texturaMapeada;
-      });
-      var geo = new THREE.BoxGeometry(1.5, 3, 1.5);
-      test.geometry = geo;
-      test.position.x = 5;
-      test.position.y = 0;
-      // test.rotation.y = Math.PI / 2;
-      test.scale.set(1, 1.8, 1);
-      scene.add(test);
-      arraySolidos.push(test);
-    });
-  }
-
-  fuego()
-
-
-
-
-
-  import { Fire } from './jsm/objects/Fire.js';
-
-  function fuego(){
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   //raycaster
   const raycaster = new THREE.Raycaster();
@@ -359,7 +278,7 @@
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 10;
   var cantidadCofres = 10;
-
+  crearLuces();
   crearCajas();
   crearParedes(4);
   cargarInventario();
@@ -627,8 +546,8 @@
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
   }
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+  scene.add(new THREE.AmbientLight(0xffffff, 0));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0);
   dirLight.position.set(-50, 50, 0);
   dirLight.castShadow = true;
   dirLight.shadow.camera.top = 100;
@@ -640,11 +559,6 @@
   dirLight.shadow.mapSize.width = 4096;
   dirLight.shadow.mapSize.height = 4096;
   scene.add(dirLight);
-
-  var luz = new THREE.SpotLight(0xe69138, 1);
-  luz.position.set(0, 1, 0);
-  luz.castShadow = true;
-  scene.add(luz);
 
   // ANIMATE
   function animate() {
@@ -662,8 +576,6 @@
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
     chequearChoque();
-
-
 
     stats.end();
   }
@@ -1144,45 +1056,152 @@
     audioMoneda.play();
   }
 
-  crearLuces();
-
   function crearLuces() {
-    //   var luz = new THREE.SpotLight(0xE69138, 1);
-    // luz.position.set(0, 1, 0);
-    // luz.castShadow = true;
-    // scene.add(luz);
+    var anguloLuz = 1;
+    var luz1 = new THREE.SpotLight(0xe69138, 0.01);
+    luz1.position.set(tamañoCuarto / 2 - 1, 2, tamañoCuarto / 2 - 1);
+
+    luz1.shadowCameraFar = 50;
+    luz1.shadowCameraNear = 0.01;
+    luz1.castShadow = true;
+    luz1.angle = anguloLuz;
+
+    luz1.shadowCameraFar = 800;
+    luz1.shadowCameraFov = 15;
+    luz1.castShadow = true;
+    arrayLuces.push(luz1);
+    scene.add(luz1);
+
+    var luz2 = new THREE.SpotLight(0xe69138, 0.3);
+    luz2.position.set(-(tamañoCuarto / 2 - 1), 2, -(tamañoCuarto / 2 - 1));
+    luz2.shadow.camera.far = 50;
+    luz2.shadow.camera.near = 0.01;
+    luz2.angle = anguloLuz;
+    luz2.castShadow = true;
+    luz2.castShadow = true;
+    arrayLuces.push(luz2);
+    scene.add(luz2);
+
+    var luz3 = new THREE.SpotLight(0xe69138, 1.5);
+    luz3.position.set(tamañoCuarto / 2 - 1, 2, -(tamañoCuarto / 2 - 1));
+    luz3.shadowCameraFar = 50;
+    luz3.shadowCameraNear = 0.01;
+    luz3.angle = anguloLuz;
+    luz3.castShadow = true;
+
+    luz3.shadowCameraFar = 800;
+    luz3.shadowCameraFov = 15;
+    luz3.castShadow = true;
+    arrayLuces.push(luz3);
+    scene.add(luz3);
+
+    var luz4 = new THREE.SpotLight(0xe69138, 0.7);
+    luz4.position.set(-(tamañoCuarto / 2 - 1), 2, tamañoCuarto / 2 - 1);
+    luz4.shadowCameraFar = 50;
+    luz4.shadowCameraNear = 0.01;
+    luz4.angle = anguloLuz;
+    luz4.castShadow = true;
+
+    luz4.shadowCameraFar = 800;
+    luz4.shadowCameraFov = 15;
+    luz4.castShadow = true;
+    arrayLuces.push(luz4);
+    scene.add(luz4);
   }
 
-  var fg = 1;
+
 
   function lucesAnimar() {
-    var colorLuz;
-    var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
-    if (randomColorLuz == 1) {
-      colorLuz = "0xCC0000";
-    }
-    if (randomColorLuz == 2) {
-      colorLuz = "0xE69138";
-    }
-    if (randomColorLuz == 3) {
-      colorLuz = "0xFFD966";
-    } else {
-      colorLuz = "0xF6B26B";
-    }
-    luz.color = new THREE.Color(parseInt(colorLuz));
+    for (let i = 0; i < arrayLuces.length; i++) {
+      var colorLuz;
+      var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
+      if (randomColorLuz == 1) {
+        colorLuz = "0xCC0000";
+      }
+      if (randomColorLuz == 2) {
+        colorLuz = "0xE69138";
+      }
+      if (randomColorLuz == 3) {
+        colorLuz = "0xFFD966";
+      } else {
+        colorLuz = "0xF6B26B";
+      }
+      arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
 
-    if (luz.intensity < 3 && fg == 1) {
-      luz.intensity += 0.01;
-      if (luz.intensity >= 3) {
-        fg = 0;
+      if (arrayLuces[i].intensity < 1.8 && fg == 1) {
+        arrayLuces[i].intensity += 0.01;
+
+        if (arrayLuces[i].intensity >= 1.8) {
+          fg = 0;
+        }
+      }
+      if (fg == 0) {
+        arrayLuces[i].intensity -= 0.01;
+
+        if (arrayLuces[i].intensity <= 0) {
+          fg = 1;
+        }
+      }
+
+      for (let w = 0; w < arrayFuegos.length; w++) {
+        var materialFuego = new THREE.MeshPhongMaterial({
+          color: parseInt(colorLuz),
+        });
+        arrayFuegos[w].material = materialFuego;
+      var flag =  Math.floor(Math.random() * (5 - 1)) + 1;
+        if (flag == 2) {
+          var geo = new THREE.SphereGeometry(0.25, 0.15, 0.15);
+        } else {
+          var geo = new THREE.SphereGeometry(0.2, 0.1, 0.1);
+        }
+
+        arrayFuegos[w].geometry = geo;      
+     
       }
     }
-    if (fg == 0) {
-      luz.intensity -= 0.01;
-      if (luz.intensity <= 0) {
-        fg = 1;
-      }
-    }
+  }
+
+  var posX = 5;
+  var posZ = 5;
+
+  crearAntorcha(posX, posZ);
+
+  function crearAntorcha(posX, posZ) {
+    new GLTFLoader().load("models/torch.glb", function (gltf) {
+      const test = gltf.scene;
+      test.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+        var loader = new THREE.TextureLoader();
+        var textura = loader.load("img/metal.jpg", function (texture) {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+          texture.offset.set(0, 0);
+          texture.repeat.set(100, 100);
+        });
+        var texturaMapeada = new THREE.MeshPhongMaterial({
+          specular: 0x111111,
+          shininess: 10,
+          map: textura,
+        });
+        object.material = texturaMapeada;
+      });
+      var geo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+      test.geometry = geo;
+      test.position.x = posX;
+      test.position.z = posZ;
+      test.position.y = 3;
+      // test.rotation.y = Math.PI / 2;
+      test.scale.set(0.8, 0.8, 0.8);
+      scene.add(test);
+      arraySolidos.push(test);
+    });
+    const geometry = new THREE.SphereGeometry(0.2, 0.1, 0.1);
+    const material = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+    const sphere = new THREE.Mesh(geometry, material);
+    sphere.position.x = posX + 0.7;
+    sphere.position.z = posZ;
+    sphere.position.y = 3.6;
+    arrayFuegos.push(sphere);
+    scene.add(sphere);
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
