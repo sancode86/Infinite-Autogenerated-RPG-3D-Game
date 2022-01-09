@@ -1109,8 +1109,6 @@
     scene.add(luz4);
   }
 
-
-
   function lucesAnimar() {
     for (let i = 0; i < arrayLuces.length; i++) {
       var colorLuz;
@@ -1148,15 +1146,18 @@
           color: parseInt(colorLuz),
         });
         arrayFuegos[w].material = materialFuego;
-      var flag =  Math.floor(Math.random() * (5 - 1)) + 1;
+        var flag = Math.floor(Math.random() * (20 - 1)) + 1;
+
         if (flag == 2) {
           var geo = new THREE.SphereGeometry(0.25, 0.15, 0.15);
-        } else {
+        }else{
           var geo = new THREE.SphereGeometry(0.2, 0.1, 0.1);
         }
+        if (flag == 4) {
+          var geo = new THREE.SphereGeometry(0.23, 0.13, 0.13);
+        }
 
-        arrayFuegos[w].geometry = geo;      
-     
+        arrayFuegos[w].geometry = geo;
       }
     }
   }
