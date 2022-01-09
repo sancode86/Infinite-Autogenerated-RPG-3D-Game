@@ -85,10 +85,10 @@
     45,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    10000
   );
-  camera.position.y = 5;
-  camera.position.z = 5;
+  camera.position.y = 15;
+  camera.position.z = 15;
   camera.position.x = 0;
 
   // RENDERER
@@ -110,7 +110,7 @@
   // jugador WITH ANIMATIONS
   var characterControls;
   new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
-    musicaPlay();
+    // musicaPlay();
     jugador = gltf.scene;
     jugador.traverse(function (object) {
       if (object.isMesh) object.castShadow = true;
@@ -140,20 +140,85 @@
       "Idle"
     );
   });
-  new GLTFLoader().load("models/columna.glb", function (gltf) {
-    const test = gltf.scene;
-    test.traverse(function (object) {
-      if (object.isMesh) object.castShadow = true;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  testObj();
+  function testObj() {
+    new GLTFLoader().load("models/luzPie.glb", function (gltf) {
+      const test = gltf.scene;
+      test.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+        var loader = new THREE.TextureLoader();
+        var textura = loader.load("img/metal.jpg", function (texture) {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+          texture.offset.set(0, 0);
+          texture.repeat.set(100, 100);
+        });
+        var texturaMapeada = new THREE.MeshPhongMaterial({
+          specular: 0x111111,
+          shininess: 10,
+          map: textura,
+        });
+        object.material = texturaMapeada;
+      });
+      var geo = new THREE.BoxGeometry(1.5, 3, 1.5);
+      test.geometry = geo;
+      test.position.x = 5;
+      test.position.y = 0;
+      // test.rotation.y = Math.PI / 2;
+      test.scale.set(1, 1.8, 1);
+      scene.add(test);
+      arraySolidos.push(test);
     });
-    var geo = new THREE.BoxGeometry(1.5, 3, 1.5);
-    test.geometry = geo;
-    test.position.x = 5;
-    test.position.y = 0;
-    // test.rotation.y = Math.PI / 2;
-    test.scale.set(1, 1, 1);
-    scene.add(test);
-    arraySolidos.push(test);
-  });
+  }
+
+  fuego()
+
+
+
+
+
+
+  function fuego(){
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //raycaster
   const raycaster = new THREE.Raycaster();
@@ -370,19 +435,17 @@
     // });
 
     var loader = new THREE.TextureLoader();
-    var texture2 = loader.load( 'img/pared.jpg', function ( texture ) {
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    texture.offset.set( 0, 0 );
-    texture.repeat.set( 20, 5 );
-    } );
-    var materialPared = new THREE.MeshPhongMaterial( {
-    color: 0xffffff,
-    specular:0x111111,
-    shininess: 10,
-    map: texture2
-    } );
-
-
+    var texture2 = loader.load("img/pared.jpg", function (texture) {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.offset.set(0, 0);
+      texture.repeat.set(20, 5);
+    });
+    var materialPared = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      specular: 0x111111,
+      shininess: 10,
+      map: texture2,
+    });
 
     const pared = new THREE.Mesh(geoBox, materialPared);
     pared.castShadow = true;
@@ -538,31 +601,19 @@
     var loader = new THREE.TextureLoader();
     var material = new THREE.MeshLambertMaterial({
       map: loader.load("img/piso.jpg"),
-    });   
-   
+    });
 
-
-
-
-
-    var texture = loader.load( 'img/piso2.jpg', function ( texture ) {
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    texture.offset.set( 0, 0 );
-    texture.repeat.set( 20, 20 );
-    } );
-    var materialPiso = new THREE.MeshPhongMaterial( {
-    color: 0xffffff,
-    specular:0x111111,
-    shininess: 10,
-    map: texture
-    } );
-
-
-
-
-
-
-
+    var texture = loader.load("img/piso2.jpg", function (texture) {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.offset.set(0, 0);
+      texture.repeat.set(20, 20);
+    });
+    var materialPiso = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      specular: 0x111111,
+      shininess: 10,
+      map: texture,
+    });
 
     const pisoSimple = new THREE.Mesh(geoPiso, materialPiso);
     pisoSimple.castShadow = true;
@@ -585,23 +636,10 @@
   dirLight.shadow.mapSize.height = 4096;
   scene.add(dirLight);
 
-
-
-
-
-
-  var luz = new THREE.SpotLight(0xE69138, 1);
+  var luz = new THREE.SpotLight(0xe69138, 1);
   luz.position.set(0, 1, 0);
   luz.castShadow = true;
-  scene.add(luz); 
-
-
-
-
-
-
-
-
+  scene.add(luz);
 
   // ANIMATE
   function animate() {
@@ -619,6 +657,9 @@
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
     chequearChoque();
+
+
+
     stats.end();
   }
   animate();
@@ -1035,8 +1076,6 @@
     cargarInventario();
   }
 
-  // musicaPlay()
-
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
   var audioCofre = new Audio("audio/cofre.mp3");
@@ -1076,7 +1115,7 @@
   }
   function musicaPlay() {
     musica.play();
-    musica.loop=true;
+    musica.loop = true;
   }
   function sonidoJuntar() {
     audioJuntar.play();
@@ -1100,37 +1139,45 @@
     audioMoneda.play();
   }
 
-
   crearLuces();
 
+  function crearLuces() {
+    //   var luz = new THREE.SpotLight(0xE69138, 1);
+    // luz.position.set(0, 1, 0);
+    // luz.castShadow = true;
+    // scene.add(luz);
+  }
 
+  var fg = 1;
 
-  function crearLuces(){
-  //   var luz = new THREE.SpotLight(0xE69138, 1);
-  // luz.position.set(0, 1, 0);
-  // luz.castShadow = true;
-  // scene.add(luz); 
-}
-var fg = 1;
-function lucesAnimar(){
-  if(luz.intensity < 3 && fg == 1){
-    luz.intensity += 0.01;
-    if(luz.intensity >= 3){
-      fg = 0
+  function lucesAnimar() {
+    var colorLuz;
+    var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
+    if (randomColorLuz == 1) {
+      colorLuz = "0xCC0000";
+    }
+    if (randomColorLuz == 2) {
+      colorLuz = "0xE69138";
+    }
+    if (randomColorLuz == 3) {
+      colorLuz = "0xFFD966";
+    } else {
+      colorLuz = "0xF6B26B";
+    }
+    luz.color = new THREE.Color(parseInt(colorLuz));
+
+    if (luz.intensity < 3 && fg == 1) {
+      luz.intensity += 0.01;
+      if (luz.intensity >= 3) {
+        fg = 0;
+      }
+    }
+    if (fg == 0) {
+      luz.intensity -= 0.01;
+      if (luz.intensity <= 0) {
+        fg = 1;
+      }
     }
   }
-  if(fg == 0){
-    luz.intensity -= 0.01;
-    if(luz.intensity <= 0){
-      fg = 1
-    }
-  }
-}
-
-
-
-
-
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
