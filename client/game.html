@@ -55,6 +55,24 @@
   import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js";
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
+
+var jugadorStats = {
+fuerza: 2,
+defensa: 1,
+salud: 100,
+nivel: 0,
+experiencia: 0,
+monedas: 0
+};
+var jugadorEquipoEnUso = {
+armadura: "",
+arma: "",
+collar:"",
+anillo: "",
+};
+var jugadorInventario = [];
+
+console.log(jugadorStats)
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 10;
