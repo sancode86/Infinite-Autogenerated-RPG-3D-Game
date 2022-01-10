@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/styles.css" />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
@@ -21,7 +20,6 @@
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
     crossorigin="anonymous"
   ></script>
-
   <body>
     <div class="statsDiv" id="statsDiv"></div>
     <div class="sidebar">
@@ -44,7 +42,6 @@
     <script src="utils/tilt.js"></script>
   </body>
 </html>
-
 <script src="js/menuDragInGame.js"></script>
 <script src="js/optionsMenu.js"></script>
 <script>
@@ -58,7 +55,13 @@
   import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js";
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
+  var tamañoCuarto = 50;
+  var spawnArea = tamañoCuarto / 2;
+  var cantidadCajas = 10;
+  var cantidadCofres = 10;
   var fg = 1;
+  var jugador;
+  var characterControls;
   var arrayLuces = [];
   var arrayFuegos = [];
   var sonidoCorrerFlag = 0;
@@ -71,7 +74,6 @@
   var posicionActualJugador = new THREE.Vector3(0, 0, 0);
   stats.showPanel(0);
   statsDiv.appendChild(stats.domElement);
-
   import { CharacterControls } from "./utils/characterControls.js";
   import {
     lootArrayArmadura,
@@ -109,9 +111,7 @@
   orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
   orbitControls.update();
 
-  var jugador;
-  // jugador WITH ANIMATIONS
-  var characterControls;
+ 
   new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
     // musicaPlay();
     jugador = gltf.scene;
@@ -273,11 +273,6 @@
     }
   }
 
-  var tamañoCuarto = 50;
-
-  var spawnArea = tamañoCuarto / 2;
-  var cantidadCajas = 10;
-  var cantidadCofres = 10;
   crearLuces();
   crearCajas();
   crearParedes(4);
@@ -546,7 +541,7 @@
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
   }
-  scene.add(new THREE.AmbientLight(0x3D85C6, 0.5));
+  scene.add(new THREE.AmbientLight(0x6fa8dc, 0.8));
   const dirLight = new THREE.DirectionalLight(0xffffff, 0);
   dirLight.position.set(-50, 50, 0);
   dirLight.castShadow = true;
@@ -1057,8 +1052,8 @@
   }
 
   function crearLuces() {
-  var anguloLuz = 1;
-    
+    var anguloLuz = 1;
+
     var luz1 = new THREE.SpotLight(0xe69138, 0.01);
     luz1.position.set(tamañoCuarto / 2 - 1, 2, tamañoCuarto / 2 - 1);
     luz1.shadow.camera.far = 50;
@@ -1068,10 +1063,16 @@
     luz1.castShadow = true;
     arrayLuces.push(luz1);
     scene.add(luz1);
-    var rotacion =  2 * Math.PI * (135 / 360);  
-    var despazamientoFuegoX = - 0.5
-    var despazamientoFuegoZ =  - 0.5
-    crearAntorcha(tamañoCuarto / 2 - 1,  tamañoCuarto / 2 - 1, rotacion, despazamientoFuegoX, despazamientoFuegoZ);
+    var rotacion = 2 * Math.PI * (135 / 360);
+    var despazamientoFuegoX = -0.5;
+    var despazamientoFuegoZ = -0.5;
+    crearAntorcha(
+      tamañoCuarto / 2 - 1,
+      tamañoCuarto / 2 - 1,
+      rotacion,
+      despazamientoFuegoX,
+      despazamientoFuegoZ
+    );
 
     var luz2 = new THREE.SpotLight(0xe69138, 0.3);
     luz2.position.set(-(tamañoCuarto / 2 - 1), 2, -(tamañoCuarto / 2 - 1));
@@ -1081,101 +1082,122 @@
     luz2.castShadow = true;
     arrayLuces.push(luz2);
     scene.add(luz2);
-    var rotacion =  2 * Math.PI * (-45 / 360);  
-    var despazamientoFuegoX = + 0.5
-    var despazamientoFuegoZ =  + 0.5
-    crearAntorcha(-(tamañoCuarto / 2 - 1), -(tamañoCuarto / 2 - 1), rotacion, despazamientoFuegoX, despazamientoFuegoZ);
+    var rotacion = 2 * Math.PI * (-45 / 360);
+    var despazamientoFuegoX = +0.5;
+    var despazamientoFuegoZ = +0.5;
+    crearAntorcha(
+      -(tamañoCuarto / 2 - 1),
+      -(tamañoCuarto / 2 - 1),
+      rotacion,
+      despazamientoFuegoX,
+      despazamientoFuegoZ
+    );
 
     var luz3 = new THREE.SpotLight(0xe69138, 1.5);
     luz3.position.set(tamañoCuarto / 2 - 1, 2, -(tamañoCuarto / 2 - 1));
     luz3.shadow.camera.far = 50;
     luz3.shadow.camera.near = 0.01;
     luz3.angle = anguloLuz;
-    luz3.castShadow = true;  
+    luz3.castShadow = true;
     arrayLuces.push(luz3);
     scene.add(luz3);
-    var rotacion =  2 * Math.PI * (225 / 360);  
-    var despazamientoFuegoX = - 0.5
-    var despazamientoFuegoZ =  + 0.5
-    crearAntorcha(tamañoCuarto / 2 - 1, -(tamañoCuarto / 2 - 1), rotacion, despazamientoFuegoX, despazamientoFuegoZ);
+    var rotacion = 2 * Math.PI * (225 / 360);
+    var despazamientoFuegoX = -0.5;
+    var despazamientoFuegoZ = +0.5;
+    crearAntorcha(
+      tamañoCuarto / 2 - 1,
+      -(tamañoCuarto / 2 - 1),
+      rotacion,
+      despazamientoFuegoX,
+      despazamientoFuegoZ
+    );
 
     var luz4 = new THREE.SpotLight(0xe69138, 0.7);
     luz4.position.set(-(tamañoCuarto / 2 - 1), 2, tamañoCuarto / 2 - 1);
     luz4.shadow.camera.far = 50;
     luz4.shadow.camera.near = 0.01;
     luz4.angle = anguloLuz;
-    luz4.castShadow = true; 
+    luz4.castShadow = true;
     arrayLuces.push(luz4);
     scene.add(luz4);
     var rotacion = Math.PI / 4;
-    var despazamientoFuegoX = 0.5
-    var despazamientoFuegoZ = -0.5
-    crearAntorcha(-(tamañoCuarto / 2 - 1),  tamañoCuarto / 2 - 1, rotacion, despazamientoFuegoX, despazamientoFuegoZ);
+    var despazamientoFuegoX = 0.5;
+    var despazamientoFuegoZ = -0.5;
+    crearAntorcha(
+      -(tamañoCuarto / 2 - 1),
+      tamañoCuarto / 2 - 1,
+      rotacion,
+      despazamientoFuegoX,
+      despazamientoFuegoZ
+    );
   }
 
   function lucesAnimar() {
-    for (let i = 0; i < arrayLuces.length; i++) {
-      var colorLuz;
-      var intensidad;
-      var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
-      if (randomColorLuz == 1) {
-        colorLuz = "0xCC0000";
-        intensidad = 0.6
-      }
-      if (randomColorLuz == 2) {
-        colorLuz = "0xE69138";
-        intensidad = 0.4
-      }
-      if (randomColorLuz == 3) {
-        colorLuz = "0xFFD966";
-        intensidad = 0.6
+    // for (let i = 0; i < arrayLuces.length; i++) {
+    var colorLuz;
+    var intensidad;
+    var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
+    if (randomColorLuz == 1) {
+      colorLuz = "0xCC0000";
+      // intensidad = 0.6
+    }
+    if (randomColorLuz == 2) {
+      colorLuz = "0xE69138";
+      // intensidad = 0.4
+    }
+    if (randomColorLuz == 3) {
+      colorLuz = "0xFFD966";
+      // intensidad = 0.6
+    } else {
+      colorLuz = "0xF6B26B";
+      // intensidad = 0.6
+    }
+    // arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
+    // arrayLuces[i].intensity = intensidad
+
+    // if (arrayLuces[i].intensity < 1.8 && fg == 1) {
+    //   arrayLuces[i].intensity += 0.01;
+
+    //   if (arrayLuces[i].intensity >= 1.8) {
+    //     fg = 0;
+    //   }
+    // }
+    // if (fg == 0) {
+    //   arrayLuces[i].intensity -= 0.01;
+
+    //   if (arrayLuces[i].intensity <= 0) {
+    //     fg = 1;
+    //   }
+    // }
+
+    for (let w = 0; w < arrayFuegos.length; w++) {
+      var materialFuego = new THREE.MeshPhongMaterial({
+        color: parseInt(colorLuz),
+      });
+      arrayFuegos[w].material = materialFuego;
+      var flag = Math.floor(Math.random() * (20 - 1)) + 1;
+
+      if (flag == 2) {
+        var geo = new THREE.SphereGeometry(0.25, 0.15, 0.15);
       } else {
-        colorLuz = "0xF6B26B";
-        intensidad = 0.6
+        var geo = new THREE.SphereGeometry(0.2, 0.1, 0.1);
       }
-      arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
-      arrayLuces[i].intensity = intensidad
-
-      // if (arrayLuces[i].intensity < 1.8 && fg == 1) {
-      //   arrayLuces[i].intensity += 0.01;
-
-      //   if (arrayLuces[i].intensity >= 1.8) {
-      //     fg = 0;
-      //   }
-      // }
-      // if (fg == 0) {
-      //   arrayLuces[i].intensity -= 0.01;
-
-      //   if (arrayLuces[i].intensity <= 0) {
-      //     fg = 1;
-      //   }
-      // }
-
-      for (let w = 0; w < arrayFuegos.length; w++) {
-        var materialFuego = new THREE.MeshPhongMaterial({
-          color: parseInt(colorLuz),
-        });
-        arrayFuegos[w].material = materialFuego;
-        var flag = Math.floor(Math.random() * (20 - 1)) + 1;
-
-        if (flag == 2) {
-          var geo = new THREE.SphereGeometry(0.25, 0.15, 0.15);
-        }else{
-          var geo = new THREE.SphereGeometry(0.2, 0.1, 0.1);
-        }
-        if (flag == 4) {
-          var geo = new THREE.SphereGeometry(0.23, 0.13, 0.13);
-        }
-
-        arrayFuegos[w].geometry = geo;
+      if (flag == 4) {
+        var geo = new THREE.SphereGeometry(0.23, 0.13, 0.13);
       }
+
+      arrayFuegos[w].geometry = geo;
     }
   }
+  // }
 
-
- 
-
-  function crearAntorcha(posX, posZ, rotacion, despazamientoFuegoX, despazamientoFuegoZ) {
+  function crearAntorcha(
+    posX,
+    posZ,
+    rotacion,
+    despazamientoFuegoX,
+    despazamientoFuegoZ
+  ) {
     new GLTFLoader().load("models/torch.glb", function (gltf) {
       const test = gltf.scene;
       test.traverse(function (object) {
@@ -1235,13 +1257,11 @@
       var geo = new THREE.BoxGeometry(1, 2, 1);
       test.geometry = geo;
       test.position.x = posX;
-      test.position.z = posZ;   
+      test.position.z = posZ;
       test.scale.set(1, 1.24, 1);
       scene.add(test);
       arraySolidos.push(test);
     });
   }
-
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
