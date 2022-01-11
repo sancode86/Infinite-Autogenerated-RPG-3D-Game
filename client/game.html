@@ -46,8 +46,8 @@
 <script src="js/optionsMenu.js"></script>
 <script>
   $(".js-tilt").tilt({
-    glare:     true,
-    maxGlare:  0.5,
+    glare: true,
+    maxGlare: 0.5,
   });
 </script>
 <script type="module">
@@ -56,25 +56,24 @@
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
 
-var jugadorStats = {
-fuerza:       2,
-defensa:      1,
-salud:        100,
-nivel:        0,
-experiencia:  0,
-monedas:      0
-};
-var jugadorEquipoEnUso = {
-armadura:    "",
-arma:        "",
-collar:      "",
-anillo:      "",
-};
-var inventario = [];
+  var jugadorStats = {
+    fuerza: 2,
+    defensa: 1,
+    salud: 100,
+    nivel: 0,
+    experiencia: 0,
+    monedas: 0,
+  };
+  var jugadorEquipoEnUso = {
+    armadura: "",
+    arma: "",
+    collar: "",
+    anillo: "",
+  };
+  var inventario = [];
 
-console.log(jugadorStats)
-console.log(jugadorEquipoEnUso)
-
+  console.log(jugadorStats);
+  console.log(jugadorEquipoEnUso);
 
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
@@ -132,7 +131,6 @@ console.log(jugadorEquipoEnUso)
   orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
   orbitControls.update();
 
- 
   new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
     // musicaPlay();
     jugador = gltf.scene;
@@ -662,32 +660,37 @@ console.log(jugadorEquipoEnUso)
     }
   }
 
-
-
-
-
-
   function cargarInventario() {
     var cartel = document.getElementById("optionsMenu");
     cartel.innerHTML = "";
-
-    var div = document.createElement("div");
-    div.setAttribute("class", "divInventario");
-    div.setAttribute("id", "divInventario");
-    cartel.appendChild(div);
     var divInventarioId = document.getElementById("divInventario");
-
     for (let index = 0; index < inventario.length; index++) {
-      var casillero = document.createElement("button");
-      casillero.setAttribute("class", "casillero");
-      casillero.style.backgroundImage =
+      var div = document.createElement("div");
+      div.setAttribute("class", "dropdown");
+      div.setAttribute("id", "dropdownid");
+      cartel.appendChild(div);
+      var equipo = document.getElementById("dropdownid");
+
+      var boton = document.createElement("button");
+      boton.setAttribute("class", "dropbtn casillero");
+      boton.style.backgroundImage =
         "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
-      casillero.style.backgroundSize = "contain";
-      casillero.style.backgroundRepeat = "no-repeat";
-      casillero.style.backgroundPosition = "center";
-      casillero.setAttribute("onclick", "opcionesItemInventario("+ index +")");
-      divInventarioId.appendChild(casillero);
+      boton.style.backgroundSize = "contain";
+      boton.style.backgroundRepeat = "no-repeat";
+      boton.style.backgroundPosition = "center";
+      boton.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
+      equipo.appendChild(boton);
+      var div = document.createElement("div");
+      div.setAttribute("class", "dropdown-content");
+      div.setAttribute("id", "dropdown-contentId");
+      equipo.appendChild(div);
+      var desplegable = document.getElementById("dropdown-contentId");
+
+      var link = document.createElement("a");
+      link.innerHTML = "Link1";
+      desplegable.appendChild(link);
     }
+
     var boton = document.createElement("button");
     boton.setAttribute("class", "botonSave");
     boton.setAttribute("onclick", "preferencesClose()");
@@ -697,31 +700,9 @@ console.log(jugadorEquipoEnUso)
 
   window.opcionesItemInventario = opcionesItemInventario;
 
-function opcionesItemInventario(index){
-
-
-  console.log(inventario[index]);
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  function opcionesItemInventario(index) {
+    console.log(inventario[index]);
+  }
 
   function abrirInventario() {
     var cartel = document.getElementById("optionsMenu");
