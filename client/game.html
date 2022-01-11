@@ -661,6 +661,12 @@ console.log(jugadorEquipoEnUso)
       }
     }
   }
+
+
+
+
+
+
   function cargarInventario() {
     var cartel = document.getElementById("optionsMenu");
     cartel.innerHTML = "";
@@ -679,7 +685,7 @@ console.log(jugadorEquipoEnUso)
       casillero.style.backgroundSize = "contain";
       casillero.style.backgroundRepeat = "no-repeat";
       casillero.style.backgroundPosition = "center";
-
+      casillero.setAttribute("onclick", "opcionesItemInventario("+ index +")");
       divInventarioId.appendChild(casillero);
     }
     var boton = document.createElement("button");
@@ -688,6 +694,35 @@ console.log(jugadorEquipoEnUso)
     boton.innerHTML = "Close";
     cartel.appendChild(boton);
   }
+
+  window.opcionesItemInventario = opcionesItemInventario;
+
+function opcionesItemInventario(index){
+
+
+  console.log(inventario[index]);
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   function abrirInventario() {
     var cartel = document.getElementById("optionsMenu");
     cartel.style.display = "block";
