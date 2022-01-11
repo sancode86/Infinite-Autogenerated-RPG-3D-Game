@@ -56,8 +56,6 @@
   import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
 
- 
-
   var jugadorStats = {
     fuerza: 2,
     defensa: 1,
@@ -78,8 +76,8 @@
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
 
-  console.log(jugadorStats);
-  console.log(jugadorEquipoEnUso);
+  // console.log(jugadorStats);
+  // console.log(jugadorEquipoEnUso);
 
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
@@ -684,17 +682,17 @@
       boton.style.backgroundSize = "contain";
       boton.style.backgroundRepeat = "no-repeat";
       boton.style.backgroundPosition = "center";
-      boton.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
+      // boton.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
       equipo.appendChild(boton);
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown-content");
-      div.setAttribute("id", "dropdown-contentId");
+      div.setAttribute("id", "dropdown-contentId"+index);
       equipo.appendChild(div);
-      var desplegable = document.getElementById("dropdown-contentId");
+      var desplegable = document.getElementById("dropdown-contentId"+index);
 
       var link = document.createElement("a");
       link.innerHTML = "Use";
-      link.setAttribute("onclick", "agregarAlEquipo(" + index + ")");
+      link.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
       desplegable.appendChild(link);
     }
 
@@ -706,18 +704,40 @@
   }
 
   window.opcionesItemInventario = opcionesItemInventario;
-  window.agregarAlEquipo = agregarAlEquipo;
+  // window.agregarAlEquipo = agregarAlEquipo;
+
+  // function opcionesItemInventario(index) {
+  //   console.log("inventario", inventario[index]);
+  //   console.log("jugadorEquipoEnUso", jugadorEquipoEnUso);
+  //   // console.log("categoria", inventario[index].parent.userData.categoria);
+  // }
+
+
+
+
+
+
+
 
   function opcionesItemInventario(index) {
-    console.log("inventario", inventario[index]);
-  }
-  function agregarAlEquipo(index) {
+    console.log("categoria", inventario[index].parent.userData.categoria);
+    if (inventario[index].parent.userData.categoria == "armadura") {
+      jugadorEquipoEnUso.armadura = inventario[index];
+      inventario.splice(index, 1);
+      console.log("inventario2", inventario[index]);
+      console.log("jugadorEquipoEnUso2", jugadorEquipoEnUso);
+    }
 
-//PRIMERO VER DONDE HAY QUE GRAGARLO, ESTO ESTA MAL OBVIAMENTE :
-
-    jugadorEquipoEnUso.push(inventario[index])
-    console.log("jugadorEquipoEnUso", jugadorEquipoEnUso);
+    cargarInventario();
   }
+
+
+
+
+
+
+
+
 
   function abrirInventario() {
     var cartel = document.getElementById("optionsMenu");
