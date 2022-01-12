@@ -45,7 +45,8 @@
         <th class="imagenPj">
           <button id="contenedorArmadura" class="contenedorArmadura"></button>
           <button id="contenedorArma" class="contenedorArma"></button>
-          
+          <button id="contenedorAnillo" class="contenedorAnillo"></button>
+          <button id="contenedorCollar" class="contenedorCollar"></button>
         </th>
         <th id="statsPj" class="statsPj">Stats</th> 
       </tr>
@@ -831,6 +832,45 @@
 
 
 
+
+
+    
+    if (inventario[index]?.parent?.userData?.categoria == "anillo" && jugadorEquipoEnUso.anillo == "") {
+      jugadorEquipoEnUso.anillo = inventario[index];
+      inventario.splice(index, 1);
+      sonidoDropAnillo();    
+    }
+    if (inventario[index]?.parent?.userData?.categoria == "anillo" && jugadorEquipoEnUso.anillo != "") {
+      inventario.push(jugadorEquipoEnUso.anillo)
+      jugadorEquipoEnUso.anillo = inventario[index];
+      inventario.splice(index, 1);
+      sonidoJuntar();
+      sonidoDropAnillo();         
+    }
+
+
+
+
+
+
+
+    if (inventario[index]?.parent?.userData?.categoria == "collar" && jugadorEquipoEnUso.collar == "") {
+      jugadorEquipoEnUso.collar = inventario[index];
+      inventario.splice(index, 1);
+      sonidoDropCollar();    
+    }
+    if (inventario[index]?.parent?.userData?.categoria == "collar" && jugadorEquipoEnUso.collar != "") {
+      inventario.push(jugadorEquipoEnUso.collar)
+      jugadorEquipoEnUso.collar = inventario[index];
+      inventario.splice(index, 1);
+      sonidoJuntar();
+      sonidoDropCollar();         
+    }
+
+
+
+
+
     cargarInventario();
     cargarEquipo();
   }
@@ -839,12 +879,20 @@
 function cargarEquipo(){
 var armaduraId = document.getElementById("contenedorArmadura")
 var armaId = document.getElementById("contenedorArma")
+var anilloId = document.getElementById("contenedorAnillo")
+var collarId = document.getElementById("contenedorCollar")
 
 if( jugadorEquipoEnUso.armadura != ""){
   armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
 }
 if( jugadorEquipoEnUso.arma != ""){
   armaId.style.backgroundImage = "url(img/item/arma.png)";
+}
+if( jugadorEquipoEnUso.anillo != ""){
+  anilloId.style.backgroundImage = "url(img/item/anillo.png)";
+}
+if( jugadorEquipoEnUso.collar != ""){
+  collarId.style.backgroundImage = "url(img/item/collar.png)";
 }
 
 }
