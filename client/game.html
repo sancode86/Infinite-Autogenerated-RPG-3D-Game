@@ -880,24 +880,28 @@
 
 function sacarItemPuesto(tipo){
 
-if(tipo == "armadura"){
+if(tipo == "armadura" && jugadorEquipoEnUso.armadura != ""){
   inventario.push(jugadorEquipoEnUso.armadura)
   jugadorEquipoEnUso.armadura = ""
+  sonidoDropArmadura();   
 }
 
-if(tipo == "arma"){
+if(tipo == "arma" && jugadorEquipoEnUso.arma != ""){
   inventario.push(jugadorEquipoEnUso.arma)
   jugadorEquipoEnUso.arma = ""
+  sonidoDropArma();   
 }
 
-if(tipo == "collar"){
+if(tipo == "collar" && jugadorEquipoEnUso.collar != ""){
   inventario.push(jugadorEquipoEnUso.collar)
   jugadorEquipoEnUso.collar = ""
+  sonidoDropCollar();   
 }
 
-if(tipo == "anillo"){
+if(tipo == "anillo" && jugadorEquipoEnUso.anillo != ""){
   inventario.push(jugadorEquipoEnUso.anillo)
   jugadorEquipoEnUso.anillo = ""
+  sonidoDropAnillo();   
 }
 
 
@@ -917,18 +921,26 @@ var armaId = document.getElementById("contenedorArma")
 var anilloId = document.getElementById("contenedorAnillo")
 var collarId = document.getElementById("contenedorCollar")
 
-if( jugadorEquipoEnUso.armadura != ""){
-  armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
-}
-if( jugadorEquipoEnUso.arma != ""){
-  armaId.style.backgroundImage = "url(img/item/arma.png)";
-}
-if( jugadorEquipoEnUso.anillo != ""){
-  anilloId.style.backgroundImage = "url(img/item/anillo.png)";
-}
-if( jugadorEquipoEnUso.collar != ""){
-  collarId.style.backgroundImage = "url(img/item/collar.png)";
-}
+    if( jugadorEquipoEnUso.armadura != ""){
+      armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
+    }else{
+      armaduraId.style.backgroundImage = "";
+    }
+    if( jugadorEquipoEnUso.arma != ""){
+      armaId.style.backgroundImage = "url(img/item/arma.png)";
+    }else{
+      armaId.style.backgroundImage = "";
+    }
+    if( jugadorEquipoEnUso.anillo != ""){
+      anilloId.style.backgroundImage = "url(img/item/anillo.png)";
+    }else{
+      anilloId.style.backgroundImage = "";
+    }
+    if( jugadorEquipoEnUso.collar != ""){
+      collarId.style.backgroundImage = "url(img/item/collar.png)";
+    }else{
+      collarId.style.backgroundImage = "";
+    }
 
 }
 
