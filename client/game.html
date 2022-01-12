@@ -43,10 +43,10 @@
     <table class="pj">
       <tr>
         <th class="imagenPj">
-          <button id="contenedorArmadura" class="contenedorArmadura"></button>
-          <button id="contenedorArma" class="contenedorArma"></button>
-          <button id="contenedorAnillo" class="contenedorAnillo"></button>
-          <button id="contenedorCollar" class="contenedorCollar"></button>
+          <button id="contenedorArmadura" class="contenedorArmadura" onclick="sacarItemPuesto('armadura');"></button>
+          <button id="contenedorArma" class="contenedorArma" onclick="sacarItemPuesto('arma');"></button>
+          <button id="contenedorAnillo" class="contenedorAnillo" onclick="sacarItemPuesto('anillo');"></button>
+          <button id="contenedorCollar" class="contenedorCollar" onclick="sacarItemPuesto('collar');"></button>
         </th>
         <th id="statsPj" class="statsPj">Stats</th> 
       </tr>
@@ -92,7 +92,8 @@
   window.inventario = inventario;
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
-
+  window.sacarItemPuesto = sacarItemPuesto;
+  
   // console.log(jugadorStats);
   // console.log(jugadorEquipoEnUso);
 
@@ -364,6 +365,7 @@
             estado: "cerrado",
           };
         });
+      
         var random = Math.floor(Math.random() * (250 - 0)) + 0;
         cofre.rotation.y = random;
         cofre.geometry = geo;
@@ -371,10 +373,10 @@
         cofre.castShadow = true;
         cofre.receiveShadow = true;
         cofre.position.x =
-          Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+          Math.floor(Math.random() * ( (spawnArea-5) - - (spawnArea-5))) + - (spawnArea-5);
         cofre.position.y = 0;
         cofre.position.z =
-          Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+          Math.floor(Math.random() * ( (spawnArea-5) - - (spawnArea-5))) + - (spawnArea-5);
 
         scene.add(cofre);
         arraySolidos.push(cofre);
@@ -699,7 +701,7 @@
       var equipo = document.getElementById("dropdownid");
 
       var boton = document.createElement("button");
-      boton.setAttribute("class", "dropbtn casillero");
+      boton.setAttribute("class", "dropbtn casillero animate__animated animate__fadeIn");
       boton.setAttribute("id", "boton" + index);
       boton.style.backgroundImage =
         "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
@@ -874,6 +876,39 @@
     cargarInventario();
     cargarEquipo();
   }
+
+
+function sacarItemPuesto(tipo){
+
+if(tipo == "armadura"){
+  inventario.push(jugadorEquipoEnUso.armadura)
+  jugadorEquipoEnUso.armadura = ""
+}
+
+if(tipo == "arma"){
+  inventario.push(jugadorEquipoEnUso.arma)
+  jugadorEquipoEnUso.arma = ""
+}
+
+if(tipo == "collar"){
+  inventario.push(jugadorEquipoEnUso.collar)
+  jugadorEquipoEnUso.collar = ""
+}
+
+if(tipo == "anillo"){
+  inventario.push(jugadorEquipoEnUso.anillo)
+  jugadorEquipoEnUso.anillo = ""
+}
+
+
+
+  cargarInventario();
+    cargarEquipo();
+}
+
+
+
+
 
 
 function cargarEquipo(){
