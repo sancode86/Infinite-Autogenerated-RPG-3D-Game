@@ -9,7 +9,7 @@ function preferencesClose() {
   var menuId = document.getElementById("optionsMenu");
   menuId.setAttribute(
     "class",
-    "optionsMenu animate__animated animate__fadeOut"
+    "optionsMenu animate__animated animate__fadeOut center"
   );
 
   setTimeout(function () {
@@ -18,7 +18,7 @@ function preferencesClose() {
   setTimeout(function () {
     menuId.setAttribute(
       "class",
-      "optionsMenu animate__animated animate__fadeIn"
+      "optionsMenu animate__animated animate__fadeIn center"
     );
   }, 850);
 }

@@ -723,11 +723,13 @@
 
       var link = document.createElement("a");
       link.innerHTML = "Use";
+      link.setAttribute("class", "accionItemLeyenda");
       link.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
       desplegable.appendChild(link);
 
       var link = document.createElement("a");
       link.innerHTML = "Drop";
+      link.setAttribute("class", "accionItemLeyenda");
       link.setAttribute("onclick", "opcionesItemInventarioDrop(" + index + ")");
       desplegable.appendChild(link);
 
@@ -737,9 +739,9 @@
       desplegable.appendChild(info);
       var infoId = document.getElementById("info" + index);
       var infoItem = document.createElement("p");  
-      infoItem.innerHTML = inventario[index].parent.userData.nombre;
+      infoItem.innerHTML = (inventario[index].parent.userData.nombre).toUpperCase() ;
       infoId.appendChild(infoItem);
-      if(inventario[index].parent.userData.categoria != "pocion"){
+      if(inventario[index].parent.userData.categoria != "pocion" || inventario[index].parent.userData.categoria != "moneda"){
         var infoItem = document.createElement("p");  
       infoItem.innerHTML = "⚔️ ATK: " + inventario[index].parent.userData.ataque;
       infoId.appendChild(infoItem);
@@ -749,7 +751,7 @@
       infoId.appendChild(infoItem);
 
       var infoItem = document.createElement("p");  
-      infoItem.innerHTML = "⚖️ WEIGHT: " + inventario[index].parent.userData.peso;
+      infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
       infoId.appendChild(infoItem);
      
 

@@ -241,3 +241,7 @@ h2 {
   color: white;
   font-family: "Farfetch Basis","Helvetica Neue",Arial,sans-serif;
  }
+ .accionItemLeyenda{
+  font-family: "Farfetch Basis","Helvetica Neue",Arial,sans-serif;
+  font-weight: 600;
+ }
