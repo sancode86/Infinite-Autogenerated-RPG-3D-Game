@@ -44,6 +44,8 @@
       <tr>
         <th class="imagenPj">
           <button id="contenedorArmadura" class="contenedorArmadura"></button>
+          <button id="contenedorArma" class="contenedorArma"></button>
+          
         </th>
         <th id="statsPj" class="statsPj">Stats</th> 
       </tr>
@@ -787,22 +789,47 @@
 
   window.opcionesItemInventario = opcionesItemInventario;
   window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
-  // window.agregarAlEquipo = agregarAlEquipo;
-
-  // function opcionesItemInventario(index) {
-  //   console.log("inventario", inventario[index]);
-  //   console.log("jugadorEquipoEnUso", jugadorEquipoEnUso);
-  //   // console.log("categoria", inventario[index].parent.userData.categoria);
-  // }
+  
 
   function opcionesItemInventario(index) {
     // console.log("categoria", inventario[index].parent.userData.categoria);
-    if (inventario[index].parent.userData.categoria == "armadura") {
+    if (inventario[index]?.parent?.userData?.categoria == "armadura" && jugadorEquipoEnUso.armadura == "") {
       jugadorEquipoEnUso.armadura = inventario[index];
       inventario.splice(index, 1);
-    
-      console.log("jugadorEquipoEnUso2", jugadorEquipoEnUso);
+      sonidoDropArmadura();    
     }
+    if (inventario[index]?.parent?.userData?.categoria == "armadura" && jugadorEquipoEnUso.armadura != "") {
+      inventario.push(jugadorEquipoEnUso.armadura)
+      jugadorEquipoEnUso.armadura = inventario[index];
+      inventario.splice(index, 1);
+      sonidoJuntar();
+      sonidoDropArmadura();         
+    }
+
+
+
+
+
+
+
+
+
+    if (inventario[index]?.parent?.userData?.categoria == "arma" && jugadorEquipoEnUso.arma == "") {
+      jugadorEquipoEnUso.arma = inventario[index];
+      inventario.splice(index, 1);
+      sonidoDropArma();    
+    }
+    if (inventario[index]?.parent?.userData?.categoria == "arma" && jugadorEquipoEnUso.arma != "") {
+      inventario.push(jugadorEquipoEnUso.arma)
+      jugadorEquipoEnUso.arma = inventario[index];
+      inventario.splice(index, 1);
+      sonidoJuntar();
+      sonidoDropArma();         
+    }
+
+
+
+
 
     cargarInventario();
     cargarEquipo();
@@ -811,11 +838,14 @@
 
 function cargarEquipo(){
 var armaduraId = document.getElementById("contenedorArmadura")
+var armaId = document.getElementById("contenedorArma")
 
 if( jugadorEquipoEnUso.armadura != ""){
   armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
 }
-
+if( jugadorEquipoEnUso.arma != ""){
+  armaId.style.backgroundImage = "url(img/item/arma.png)";
+}
 
 }
 

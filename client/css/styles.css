@@ -292,3 +292,18 @@ h2 {
   margin: 5px;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
  }
+ .contenedorArma{
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: #f0f8ff33;
+  position: absolute;
+  top: 135px;
+  left: 35px;
+  width: 50px;
+  height: 50px;
+  border: 1px solid grey;
+  border-radius: 3px;
+  margin: 5px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+ }
