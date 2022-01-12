@@ -677,22 +677,52 @@
 
       var boton = document.createElement("button");
       boton.setAttribute("class", "dropbtn casillero");
+      boton.setAttribute("id", "boton" + index);
       boton.style.backgroundImage =
         "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
       boton.style.backgroundSize = "contain";
       boton.style.backgroundRepeat = "no-repeat";
       boton.style.backgroundPosition = "center";
-      // boton.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
       equipo.appendChild(boton);
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown-content");
-      div.setAttribute("id", "dropdown-contentId"+index);
+      div.setAttribute("id", "dropdown-contentId" + index);
       equipo.appendChild(div);
-      var desplegable = document.getElementById("dropdown-contentId"+index);
+      var desplegable = document.getElementById("dropdown-contentId" + index);
+
+      let eventoBoton = document.getElementById("boton" + index);
+      eventoBoton.addEventListener(
+        "mouseover",
+        function (event) {
+          var desplegableItem = document.getElementById("dropdown-contentId" + index);
+          desplegableItem.style.display = "block";
+          var boton = document.getElementById("boton" + index);
+          boton.style.backgroundColor = "#8bd48d94"
+        },
+        false
+      );
+
+      eventoBoton.addEventListener(
+        "mouseleave",
+        function (event) {
+          setTimeout(function () {
+            var desplegable = document.getElementById("dropdown-contentId" + index);
+            desplegable.style.display = "none";
+            var boton = document.getElementById("boton" + index);
+            boton.style.backgroundColor = ""
+          }, 1000);
+        },
+        false
+      );
 
       var link = document.createElement("a");
       link.innerHTML = "Use";
       link.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
+      desplegable.appendChild(link);
+
+      var link = document.createElement("a");
+      link.innerHTML = "Drop";
+      link.setAttribute("onclick", "opcionesItemInventarioDrop(" + index + ")");
       desplegable.appendChild(link);
     }
 
@@ -704,6 +734,7 @@
   }
 
   window.opcionesItemInventario = opcionesItemInventario;
+  window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
   // window.agregarAlEquipo = agregarAlEquipo;
 
   // function opcionesItemInventario(index) {
@@ -711,13 +742,6 @@
   //   console.log("jugadorEquipoEnUso", jugadorEquipoEnUso);
   //   // console.log("categoria", inventario[index].parent.userData.categoria);
   // }
-
-
-
-
-
-
-
 
   function opcionesItemInventario(index) {
     console.log("categoria", inventario[index].parent.userData.categoria);
@@ -731,13 +755,11 @@
     cargarInventario();
   }
 
-
-
-
-
-
-
-
+  function opcionesItemInventarioDrop(index) {
+    inventario.splice(index, 1);
+    sonidoJuntar();
+    cargarInventario();
+  }
 
   function abrirInventario() {
     var cartel = document.getElementById("optionsMenu");
