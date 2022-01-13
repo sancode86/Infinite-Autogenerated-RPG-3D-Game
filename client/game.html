@@ -39,23 +39,61 @@
       class="optionsMenu animate__animated animate__fadeIn center"
       style="display: none"
     >
+      <table class="pj">
+        <tr>
+          <th class="imagenPj">
+            <button
+              id="contenedorArmadura"
+              class="contenedorArmadura"
+              onclick="sacarItemPuesto('armadura');"
+            ></button>
+            <button
+              id="contenedorArma"
+              class="contenedorArma"
+              onclick="sacarItemPuesto('arma');"
+            ></button>
+            <button
+              id="contenedorAnillo"
+              class="contenedorAnillo"
+              onclick="sacarItemPuesto('anillo');"
+            ></button>
+            <button
+              id="contenedorCollar"
+              class="contenedorCollar"
+              onclick="sacarItemPuesto('collar');"
+            ></button>
+          </th>
+          <th id="statsPj" class="statsPj">
+            <h1>Información</h1>
+            <div class="textoStatsPj">
+              <table class="tabla">
+                <tr>
+                  <th>
+                    <p>🔀 Nivel: </p>
+                    <p>🦾 Fuerza: </p>
+                    <p>🛡️ Defensa: </p>
+                    <p>❤️ Salud: </p>
+                    <p>📖 Exp: </p>
+                    <p>💰 Monedas: </p>
+                  </th>
 
-    <table class="pj">
-      <tr>
-        <th class="imagenPj">
-          <button id="contenedorArmadura" class="contenedorArmadura" onclick="sacarItemPuesto('armadura');"></button>
-          <button id="contenedorArma" class="contenedorArma" onclick="sacarItemPuesto('arma');"></button>
-          <button id="contenedorAnillo" class="contenedorAnillo" onclick="sacarItemPuesto('anillo');"></button>
-          <button id="contenedorCollar" class="contenedorCollar" onclick="sacarItemPuesto('collar');"></button>
-        </th>
-        <th id="statsPj" class="statsPj">Stats</th> 
-      </tr>
-      
-    </table> 
+                  <th>
+                    <p id="nivelId">1</p>
+                    <p id="fuerzaId">2</p>
+                    <p id="defensaId">1</p>
+                    <p id="saludId">100</p>
+                    <p id="experienciaId">0</p>
+                    <p id="monedasId">0</p>
+                  </th>
+                </tr>
+              </table>
+            </div>
+          </th>
+        </tr>
+      </table>
 
-  <div id="inventarioARellenar"></div>
-  
-  </div>
+      <div id="inventarioARellenar"></div>
+    </div>
     <script src="utils/tilt.js"></script>
   </body>
 </html>
@@ -93,7 +131,7 @@
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
   window.sacarItemPuesto = sacarItemPuesto;
-  
+
   // console.log(jugadorStats);
   // console.log(jugadorEquipoEnUso);
 
@@ -365,7 +403,7 @@
             estado: "cerrado",
           };
         });
-      
+
         var random = Math.floor(Math.random() * (250 - 0)) + 0;
         cofre.rotation.y = random;
         cofre.geometry = geo;
@@ -373,10 +411,12 @@
         cofre.castShadow = true;
         cofre.receiveShadow = true;
         cofre.position.x =
-          Math.floor(Math.random() * ( (spawnArea-5) - - (spawnArea-5))) + - (spawnArea-5);
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
         cofre.position.y = 0;
         cofre.position.z =
-          Math.floor(Math.random() * ( (spawnArea-5) - - (spawnArea-5))) + - (spawnArea-5);
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
 
         scene.add(cofre);
         arraySolidos.push(cofre);
@@ -692,7 +732,6 @@
     cartel.appendChild(div);
     var contenedorItemsId = document.getElementById("contenedorItems");
 
-
     for (let index = 0; index < inventario.length; index++) {
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown");
@@ -701,7 +740,10 @@
       var equipo = document.getElementById("dropdownid");
 
       var boton = document.createElement("button");
-      boton.setAttribute("class", "dropbtn casillero animate__animated animate__fadeIn");
+      boton.setAttribute(
+        "class",
+        "dropbtn casillero animate__animated animate__fadeIn"
+      );
       boton.setAttribute("id", "boton" + index);
       boton.style.backgroundImage =
         "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
@@ -716,17 +758,21 @@
       var desplegable = document.getElementById("dropdown-contentId" + index);
 
       let eventoBoton = document.getElementById("boton" + index);
-      eventoBoton.addEventListener("click",function (event) {
-          var desplegableItem = document.getElementById("dropdown-contentId" + index);      
+      eventoBoton.addEventListener(
+        "click",
+        function (event) {
+          var desplegableItem = document.getElementById(
+            "dropdown-contentId" + index
+          );
           desplegableItem.style.display = "block";
           var boton = document.getElementById("boton" + index);
-          boton.style.backgroundColor = "#8bd48d94";            
+          boton.style.backgroundColor = "#8bd48d94";
 
-           var mouseX = (event.clientX / window.innerWidth) + 50;
-           var mouseY = -(event.clientY / window.innerHeight) * 2 + 50;
-           
-            desplegableItem.style.top = (mouseY) + "px";
-            desplegableItem.style.left = mouseX + "px";      
+          var mouseX = event.clientX / window.innerWidth + 50;
+          var mouseY = -(event.clientY / window.innerHeight) * 2 + 50;
+
+          desplegableItem.style.top = mouseY + "px";
+          desplegableItem.style.left = mouseX + "px";
         },
         false
       );
@@ -758,28 +804,33 @@
       link.setAttribute("onclick", "opcionesItemInventarioDrop(" + index + ")");
       desplegable.appendChild(link);
 
-      var info = document.createElement("div");  
+      var info = document.createElement("div");
       info.setAttribute("id", "info" + index);
       info.setAttribute("class", "infoArma");
       desplegable.appendChild(info);
       var infoId = document.getElementById("info" + index);
-      var infoItem = document.createElement("p");  
-      infoItem.innerHTML = (inventario[index].parent.userData.nombre).toUpperCase() ;
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML =
+        inventario[index].parent.userData.nombre.toUpperCase();
       infoId.appendChild(infoItem);
-      if(inventario[index].parent.userData.categoria != "pocion" || inventario[index].parent.userData.nombre != "Monedas"){
+      if (
+        inventario[index].parent.userData.categoria != "pocion" ||
+        inventario[index].parent.userData.nombre != "Monedas"
+      ) {
         // console.log(inventario[index].parent.userData)
-        var infoItem = document.createElement("p");  
-      infoItem.innerHTML = "⚔️ ATK: " + inventario[index].parent.userData.ataque;
-      infoId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚔️ ATK: " + inventario[index].parent.userData.ataque;
+        infoId.appendChild(infoItem);
 
-      var infoItem = document.createElement("p");  
-      infoItem.innerHTML = "🛡️ DEF: " + inventario[index].parent.userData.defensa;
-      infoId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🛡️ DEF: " + inventario[index].parent.userData.defensa;
+        infoId.appendChild(infoItem);
 
-      var infoItem = document.createElement("p");  
-      infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
-      infoId.appendChild(infoItem);
-
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
+        infoId.appendChild(infoItem);
       }
     }
 
@@ -792,162 +843,145 @@
 
   window.opcionesItemInventario = opcionesItemInventario;
   window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
-  
 
   function opcionesItemInventario(index) {
     // console.log("categoria", inventario[index].parent.userData.categoria);
-    if (inventario[index]?.parent?.userData?.categoria == "armadura" && jugadorEquipoEnUso.armadura == "") {
+    if (
+      inventario[index]?.parent?.userData?.categoria == "armadura" &&
+      jugadorEquipoEnUso.armadura == ""
+    ) {
       jugadorEquipoEnUso.armadura = inventario[index];
       inventario.splice(index, 1);
-      sonidoDropArmadura();    
+      sonidoDropArmadura();
     }
-    if (inventario[index]?.parent?.userData?.categoria == "armadura" && jugadorEquipoEnUso.armadura != "") {
-      inventario.push(jugadorEquipoEnUso.armadura)
+    if (
+      inventario[index]?.parent?.userData?.categoria == "armadura" &&
+      jugadorEquipoEnUso.armadura != ""
+    ) {
+      inventario.push(jugadorEquipoEnUso.armadura);
       jugadorEquipoEnUso.armadura = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-      sonidoDropArmadura();         
+      sonidoDropArmadura();
     }
 
-
-
-
-
-
-
-
-
-    if (inventario[index]?.parent?.userData?.categoria == "arma" && jugadorEquipoEnUso.arma == "") {
+    if (
+      inventario[index]?.parent?.userData?.categoria == "arma" &&
+      jugadorEquipoEnUso.arma == ""
+    ) {
       jugadorEquipoEnUso.arma = inventario[index];
       inventario.splice(index, 1);
-      sonidoDropArma();    
+      sonidoDropArma();
     }
-    if (inventario[index]?.parent?.userData?.categoria == "arma" && jugadorEquipoEnUso.arma != "") {
-      inventario.push(jugadorEquipoEnUso.arma)
+    if (
+      inventario[index]?.parent?.userData?.categoria == "arma" &&
+      jugadorEquipoEnUso.arma != ""
+    ) {
+      inventario.push(jugadorEquipoEnUso.arma);
       jugadorEquipoEnUso.arma = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-      sonidoDropArma();         
+      sonidoDropArma();
     }
 
-
-
-
-
-
-
-    
-    if (inventario[index]?.parent?.userData?.categoria == "anillo" && jugadorEquipoEnUso.anillo == "") {
+    if (
+      inventario[index]?.parent?.userData?.categoria == "anillo" &&
+      jugadorEquipoEnUso.anillo == ""
+    ) {
       jugadorEquipoEnUso.anillo = inventario[index];
       inventario.splice(index, 1);
-      sonidoDropAnillo();    
+      sonidoDropAnillo();
     }
-    if (inventario[index]?.parent?.userData?.categoria == "anillo" && jugadorEquipoEnUso.anillo != "") {
-      inventario.push(jugadorEquipoEnUso.anillo)
+    if (
+      inventario[index]?.parent?.userData?.categoria == "anillo" &&
+      jugadorEquipoEnUso.anillo != ""
+    ) {
+      inventario.push(jugadorEquipoEnUso.anillo);
       jugadorEquipoEnUso.anillo = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-      sonidoDropAnillo();         
+      sonidoDropAnillo();
     }
 
-
-
-
-
-
-
-    if (inventario[index]?.parent?.userData?.categoria == "collar" && jugadorEquipoEnUso.collar == "") {
+    if (
+      inventario[index]?.parent?.userData?.categoria == "collar" &&
+      jugadorEquipoEnUso.collar == ""
+    ) {
       jugadorEquipoEnUso.collar = inventario[index];
       inventario.splice(index, 1);
-      sonidoDropCollar();    
+      sonidoDropCollar();
     }
-    if (inventario[index]?.parent?.userData?.categoria == "collar" && jugadorEquipoEnUso.collar != "") {
-      inventario.push(jugadorEquipoEnUso.collar)
+    if (
+      inventario[index]?.parent?.userData?.categoria == "collar" &&
+      jugadorEquipoEnUso.collar != ""
+    ) {
+      inventario.push(jugadorEquipoEnUso.collar);
       jugadorEquipoEnUso.collar = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-      sonidoDropCollar();         
+      sonidoDropCollar();
     }
-
-
-
-
 
     cargarInventario();
     cargarEquipo();
   }
 
+  function sacarItemPuesto(tipo) {
+    if (tipo == "armadura" && jugadorEquipoEnUso.armadura != "") {
+      inventario.push(jugadorEquipoEnUso.armadura);
+      jugadorEquipoEnUso.armadura = "";
+      sonidoDropArmadura();
+    }
 
-function sacarItemPuesto(tipo){
+    if (tipo == "arma" && jugadorEquipoEnUso.arma != "") {
+      inventario.push(jugadorEquipoEnUso.arma);
+      jugadorEquipoEnUso.arma = "";
+      sonidoDropArma();
+    }
 
-if(tipo == "armadura" && jugadorEquipoEnUso.armadura != ""){
-  inventario.push(jugadorEquipoEnUso.armadura)
-  jugadorEquipoEnUso.armadura = ""
-  sonidoDropArmadura();   
-}
+    if (tipo == "collar" && jugadorEquipoEnUso.collar != "") {
+      inventario.push(jugadorEquipoEnUso.collar);
+      jugadorEquipoEnUso.collar = "";
+      sonidoDropCollar();
+    }
 
-if(tipo == "arma" && jugadorEquipoEnUso.arma != ""){
-  inventario.push(jugadorEquipoEnUso.arma)
-  jugadorEquipoEnUso.arma = ""
-  sonidoDropArma();   
-}
+    if (tipo == "anillo" && jugadorEquipoEnUso.anillo != "") {
+      inventario.push(jugadorEquipoEnUso.anillo);
+      jugadorEquipoEnUso.anillo = "";
+      sonidoDropAnillo();
+    }
 
-if(tipo == "collar" && jugadorEquipoEnUso.collar != ""){
-  inventario.push(jugadorEquipoEnUso.collar)
-  jugadorEquipoEnUso.collar = ""
-  sonidoDropCollar();   
-}
-
-if(tipo == "anillo" && jugadorEquipoEnUso.anillo != ""){
-  inventario.push(jugadorEquipoEnUso.anillo)
-  jugadorEquipoEnUso.anillo = ""
-  sonidoDropAnillo();   
-}
-
-
-
-  cargarInventario();
+    cargarInventario();
     cargarEquipo();
-}
+  }
 
+  function cargarEquipo() {
+    var armaduraId = document.getElementById("contenedorArmadura");
+    var armaId = document.getElementById("contenedorArma");
+    var anilloId = document.getElementById("contenedorAnillo");
+    var collarId = document.getElementById("contenedorCollar");
 
-
-
-
-
-function cargarEquipo(){
-var armaduraId = document.getElementById("contenedorArmadura")
-var armaId = document.getElementById("contenedorArma")
-var anilloId = document.getElementById("contenedorAnillo")
-var collarId = document.getElementById("contenedorCollar")
-
-    if( jugadorEquipoEnUso.armadura != ""){
+    if (jugadorEquipoEnUso.armadura != "") {
       armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
-    }else{
+    } else {
       armaduraId.style.backgroundImage = "";
     }
-    if( jugadorEquipoEnUso.arma != ""){
+    if (jugadorEquipoEnUso.arma != "") {
       armaId.style.backgroundImage = "url(img/item/arma.png)";
-    }else{
+    } else {
       armaId.style.backgroundImage = "";
     }
-    if( jugadorEquipoEnUso.anillo != ""){
+    if (jugadorEquipoEnUso.anillo != "") {
       anilloId.style.backgroundImage = "url(img/item/anillo.png)";
-    }else{
+    } else {
       anilloId.style.backgroundImage = "";
     }
-    if( jugadorEquipoEnUso.collar != ""){
+    if (jugadorEquipoEnUso.collar != "") {
       collarId.style.backgroundImage = "url(img/item/collar.png)";
-    }else{
+    } else {
       collarId.style.backgroundImage = "";
     }
-
-}
-
-
-
-
-
+  }
 
   function opcionesItemInventarioDrop(index) {
     inventario.splice(index, 1);
@@ -1270,11 +1304,42 @@ var collarId = document.getElementById("contenedorCollar")
   }
   function varSiPuedeLevantarLoot(objeto) {
     sonidoJuntar();
-    inventario.push(objeto);
-    var selectedObject = scene.getObjectByName(objeto.parent.name);
-    scene.remove(selectedObject);
-    cargarInventario();
+
+ 
+    if (objeto.parent.userData.categoria != "moneda") {
+      inventario.push(objeto);
+      var selectedObject = scene.getObjectByName(objeto.parent.name);
+      scene.remove(selectedObject);
+      cargarInventario();
+    }  
+    if (objeto.parent.userData.categoria == "moneda"){
+      jugadorStats.monedas += objeto.parent.userData.cantidad;
+      var selectedObject = scene.getObjectByName(objeto.parent.name);
+      scene.remove(selectedObject);
+      cargarInventario();
+    }
+    console.log(jugadorStats.monedas);
+    actualizarStatsJugador()
   }
+
+
+
+function actualizarStatsJugador(){ 
+
+document.getElementById("monedasId").innerHTML = jugadorStats.monedas
+document.getElementById("fuerzaId").innerHTML = jugadorStats.fuerza
+document.getElementById("defensaId").innerHTML = jugadorStats.defensa
+document.getElementById("saludId").innerHTML = jugadorStats.salud
+document.getElementById("nivelId").innerHTML = jugadorStats.nivel
+document.getElementById("experienciaId").innerHTML = jugadorStats.experiencia
+}
+
+
+
+
+
+
+
 
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
