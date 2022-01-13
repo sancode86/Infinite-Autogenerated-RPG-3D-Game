@@ -39,6 +39,19 @@
       class="optionsMenu animate__animated animate__fadeIn center"
       style="display: none"
     >
+
+
+
+    <div class="vistaPreviaArmadura dropdown-content" id="vistaPreviaArmadura" style="display: none"></div>
+    <div class="vistaPreviaArma dropdown-content" id="vistaPreviaArma" style="display: none"></div>
+    <div class="vistaPreviaCollar dropdown-content" id="vistaPreviaCollar" style="display: none"></div>
+    <div class="vistaPreviaAnillo dropdown-content" id="vistaPreviaAnillo" style="display: none"></div>
+
+
+
+
+
+
       <table class="pj">
         <tr>
           <th class="imagenPj">
@@ -46,21 +59,29 @@
               id="contenedorArmadura"
               class="contenedorArmadura"
               onclick="sacarItemPuesto('armadura');"
+              onmouseover="verItemPuesto('armadura');"
+              onmouseleave="verItemPuestoClose()"
             ></button>
             <button
               id="contenedorArma"
               class="contenedorArma"
               onclick="sacarItemPuesto('arma');"
+              onmouseover="verItemPuesto('arma');"
+              onmouseleave="verItemPuestoClose()"
             ></button>
             <button
               id="contenedorAnillo"
               class="contenedorAnillo"
               onclick="sacarItemPuesto('anillo');"
+              onmouseover="verItemPuesto('anillo');"
+              onmouseleave="verItemPuestoClose()"
             ></button>
             <button
               id="contenedorCollar"
               class="contenedorCollar"
               onclick="sacarItemPuesto('collar');"
+              onmouseover="verItemPuesto('collar');"
+              onmouseleave="verItemPuestoClose()"
             ></button>
           </th>
           <th id="statsPj" class="statsPj">
@@ -130,12 +151,13 @@
     anillo: "",
   };
   var inventario = [];
-
+  window.verItemPuestoClose = verItemPuestoClose;
+  window.verItemPuesto = verItemPuesto;
   window.inventario = inventario;
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
   window.sacarItemPuesto = sacarItemPuesto;
-
+  var draggable;
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 10;
@@ -147,7 +169,6 @@
   var arrayFuegos = [];
   var sonidoCorrerFlag = 0;
   var sonidoAtacarFlag = 0;
-
   var arraySolidos = [];
   var gameTime = 1111104000000;
   var stats = new Stats();
@@ -165,7 +186,6 @@
   // SCENE
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xa8def0);
-
   // CAMERA
   const camera = new THREE.PerspectiveCamera(
     45,
@@ -176,7 +196,6 @@
   camera.position.y = 15;
   camera.position.z = 15;
   camera.position.x = 0;
-
   // RENDERER
   const renderer = new THREE.WebGLRenderer({ antialias: false });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -191,7 +210,6 @@
   orbitControls.enablePan = false;
   orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
   orbitControls.update();
-
   new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
     // musicaPlay();
     jugador = gltf.scene;
@@ -204,7 +222,6 @@
     var jugadorGeometry = new THREE.BoxGeometry(1, 3, 1);
     jugador.geometry = jugadorGeometry;
     scene.add(jugador);
-
     const gltfAnimations = gltf.animations;
     const mixer = new THREE.AnimationMixer(jugador);
     const animationsMap = new Map();
@@ -223,14 +240,11 @@
       "Idle"
     );
   });
-
   //raycaster
   const raycaster = new THREE.Raycaster();
   const clicMouse = new THREE.Vector2();
   const moveMouse = new THREE.Vector2();
-
-  var draggable;
-
+  
   window.addEventListener("click", (event) => {
     camera.updateProjectionMatrix();
     if (draggable) {
@@ -238,7 +252,6 @@
       draggable = null;
       return;
     }
-
     clicMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(clicMouse, camera);
@@ -251,7 +264,6 @@
     var objFound = found[0].object;
     if (found.length > 0 && objFound.userData.name != undefined) {
     }
-
     if (
       found.length > 0 &&
       objFound.userData.tipo == "cofre" &&
@@ -308,18 +320,15 @@
     let l1 = a.position.x - a.geometry.parameters.width / 2;
     let f1 = a.position.z - a.geometry.parameters.depth / 2;
     let B1 = a.position.z + a.geometry.parameters.depth / 2;
-
     let b2 = d.position.y - d.geometry.parameters.height / 2;
     let t2 = d.position.y + d.geometry.parameters.height / 2;
     let r2 = d.position.x + d.geometry.parameters.width / 2;
     let l2 = d.position.x - d.geometry.parameters.width / 2;
     let f2 = d.position.z - d.geometry.parameters.depth / 2;
     let B2 = d.position.z + d.geometry.parameters.depth / 2;
-
     if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {
       return false;
     }
-
     return true;
   }
   function checkearSiSeTocaJugador(a, d) {
@@ -327,7 +336,6 @@
     let l1 = a.position.x - a.geometry.parameters.width / 2;
     let f1 = a.position.z - a.geometry.parameters.depth / 2;
     let B1 = a.position.z + a.geometry.parameters.depth / 2;
-
     let r2 = d.position.x + d.geometry.parameters.width / 2;
     let l2 = d.position.x - d.geometry.parameters.width / 2;
     let f2 = d.position.z - d.geometry.parameters.depth / 2;
@@ -352,13 +360,12 @@
       }
     }
   }
-
   crearLuces();
   crearCajas();
   crearParedes(4);
   cargarInventario();
   crearCofres();
-
+  crearSkybox();
   function crearCajas() {
     for (let j = 0; j < cantidadCajas; j++) {
       // crear una caja
@@ -384,7 +391,6 @@
       arraySolidos.push(box);
     }
   }
-
   function crearCofres() {
     for (let j = 0; j < cantidadCofres; j++) {
       var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -404,7 +410,6 @@
             estado: "cerrado",
           };
         });
-
         var random = Math.floor(Math.random() * (250 - 0)) + 0;
         cofre.rotation.y = random;
         cofre.geometry = geo;
@@ -425,17 +430,10 @@
       });
     }
   }
-
   function crearParedes(cantidadParedes) {
     var cantidad = cantidadParedes;
-
     // crear una pared
     const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
-    var aparienciaColor = "0x101010";
-    // const matPared = new THREE.MeshPhongMaterial({
-    //   color: parseInt(aparienciaColor),
-    // });
-
     var loader = new THREE.TextureLoader();
     var texture2 = loader.load("img/pared.jpg", function (texture) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -448,7 +446,6 @@
       shininess: 10,
       map: texture2,
     });
-
     const pared = new THREE.Mesh(geoBox, materialPared);
     pared.castShadow = true;
     pared.receiveShadow = true;
@@ -491,17 +488,14 @@
     pared4.position.z = -tamañoCuarto / 2;
     scene.add(pared4);
     arraySolidos.push(pared4);
-
     pared.userData.ground = false;
     pared2.userData.ground = false;
     pared3.userData.ground = false;
     pared4.userData.ground = false;
-
     pared.userData.pared = true;
     pared2.userData.pared = true;
     pared3.userData.pared = true;
     pared4.userData.pared = true;
-
     camera.updateProjectionMatrix();
   }
   // CONTROL KEYS
@@ -528,7 +522,6 @@
       characterControls.switchRoll();
       sonidoRoll();
     }
-
     if (e.keyCode == 69) {
       //E
       characterControls.switchJuntar();
@@ -541,7 +534,6 @@
       //ESC (cerrar inventario)
       preferencesClose();
     }
-
     if (
       e.keyCode == 65 ||
       e.keyCode == 83 ||
@@ -616,7 +608,6 @@
       shininess: 10,
       map: texture,
     });
-
     const pisoSimple = new THREE.Mesh(geoPiso, materialPiso);
     pisoSimple.castShadow = true;
     pisoSimple.receiveShadow = true;
@@ -637,29 +628,24 @@
   dirLight.shadow.mapSize.width = 4096;
   dirLight.shadow.mapSize.height = 4096;
   scene.add(dirLight);
-
   // ANIMATE
   function animate() {
     stats.begin();
     draggObj();
     lucesAnimar();
     horaActual();
-
     let mixerUpdateDelta = clock.getDelta();
     if (characterControls) {
       characterControls.update(mixerUpdateDelta, keysPressed);
     }
-
     orbitControls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
     chequearChoque();
-
     stats.end();
   }
   animate();
   document.body.appendChild(renderer.domElement);
-
   function horaActual() {
     var speed = 10000;
     let clockDiv = document.querySelector("#clock");
@@ -670,7 +656,6 @@
     gameTime += speed;
   }
 
-  crearSkybox();
   function crearSkybox() {
     let materialArray = [];
     let texture_up = new THREE.TextureLoader().load("img/skybox/up.png");
@@ -691,19 +676,16 @@
     var skybox = new THREE.Mesh(skyboxGeo, materialArray);
     skybox.castShadow = true;
     skybox.receiveShadow = true;
-
     skybox.userData = {
       nombre: "universo",
       tipo: "infinito",
     };
     scene.add(skybox);
   }
-
   function chequearChoque() {
     if (jugador?.position != undefined) {
       for (let index = 0; index < arraySolidos.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arraySolidos[index]);
-
         if (resultado == "derecha") {
           const frenar = new THREE.Vector3(0.5, 0, 0);
           jugador.position.add(frenar);
@@ -723,7 +705,6 @@
       }
     }
   }
-
   function cargarInventario() {
     actualizarStatsJugador();
     var cartel = document.getElementById("inventarioARellenar");
@@ -733,14 +714,12 @@
     div.setAttribute("id", "contenedorItems");
     cartel.appendChild(div);
     var contenedorItemsId = document.getElementById("contenedorItems");
-
     for (let index = 0; index < inventario.length; index++) {
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown");
       div.setAttribute("id", "dropdownid");
       contenedorItemsId.appendChild(div);
       var equipo = document.getElementById("dropdownid");
-
       var boton = document.createElement("button");
       boton.setAttribute(
         "class",
@@ -758,7 +737,6 @@
       div.setAttribute("id", "dropdown-contentId" + index);
       equipo.appendChild(div);
       var desplegable = document.getElementById("dropdown-contentId" + index);
-
       let eventoBoton = document.getElementById("boton" + index);
       eventoBoton.addEventListener(
         "click",
@@ -769,16 +747,13 @@
           desplegableItem.style.display = "block";
           var boton = document.getElementById("boton" + index);
           boton.style.backgroundColor = "#8bd48d94";
-
           var mouseX = event.clientX / window.innerWidth + 50;
           var mouseY = -(event.clientY / window.innerHeight) * 2 + 50;
-
           desplegableItem.style.top = mouseY + "px";
           desplegableItem.style.left = mouseX + "px";
         },
         false
       );
-
       eventoBoton.addEventListener(
         "mouseleave",
         function (event) {
@@ -793,19 +768,16 @@
         },
         false
       );
-
       var link = document.createElement("a");
       link.innerHTML = "Usar";
       link.setAttribute("class", "accionItemLeyenda");
       link.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
       desplegable.appendChild(link);
-
       var link = document.createElement("a");
       link.innerHTML = "Tirar";
       link.setAttribute("class", "accionItemLeyenda");
       link.setAttribute("onclick", "opcionesItemInventarioDrop(" + index + ")");
       desplegable.appendChild(link);
-
       var info = document.createElement("div");
       info.setAttribute("id", "info" + index);
       info.setAttribute("class", "infoArma");
@@ -818,18 +790,15 @@
       if (
         inventario[index].parent.userData.categoria != "pocion" ||
         inventario[index].parent.userData.nombre != "Pocion"
-      ) {
-      
+      ) {      
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
           "⚔️ ATK: " + inventario[index].parent.userData.ataque;
         infoId.appendChild(infoItem);
-
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
           "🛡️ DEF: " + inventario[index].parent.userData.defensa;
         infoId.appendChild(infoItem);
-
         var infoItem = document.createElement("p");
         infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
         infoId.appendChild(infoItem);
@@ -840,37 +809,26 @@
         infoId.appendChild(infoItem);
       }
     }
-
     var boton = document.createElement("button");
     boton.setAttribute("class", "botonSave");
     boton.setAttribute("onclick", "preferencesClose()");
     boton.innerHTML = "Cerrar";
     cartel.appendChild(boton);
   }
-
   window.opcionesItemInventario = opcionesItemInventario;
   window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
-
   function opcionesItemInventario(index) {
-
-
-
     if (inventario[index]?.parent?.userData?.categoria == "pocion"){
       jugadorStats.salud += inventario[index]?.parent?.userData?.cantidad
       inventario.splice(index, 1);
       sonidoDropPocion();
       }
-
-
-
-
     if (
       inventario[index]?.parent?.userData?.categoria == "armadura" &&
       jugadorEquipoEnUso.armadura == ""
     ) {
       jugadorEquipoEnUso.armadura = inventario[index];
       inventario.splice(index, 1);
-
       sonidoDropArmadura();
     }
     if (
@@ -881,17 +839,14 @@
       jugadorEquipoEnUso.armadura = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-
       sonidoDropArmadura();
     }
-
     if (
       inventario[index]?.parent?.userData?.categoria == "arma" &&
       jugadorEquipoEnUso.arma == ""
     ) {
       jugadorEquipoEnUso.arma = inventario[index];
       inventario.splice(index, 1);
-
       sonidoDropArma();
     }
     if (
@@ -902,17 +857,14 @@
       jugadorEquipoEnUso.arma = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-
       sonidoDropArma();
     }
-
     if (
       inventario[index]?.parent?.userData?.categoria == "anillo" &&
       jugadorEquipoEnUso.anillo == ""
     ) {
       jugadorEquipoEnUso.anillo = inventario[index];
       inventario.splice(index, 1);
-
       sonidoDropAnillo();
     }
     if (
@@ -923,17 +875,14 @@
       jugadorEquipoEnUso.anillo = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-
       sonidoDropAnillo();
     }
-
     if (
       inventario[index]?.parent?.userData?.categoria == "collar" &&
       jugadorEquipoEnUso.collar == ""
     ) {
       jugadorEquipoEnUso.collar = inventario[index];
       inventario.splice(index, 1);
-
       sonidoDropCollar();
     }
     if (
@@ -944,33 +893,27 @@
       jugadorEquipoEnUso.collar = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-
       sonidoDropCollar();
     }
-
     cargarInventario();
     cargarEquipo();
   }
-
   function sacarItemPuesto(tipo) {
     if (tipo == "armadura" && jugadorEquipoEnUso.armadura != "") {
       inventario.push(jugadorEquipoEnUso.armadura);
       jugadorEquipoEnUso.armadura = "";
       sonidoDropArmadura();
     }
-
     if (tipo == "arma" && jugadorEquipoEnUso.arma != "") {
       inventario.push(jugadorEquipoEnUso.arma);
       jugadorEquipoEnUso.arma = "";
       sonidoDropArma();
     }
-
     if (tipo == "collar" && jugadorEquipoEnUso.collar != "") {
       inventario.push(jugadorEquipoEnUso.collar);
       jugadorEquipoEnUso.collar = "";
       sonidoDropCollar();
     }
-
     if (tipo == "anillo" && jugadorEquipoEnUso.anillo != "") {
       inventario.push(jugadorEquipoEnUso.anillo);
       jugadorEquipoEnUso.anillo = "";
@@ -980,13 +923,11 @@
     cargarInventario();
     cargarEquipo();
   }
-
   function cargarEquipo() {
     var armaduraId = document.getElementById("contenedorArmadura");
     var armaId = document.getElementById("contenedorArma");
     var anilloId = document.getElementById("contenedorAnillo");
     var collarId = document.getElementById("contenedorCollar");
-
     if (jugadorEquipoEnUso.armadura != "") {
       armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
     } else {
@@ -1008,14 +949,11 @@
       collarId.style.backgroundImage = "";
     }
   }
-
   function opcionesItemInventarioDrop(index) {
     inventario.splice(index, 1);
-
     sonidoJuntar();
     cargarInventario();
   }
-
   function abrirInventario() {
     var cartel = document.getElementById("optionsMenu");
     cartel.style.display = "block";
@@ -1099,7 +1037,6 @@
         loot.scale.set(0.8, 0.8, 0.8);
         var random = Math.floor(Math.random() * (250 - 0)) + 0;
         var tipo = tipoLootSegunNombreObjeto3D(loot.children[0].name);
-
         if (tipo != "moneda") {
           loot.rotation.x = -Math.PI / 2;
           loot.rotation.z = random;
@@ -1110,7 +1047,6 @@
         if (tipo == "pocion") {
           loot.scale.set(0.4, 0.4, 0.4);
         }
-
         if (tipo == "moneda") {
           loot.userData = {
             nombre: "Monedas",
@@ -1347,19 +1283,15 @@
       cargarInventario();
     }
   }
-
   function actualizarStatsJugador() {   
     var arrayAcumuladorAtaque = [];
     var arrayAcumuladorDefensa = [];
-
     var totalAtaque = 0;
     var totalDefensa = 0;
-
     arrayAcumuladorAtaque.push(jugadorEquipoEnUso.armadura?.parent?.userData.ataque);
     arrayAcumuladorAtaque.push(jugadorEquipoEnUso.arma?.parent?.userData.ataque);
     arrayAcumuladorAtaque.push(jugadorEquipoEnUso.collar?.parent?.userData.ataque);
     arrayAcumuladorAtaque.push( jugadorEquipoEnUso.anillo?.parent?.userData.ataque);
-
     arrayAcumuladorDefensa.push(
       jugadorEquipoEnUso.armadura?.parent?.userData.defensa
     );
@@ -1372,7 +1304,6 @@
     arrayAcumuladorDefensa.push(
       jugadorEquipoEnUso.anillo?.parent?.userData.defensa
     );
-
     for (let i = 0; i < arrayAcumuladorAtaque.length; i++) {
       if (!isNaN(arrayAcumuladorAtaque[i])) {
         totalAtaque += arrayAcumuladorAtaque[i];
@@ -1383,7 +1314,6 @@
     }
     jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + totalAtaque;
     jugadorStatsConEquipo.defensa = jugadorStats.defensa + totalDefensa;
-
     document.getElementById("monedasId").innerHTML = jugadorStats.monedas;
     document.getElementById("fuerzaId").innerHTML =  jugadorStatsConEquipo.fuerza;
     document.getElementById("defensaId").innerHTML = jugadorStatsConEquipo.defensa;
@@ -1391,7 +1321,6 @@
     document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
     document.getElementById("experienciaId").innerHTML = jugadorStats.experiencia;
   }
-
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
   var audioCofre = new Audio("audio/cofre.mp3");
@@ -1404,7 +1333,6 @@
   var audioPocion = new Audio("audio/dropPocion.mp3");
   var audioMoneda = new Audio("audio/dropMoneda.mp3");
   var audioJuntar = new Audio("audio/juntar.mp3");
-
   function sonidoCaminar() {
     if (sonidoCorrerFlag == 1) {
       audioCaminar.play();
@@ -1477,7 +1405,6 @@
       despazamientoFuegoX,
       despazamientoFuegoZ
     );
-
     var luz2 = new THREE.SpotLight(0xe69138, 0.3);
     luz2.position.set(-(tamañoCuarto / 2 - 1), 2, -(tamañoCuarto / 2 - 1));
     luz2.shadow.camera.far = 50;
@@ -1496,7 +1423,6 @@
       despazamientoFuegoX,
       despazamientoFuegoZ
     );
-
     var luz3 = new THREE.SpotLight(0xe69138, 1.5);
     luz3.position.set(tamañoCuarto / 2 - 1, 2, -(tamañoCuarto / 2 - 1));
     luz3.shadow.camera.far = 50;
@@ -1515,7 +1441,6 @@
       despazamientoFuegoX,
       despazamientoFuegoZ
     );
-
     var luz4 = new THREE.SpotLight(0xe69138, 0.7);
     luz4.position.set(-(tamañoCuarto / 2 - 1), 2, tamañoCuarto / 2 - 1);
     luz4.shadow.camera.far = 50;
@@ -1535,7 +1460,6 @@
       despazamientoFuegoZ
     );
   }
-
   function lucesAnimar() {
     // for (let i = 0; i < arrayLuces.length; i++) {
     var colorLuz;
@@ -1543,18 +1467,14 @@
     var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
     if (randomColorLuz == 1) {
       colorLuz = "0xCC0000";
-      // intensidad = 0.6
     }
     if (randomColorLuz == 2) {
       colorLuz = "0xE69138";
-      // intensidad = 0.4
     }
     if (randomColorLuz == 3) {
-      colorLuz = "0xFFD966";
-      // intensidad = 0.6
+      colorLuz = "0xFFD966";   
     } else {
-      colorLuz = "0xF6B26B";
-      // intensidad = 0.6
+      colorLuz = "0xF6B26B";  
     }
     // arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
     // arrayLuces[i].intensity = intensidad
@@ -1573,7 +1493,6 @@
     //     fg = 1;
     //   }
     // }
-
     for (let w = 0; w < arrayFuegos.length; w++) {
       var materialFuego = new THREE.MeshPhongMaterial({
         color: parseInt(colorLuz),
@@ -1594,7 +1513,6 @@
     }
   }
   // }
-
   function crearAntorcha(
     posX,
     posZ,
@@ -1667,5 +1585,110 @@
       arraySolidos.push(test);
     });
   }
+
+function verItemPuesto(item){
+  
+
+ var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura")
+ var vistaPreviaArmaId = document.getElementById("vistaPreviaArma")
+ var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar")
+ var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo")
+
+
+      if(item == "armadura"){
+      vistaPreviaArmaduraId.style.display = "block"
+      vistaPreviaArmaduraId.innerHTML =""
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = jugadorEquipoEnUso.armadura.parent.userData.nombre.toUpperCase();
+      vistaPreviaArmaduraId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.armadura.parent.userData.ataque;
+      vistaPreviaArmaduraId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.armadura.parent.userData.defensa;
+      vistaPreviaArmaduraId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.armadura.parent.userData.peso;
+      vistaPreviaArmaduraId.appendChild(infoItem);        
+      }
+
+
+
+      if(item == "arma"){
+      vistaPreviaArmaId.style.display = "block"
+      vistaPreviaArmaId.innerHTML =""
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = jugadorEquipoEnUso.arma.parent.userData.nombre.toUpperCase();
+      vistaPreviaArmaId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.arma.parent.userData.ataque;
+      vistaPreviaArmaId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.arma.parent.userData.defensa;
+      vistaPreviaArmaId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.arma.parent.userData.peso;
+      vistaPreviaArmaId.appendChild(infoItem);        
+      }
+
+
+
+      if(item == "anillo"){
+      vistaPreviaAnilloId.style.display = "block"
+      vistaPreviaAnilloId.innerHTML =""
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = jugadorEquipoEnUso.anillo.parent.userData.nombre.toUpperCase();
+      vistaPreviaAnilloId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.anillo.parent.userData.ataque;
+      vistaPreviaAnilloId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.anillo.parent.userData.defensa;
+      vistaPreviaAnilloId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.anillo.parent.userData.peso;
+      vistaPreviaAnilloId.appendChild(infoItem);        
+      }
+
+
+
+      if(item == "collar"){
+      vistaPreviaCollarId.style.display = "block"
+      vistaPreviaCollarId.innerHTML =""
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = jugadorEquipoEnUso.collar.parent.userData.nombre.toUpperCase();
+      vistaPreviaCollarId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.collar.parent.userData.ataque;
+      vistaPreviaCollarId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.collar.parent.userData.defensa;
+      vistaPreviaCollarId.appendChild(infoItem);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.collar.parent.userData.peso;
+      vistaPreviaCollarId.appendChild(infoItem);        
+      }
+
+
+
+
+
+
+
+}
+function verItemPuestoClose(){
+  var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura")
+ var vistaPreviaArmaId = document.getElementById("vistaPreviaArma")
+ var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar")
+ var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo")
+
+ vistaPreviaArmaduraId.style.display = "none"
+ vistaPreviaArmaId.style.display = "none"
+ vistaPreviaCollarId.style.display = "none"
+ vistaPreviaAnilloId.style.display = "none"
+}
+
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>

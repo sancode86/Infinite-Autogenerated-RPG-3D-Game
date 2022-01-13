@@ -346,3 +346,51 @@ h2 {
  .textoStatsPj{
    text-align: left;
  }
+
+ .vistaPreviaArmadura{ 
+  background-color: #222;
+  color: white;
+  position: absolute;
+  top: 135px;
+  left: 50px; 
+  border: 1px solid grey;
+  border-radius: 3px;
+  margin: 5px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+
+ }
+ .vistaPreviaArma{
+  background-color: #222;
+  color: white;
+  position: absolute;
+  top: 135px;
+  left: -125px; 
+  border: 1px solid grey;
+  border-radius: 3px;
+  margin: 5px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+.vistaPreviaCollar{
+  background-color: #222;
+  color: white;
+  position: absolute;
+  top: 5px;
+  left: 170px; 
+  border: 1px solid grey;
+  border-radius: 3px;
+  margin: 5px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  
+}
+.vistaPreviaAnillo{
+  background-color: #222;
+  color: white;
+  position: absolute;
+  top: 135px;
+  left: 215px; 
+  border: 1px solid grey;
+  border-radius: 3px;
+  margin: 5px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  
+}
