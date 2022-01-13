@@ -39,18 +39,26 @@
       class="optionsMenu animate__animated animate__fadeIn center"
       style="display: none"
     >
-
-
-
-    <div class="vistaPreviaArmadura dropdown-content" id="vistaPreviaArmadura" style="display: none"></div>
-    <div class="vistaPreviaArma dropdown-content" id="vistaPreviaArma" style="display: none"></div>
-    <div class="vistaPreviaCollar dropdown-content" id="vistaPreviaCollar" style="display: none"></div>
-    <div class="vistaPreviaAnillo dropdown-content" id="vistaPreviaAnillo" style="display: none"></div>
-
-
-
-
-
+      <div
+        class="vistaPreviaArmadura dropdown-content"
+        id="vistaPreviaArmadura"
+        style="display: none"
+      ></div>
+      <div
+        class="vistaPreviaArma dropdown-content"
+        id="vistaPreviaArma"
+        style="display: none"
+      ></div>
+      <div
+        class="vistaPreviaCollar dropdown-content"
+        id="vistaPreviaCollar"
+        style="display: none"
+      ></div>
+      <div
+        class="vistaPreviaAnillo dropdown-content"
+        id="vistaPreviaAnillo"
+        style="display: none"
+      ></div>
 
       <table class="pj">
         <tr>
@@ -244,7 +252,7 @@
   const raycaster = new THREE.Raycaster();
   const clicMouse = new THREE.Vector2();
   const moveMouse = new THREE.Vector2();
-  
+
   window.addEventListener("click", (event) => {
     camera.updateProjectionMatrix();
     if (draggable) {
@@ -790,7 +798,7 @@
       if (
         inventario[index].parent.userData.categoria != "pocion" ||
         inventario[index].parent.userData.nombre != "Pocion"
-      ) {      
+      ) {
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
           "⚔️ ATK: " + inventario[index].parent.userData.ataque;
@@ -802,7 +810,7 @@
         var infoItem = document.createElement("p");
         infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
         infoId.appendChild(infoItem);
-      }else{
+      } else {
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
           "🍷 QTY: " + inventario[index].parent.userData.cantidad;
@@ -818,11 +826,11 @@
   window.opcionesItemInventario = opcionesItemInventario;
   window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
   function opcionesItemInventario(index) {
-    if (inventario[index]?.parent?.userData?.categoria == "pocion"){
-      jugadorStats.salud += inventario[index]?.parent?.userData?.cantidad
+    if (inventario[index]?.parent?.userData?.categoria == "pocion") {
+      jugadorStats.salud += inventario[index]?.parent?.userData?.cantidad;
       inventario.splice(index, 1);
       sonidoDropPocion();
-      }
+    }
     if (
       inventario[index]?.parent?.userData?.categoria == "armadura" &&
       jugadorEquipoEnUso.armadura == ""
@@ -950,13 +958,18 @@
     }
   }
   function opcionesItemInventarioDrop(index) {
+    tirarLoot(inventario[index]);
     inventario.splice(index, 1);
     sonidoJuntar();
     cargarInventario();
   }
   function abrirInventario() {
     var cartel = document.getElementById("optionsMenu");
-    cartel.style.display = "block";
+    if (cartel.style.display == "block") {
+      cartel.style.display = "none";
+    } else {
+      cartel.style.display = "block";
+    }
   }
   function abrirCofre(objeto) {
     sonidoCofre();
@@ -1078,6 +1091,7 @@
             tipo: "recurso",
             categoria: "armadura",
             imagen: "img/item/armadura.png",
+            glb: resultadoItem,
           };
         }
         if (tipo == "arma") {
@@ -1093,6 +1107,7 @@
             tipo: "recurso",
             categoria: "arma",
             imagen: "img/item/arma.png",
+            glb: resultadoItem,
           };
         }
         if (tipo == "collar") {
@@ -1108,6 +1123,7 @@
             tipo: "recurso",
             categoria: "collar",
             imagen: "img/item/collar.png",
+            glb: resultadoItem,
           };
         }
         if (tipo == "anillo") {
@@ -1123,6 +1139,7 @@
             tipo: "recurso",
             categoria: "anillo",
             imagen: "img/item/anillo.png",
+            glb: resultadoItem,
           };
         }
         var nombreRandomParaBorrar =
@@ -1144,7 +1161,8 @@
     if (
       objeto.includes("Sword") ||
       objeto.includes("Dagger") ||
-      objeto.includes("Axe")
+      objeto.includes("Axe") ||
+      objeto.includes("Hammer")
     ) {
       return "arma";
     }
@@ -1283,15 +1301,23 @@
       cargarInventario();
     }
   }
-  function actualizarStatsJugador() {   
+  function actualizarStatsJugador() {
     var arrayAcumuladorAtaque = [];
     var arrayAcumuladorDefensa = [];
     var totalAtaque = 0;
     var totalDefensa = 0;
-    arrayAcumuladorAtaque.push(jugadorEquipoEnUso.armadura?.parent?.userData.ataque);
-    arrayAcumuladorAtaque.push(jugadorEquipoEnUso.arma?.parent?.userData.ataque);
-    arrayAcumuladorAtaque.push(jugadorEquipoEnUso.collar?.parent?.userData.ataque);
-    arrayAcumuladorAtaque.push( jugadorEquipoEnUso.anillo?.parent?.userData.ataque);
+    arrayAcumuladorAtaque.push(
+      jugadorEquipoEnUso.armadura?.parent?.userData.ataque
+    );
+    arrayAcumuladorAtaque.push(
+      jugadorEquipoEnUso.arma?.parent?.userData.ataque
+    );
+    arrayAcumuladorAtaque.push(
+      jugadorEquipoEnUso.collar?.parent?.userData.ataque
+    );
+    arrayAcumuladorAtaque.push(
+      jugadorEquipoEnUso.anillo?.parent?.userData.ataque
+    );
     arrayAcumuladorDefensa.push(
       jugadorEquipoEnUso.armadura?.parent?.userData.defensa
     );
@@ -1315,11 +1341,14 @@
     jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + totalAtaque;
     jugadorStatsConEquipo.defensa = jugadorStats.defensa + totalDefensa;
     document.getElementById("monedasId").innerHTML = jugadorStats.monedas;
-    document.getElementById("fuerzaId").innerHTML =  jugadorStatsConEquipo.fuerza;
-    document.getElementById("defensaId").innerHTML = jugadorStatsConEquipo.defensa;
+    document.getElementById("fuerzaId").innerHTML =
+      jugadorStatsConEquipo.fuerza;
+    document.getElementById("defensaId").innerHTML =
+      jugadorStatsConEquipo.defensa;
     document.getElementById("saludId").innerHTML = jugadorStats.salud;
     document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
-    document.getElementById("experienciaId").innerHTML = jugadorStats.experiencia;
+    document.getElementById("experienciaId").innerHTML =
+      jugadorStats.experiencia;
   }
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
@@ -1472,9 +1501,9 @@
       colorLuz = "0xE69138";
     }
     if (randomColorLuz == 3) {
-      colorLuz = "0xFFD966";   
+      colorLuz = "0xFFD966";
     } else {
-      colorLuz = "0xF6B26B";  
+      colorLuz = "0xF6B26B";
     }
     // arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
     // arrayLuces[i].intensity = intensidad
@@ -1586,109 +1615,142 @@
     });
   }
 
-function verItemPuesto(item){
-  
+  function verItemPuesto(item) {
+    var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura");
+    var vistaPreviaArmaId = document.getElementById("vistaPreviaArma");
+    var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar");
+    var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo");
 
- var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura")
- var vistaPreviaArmaId = document.getElementById("vistaPreviaArma")
- var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar")
- var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo")
-
-
-      if(item == "armadura" && jugadorEquipoEnUso.armadura != ""){
-      vistaPreviaArmaduraId.style.display = "block"
-      vistaPreviaArmaduraId.innerHTML =""
+    if (item == "armadura" && jugadorEquipoEnUso.armadura != "") {
+      vistaPreviaArmaduraId.style.display = "block";
+      vistaPreviaArmaduraId.innerHTML = "";
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = jugadorEquipoEnUso.armadura.parent.userData.nombre.toUpperCase();
+      infoItem.innerHTML =
+        jugadorEquipoEnUso.armadura.parent.userData.nombre.toUpperCase();
       vistaPreviaArmaduraId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.armadura.parent.userData.ataque;
+      infoItem.innerHTML =
+        "⚔️ ATK: " + jugadorEquipoEnUso.armadura.parent.userData.ataque;
       vistaPreviaArmaduraId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.armadura.parent.userData.defensa;
+      infoItem.innerHTML =
+        "🛡️ DEF: " + jugadorEquipoEnUso.armadura.parent.userData.defensa;
       vistaPreviaArmaduraId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.armadura.parent.userData.peso;
-      vistaPreviaArmaduraId.appendChild(infoItem);        
-      }
+      infoItem.innerHTML =
+        "⚖️ WT: " + jugadorEquipoEnUso.armadura.parent.userData.peso;
+      vistaPreviaArmaduraId.appendChild(infoItem);
+    }
 
-
-
-      if(item == "arma" && jugadorEquipoEnUso.arma != ""){
-      vistaPreviaArmaId.style.display = "block"
-      vistaPreviaArmaId.innerHTML =""
+    if (item == "arma" && jugadorEquipoEnUso.arma != "") {
+      vistaPreviaArmaId.style.display = "block";
+      vistaPreviaArmaId.innerHTML = "";
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = jugadorEquipoEnUso.arma.parent.userData.nombre.toUpperCase();
+      infoItem.innerHTML =
+        jugadorEquipoEnUso.arma.parent.userData.nombre.toUpperCase();
       vistaPreviaArmaId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.arma.parent.userData.ataque;
+      infoItem.innerHTML =
+        "⚔️ ATK: " + jugadorEquipoEnUso.arma.parent.userData.ataque;
       vistaPreviaArmaId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.arma.parent.userData.defensa;
+      infoItem.innerHTML =
+        "🛡️ DEF: " + jugadorEquipoEnUso.arma.parent.userData.defensa;
       vistaPreviaArmaId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.arma.parent.userData.peso;
-      vistaPreviaArmaId.appendChild(infoItem);        
-      }
+      infoItem.innerHTML =
+        "⚖️ WT: " + jugadorEquipoEnUso.arma.parent.userData.peso;
+      vistaPreviaArmaId.appendChild(infoItem);
+    }
 
-
-
-      if(item == "anillo" && jugadorEquipoEnUso.anillo != ""){
-      vistaPreviaAnilloId.style.display = "block"
-      vistaPreviaAnilloId.innerHTML =""
+    if (item == "anillo" && jugadorEquipoEnUso.anillo != "") {
+      vistaPreviaAnilloId.style.display = "block";
+      vistaPreviaAnilloId.innerHTML = "";
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = jugadorEquipoEnUso.anillo.parent.userData.nombre.toUpperCase();
+      infoItem.innerHTML =
+        jugadorEquipoEnUso.anillo.parent.userData.nombre.toUpperCase();
       vistaPreviaAnilloId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.anillo.parent.userData.ataque;
+      infoItem.innerHTML =
+        "⚔️ ATK: " + jugadorEquipoEnUso.anillo.parent.userData.ataque;
       vistaPreviaAnilloId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.anillo.parent.userData.defensa;
+      infoItem.innerHTML =
+        "🛡️ DEF: " + jugadorEquipoEnUso.anillo.parent.userData.defensa;
       vistaPreviaAnilloId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.anillo.parent.userData.peso;
-      vistaPreviaAnilloId.appendChild(infoItem);        
-      }
+      infoItem.innerHTML =
+        "⚖️ WT: " + jugadorEquipoEnUso.anillo.parent.userData.peso;
+      vistaPreviaAnilloId.appendChild(infoItem);
+    }
 
-
-
-      if(item == "collar" && jugadorEquipoEnUso.collar != ""){
-      vistaPreviaCollarId.style.display = "block"
-      vistaPreviaCollarId.innerHTML =""
+    if (item == "collar" && jugadorEquipoEnUso.collar != "") {
+      vistaPreviaCollarId.style.display = "block";
+      vistaPreviaCollarId.innerHTML = "";
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = jugadorEquipoEnUso.collar.parent.userData.nombre.toUpperCase();
+      infoItem.innerHTML =
+        jugadorEquipoEnUso.collar.parent.userData.nombre.toUpperCase();
       vistaPreviaCollarId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚔️ ATK: " + jugadorEquipoEnUso.collar.parent.userData.ataque;
+      infoItem.innerHTML =
+        "⚔️ ATK: " + jugadorEquipoEnUso.collar.parent.userData.ataque;
       vistaPreviaCollarId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "🛡️ DEF: " + jugadorEquipoEnUso.collar.parent.userData.defensa;
+      infoItem.innerHTML =
+        "🛡️ DEF: " + jugadorEquipoEnUso.collar.parent.userData.defensa;
       vistaPreviaCollarId.appendChild(infoItem);
       var infoItem = document.createElement("p");
-      infoItem.innerHTML = "⚖️ WT: " + jugadorEquipoEnUso.collar.parent.userData.peso;
-      vistaPreviaCollarId.appendChild(infoItem);        
-      }
+      infoItem.innerHTML =
+        "⚖️ WT: " + jugadorEquipoEnUso.collar.parent.userData.peso;
+      vistaPreviaCollarId.appendChild(infoItem);
+    }
+  }
+  function verItemPuestoClose() {
+    var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura");
+    var vistaPreviaArmaId = document.getElementById("vistaPreviaArma");
+    var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar");
+    var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo");
 
+    vistaPreviaArmaduraId.style.display = "none";
+    vistaPreviaArmaId.style.display = "none";
+    vistaPreviaCollarId.style.display = "none";
+    vistaPreviaAnilloId.style.display = "none";
+  }
 
+  function tirarLoot(objeto) {
+    var posX = jugador.position.x;
+    var posZ = jugador.position.z;
+    var resultadoItem = objeto.parent.userData.glb;
+    new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
+      const loot = gltf.scene;
+      loot.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+      });
+      var randomPosX = Math.floor(Math.random() * (3 - -3)) + -3;
+      var randomPosZ = Math.floor(Math.random() * (3 - -3)) + -3;
+      var geo = new THREE.BoxGeometry(1, 1, 1);
+      loot.position.set(posX + randomPosX, 0.1, posZ + randomPosZ);
+      loot.geometry = geo;
+      loot.scale.set(0.8, 0.8, 0.8);
 
+      loot.userData = {
+        nombre: objeto.parent.userData.nombre,
+        ataque: objeto.parent.userData.ataque,
+        defensa: objeto.parent.userData.defensa,
+        peso: objeto.parent.userData.peso,
+        tipo: "recurso",
+        categoria: objeto.parent.userData.categoria,
+        imagen: objeto.parent.userData.imagen,
+        glb: objeto.parent.userData.glb,
+      };
+      var nombreRandomParaBorrar =
+          "objeto" +
+          (Math.floor(Math.random() * (999999 - 0)) + 0) *
+            (Math.floor(Math.random() * (10 - 1)) + 1);
+        loot.name = nombreRandomParaBorrar;
 
-
-
-
-}
-function verItemPuestoClose(){
-  var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura")
- var vistaPreviaArmaId = document.getElementById("vistaPreviaArma")
- var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar")
- var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo")
-
- vistaPreviaArmaduraId.style.display = "none"
- vistaPreviaArmaId.style.display = "none"
- vistaPreviaCollarId.style.display = "none"
- vistaPreviaAnilloId.style.display = "none"
-}
-
-
-
+      scene.add(loot);
+    });
+  }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
