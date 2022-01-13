@@ -136,9 +136,6 @@
   window.jugadorStats = jugadorStats;
   window.sacarItemPuesto = sacarItemPuesto;
 
-  // console.log(jugadorStats);
-  // console.log(jugadorEquipoEnUso);
-
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 10;
@@ -820,9 +817,9 @@
       infoId.appendChild(infoItem);
       if (
         inventario[index].parent.userData.categoria != "pocion" ||
-        inventario[index].parent.userData.nombre != "Monedas"
+        inventario[index].parent.userData.nombre != "Pocion"
       ) {
-        // console.log(inventario[index].parent.userData)
+      
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
           "⚔️ ATK: " + inventario[index].parent.userData.ataque;
@@ -835,6 +832,11 @@
 
         var infoItem = document.createElement("p");
         infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
+        infoId.appendChild(infoItem);
+      }else{
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🍷 QTY: " + inventario[index].parent.userData.cantidad;
         infoId.appendChild(infoItem);
       }
     }
@@ -850,7 +852,18 @@
   window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
 
   function opcionesItemInventario(index) {
-    // console.log("categoria", inventario[index].parent.userData.categoria);
+
+
+
+    if (inventario[index]?.parent?.userData?.categoria == "pocion"){
+      jugadorStats.salud += inventario[index]?.parent?.userData?.cantidad
+      inventario.splice(index, 1);
+      sonidoDropPocion();
+      }
+
+
+
+
     if (
       inventario[index]?.parent?.userData?.categoria == "armadura" &&
       jugadorEquipoEnUso.armadura == ""
@@ -1335,10 +1348,7 @@
     }
   }
 
-  function actualizarStatsJugador() {
-    // jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + jugadorEquipoEnUso.armadura?.parent?.userData.ataque + jugadorEquipoEnUso.arma.parent?.userData?.ataque + jugadorEquipoEnUso.anillo?.parent?.userData.ataque + jugadorEquipoEnUso.collar?.parent?.userData.ataque
-    // jugadorStatsConEquipo.defensa = jugadorStats.defensa + jugadorEquipoEnUso.armadura?.parent?.userData.defensa + jugadorEquipoEnUso.arma.parent?.userData?.defensa + jugadorEquipoEnUso.anillo?.parent?.userData.defensa + jugadorEquipoEnUso.collar?.parent?.userData.defensa
-
+  function actualizarStatsJugador() {   
     var arrayAcumuladorAtaque = [];
     var arrayAcumuladorDefensa = [];
 
@@ -1367,14 +1377,12 @@
       if (!isNaN(arrayAcumuladorAtaque[i])) {
         totalAtaque += arrayAcumuladorAtaque[i];
       }
-
       if (!isNaN(arrayAcumuladorDefensa[i])) {
         totalDefensa += arrayAcumuladorDefensa[i];
       }
     }
-    jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + totalAtaque
-    jugadorStatsConEquipo.defensa = jugadorStats.defensa + totalDefensa
-
+    jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + totalAtaque;
+    jugadorStatsConEquipo.defensa = jugadorStats.defensa + totalDefensa;
 
     document.getElementById("monedasId").innerHTML = jugadorStats.monedas;
     document.getElementById("fuerzaId").innerHTML =  jugadorStatsConEquipo.fuerza;
