@@ -1595,7 +1595,7 @@ function verItemPuesto(item){
  var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo")
 
 
-      if(item == "armadura"){
+      if(item == "armadura" && jugadorEquipoEnUso.armadura != ""){
       vistaPreviaArmaduraId.style.display = "block"
       vistaPreviaArmaduraId.innerHTML =""
       var infoItem = document.createElement("p");
@@ -1614,7 +1614,7 @@ function verItemPuesto(item){
 
 
 
-      if(item == "arma"){
+      if(item == "arma" && jugadorEquipoEnUso.arma != ""){
       vistaPreviaArmaId.style.display = "block"
       vistaPreviaArmaId.innerHTML =""
       var infoItem = document.createElement("p");
@@ -1633,7 +1633,7 @@ function verItemPuesto(item){
 
 
 
-      if(item == "anillo"){
+      if(item == "anillo" && jugadorEquipoEnUso.anillo != ""){
       vistaPreviaAnilloId.style.display = "block"
       vistaPreviaAnilloId.innerHTML =""
       var infoItem = document.createElement("p");
@@ -1652,7 +1652,7 @@ function verItemPuesto(item){
 
 
 
-      if(item == "collar"){
+      if(item == "collar" && jugadorEquipoEnUso.collar != ""){
       vistaPreviaCollarId.style.display = "block"
       vistaPreviaCollarId.innerHTML =""
       var infoItem = document.createElement("p");
