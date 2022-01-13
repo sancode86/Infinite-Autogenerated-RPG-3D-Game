@@ -69,12 +69,12 @@
               <table class="tabla">
                 <tr>
                   <th>
-                    <p>🔀 Nivel: </p>
-                    <p>🦾 Fuerza: </p>
-                    <p>🛡️ Defensa: </p>
-                    <p>❤️ Salud: </p>
-                    <p>📖 Exp: </p>
-                    <p>💰 Monedas: </p>
+                    <p>🔀 Nivel:</p>
+                    <p>🦾 Fuerza:</p>
+                    <p>🛡️ Defensa:</p>
+                    <p>❤️ Salud:</p>
+                    <p>📖 Exp:</p>
+                    <p>💰 Monedas:</p>
                   </th>
 
                   <th>
@@ -121,7 +121,7 @@
   };
   var jugadorStatsConEquipo = {
     fuerza: 0,
-    defensa: 0,   
+    defensa: 0,
   };
   var jugadorEquipoEnUso = {
     armadura: "",
@@ -728,7 +728,7 @@
   }
 
   function cargarInventario() {
-    actualizarStatsJugador(); 
+    actualizarStatsJugador();
     var cartel = document.getElementById("inventarioARellenar");
     cartel.innerHTML = "";
     var div = document.createElement("div");
@@ -878,7 +878,7 @@
     ) {
       jugadorEquipoEnUso.arma = inventario[index];
       inventario.splice(index, 1);
-    
+
       sonidoDropArma();
     }
     if (
@@ -899,7 +899,7 @@
     ) {
       jugadorEquipoEnUso.anillo = inventario[index];
       inventario.splice(index, 1);
-   
+
       sonidoDropAnillo();
     }
     if (
@@ -910,7 +910,7 @@
       jugadorEquipoEnUso.anillo = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
- 
+
       sonidoDropAnillo();
     }
 
@@ -920,7 +920,7 @@
     ) {
       jugadorEquipoEnUso.collar = inventario[index];
       inventario.splice(index, 1);
-  
+
       sonidoDropCollar();
     }
     if (
@@ -931,11 +931,10 @@
       jugadorEquipoEnUso.collar = inventario[index];
       inventario.splice(index, 1);
       sonidoJuntar();
-      
+
       sonidoDropCollar();
     }
 
-  
     cargarInventario();
     cargarEquipo();
   }
@@ -964,13 +963,12 @@
       jugadorEquipoEnUso.anillo = "";
       sonidoDropAnillo();
     }
-    actualizarStatsJugador(); 
+    actualizarStatsJugador();
     cargarInventario();
     cargarEquipo();
   }
 
   function cargarEquipo() {
-   
     var armaduraId = document.getElementById("contenedorArmadura");
     var armaId = document.getElementById("contenedorArma");
     var anilloId = document.getElementById("contenedorAnillo");
@@ -1321,52 +1319,69 @@
   function varSiPuedeLevantarLoot(objeto) {
     sonidoJuntar();
 
- 
     if (objeto.parent.userData.categoria != "moneda") {
       inventario.push(objeto);
       var selectedObject = scene.getObjectByName(objeto.parent.name);
       scene.remove(selectedObject);
-      actualizarStatsJugador(); 
+      actualizarStatsJugador();
       cargarInventario();
-    }  
-    if (objeto.parent.userData.categoria == "moneda"){
+    }
+    if (objeto.parent.userData.categoria == "moneda") {
       jugadorStats.monedas += objeto.parent.userData.cantidad;
       var selectedObject = scene.getObjectByName(objeto.parent.name);
       scene.remove(selectedObject);
-      actualizarStatsJugador(); 
+      actualizarStatsJugador();
       cargarInventario();
     }
- 
-   
   }
 
+  function actualizarStatsJugador() {
+    // jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + jugadorEquipoEnUso.armadura?.parent?.userData.ataque + jugadorEquipoEnUso.arma.parent?.userData?.ataque + jugadorEquipoEnUso.anillo?.parent?.userData.ataque + jugadorEquipoEnUso.collar?.parent?.userData.ataque
+    // jugadorStatsConEquipo.defensa = jugadorStats.defensa + jugadorEquipoEnUso.armadura?.parent?.userData.defensa + jugadorEquipoEnUso.arma.parent?.userData?.defensa + jugadorEquipoEnUso.anillo?.parent?.userData.defensa + jugadorEquipoEnUso.collar?.parent?.userData.defensa
+
+    var arrayAcumuladorAtaque = [];
+    var arrayAcumuladorDefensa = [];
+
+    var totalAtaque, totalDefensa;
+
+    arrayAcumuladorAtaque.push(jugadorEquipoEnUso.armadura?.parent?.userData.ataque);
+    arrayAcumuladorAtaque.push(jugadorEquipoEnUso.arma?.parent?.userData.ataque);
+    arrayAcumuladorAtaque.push(jugadorEquipoEnUso.collar?.parent?.userData.ataque);
+    arrayAcumuladorAtaque.push( jugadorEquipoEnUso.anillo?.parent?.userData.ataque);
+
+    arrayAcumuladorDefensa.push(
+      jugadorEquipoEnUso.armadura?.parent?.userData.defensa
+    );
+    arrayAcumuladorDefensa.push(
+      jugadorEquipoEnUso.arma?.parent?.userData.defensa
+    );
+    arrayAcumuladorDefensa.push(
+      jugadorEquipoEnUso.collar?.parent?.userData.defensa
+    );
+    arrayAcumuladorDefensa.push(
+      jugadorEquipoEnUso.anillo?.parent?.userData.defensa
+    );
+
+    for (let i = 0; i < arrayAcumuladorAtaque.length; i++) {
+      if (!isNaN(arrayAcumuladorAtaque[i])) {
+        totalAtaque += arrayAcumuladorAtaque[i];
+      }
+
+      if (!isNaN(arrayAcumuladorDefensa[i])) {
+        totalDefensa += arrayAcumuladorDefensa[i];
+      }
+    }
+    jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + totalAtaque
+    jugadorStatsConEquipo.defensa = jugadorStats.defensa + totalDefensa
 
 
-function actualizarStatsJugador(){ 
-
-
-
-// jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + jugadorEquipoEnUso.armadura?.parent?.userData.ataque + jugadorEquipoEnUso.arma.parent?.userData?.ataque + jugadorEquipoEnUso.anillo?.parent?.userData.ataque + jugadorEquipoEnUso.collar?.parent?.userData.ataque
-// jugadorStatsConEquipo.defensa = jugadorStats.defensa + jugadorEquipoEnUso.armadura?.parent?.userData.defensa + jugadorEquipoEnUso.arma.parent?.userData?.defensa + jugadorEquipoEnUso.anillo?.parent?.userData.defensa + jugadorEquipoEnUso.collar?.parent?.userData.defensa
-
-
-
-
-
-document.getElementById("monedasId").innerHTML = jugadorStats.monedas
-document.getElementById("fuerzaId").innerHTML = jugadorStatsConEquipo.fuerza
-document.getElementById("defensaId").innerHTML = jugadorStatsConEquipo.defensa
-document.getElementById("saludId").innerHTML = jugadorStats.salud
-document.getElementById("nivelId").innerHTML = jugadorStats.nivel
-document.getElementById("experienciaId").innerHTML = jugadorStats.experiencia
-}
-
-
-
-
-
-
-
+    document.getElementById("monedasId").innerHTML = jugadorStats.monedas;
+    document.getElementById("fuerzaId").innerHTML =  jugadorStatsConEquipo.fuerza;
+    document.getElementById("defensaId").innerHTML = jugadorStatsConEquipo.defensa;
+    document.getElementById("saludId").innerHTML = jugadorStats.salud;
+    document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
+    document.getElementById("experienciaId").innerHTML = jugadorStats.experiencia;
+  }
 
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
