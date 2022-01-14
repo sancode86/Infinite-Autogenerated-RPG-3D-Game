@@ -135,908 +135,1569 @@
   });
 </script>
 <script type="module">
-  import * as THREE from "https://cdn.skypack.dev/three@0.136.0/build/three.module.js";
-  import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js";
-  import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
-  import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
+    import * as THREE from "https://cdn.skypack.dev/three@0.136.0/build/three.module.js";
+    import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js";
+    import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js";
+    import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
 
-  var jugadorStats = {
-    fuerza: 2,
-    defensa: 1,
-    salud: 100,
-    nivel: 0,
-    experiencia: 0,
-    monedas: 0,
-  };
-  var jugadorStatsConEquipo = {
-    fuerza: 0,
-    defensa: 0,
-  };
-  var jugadorEquipoEnUso = {
-    armadura: "",
-    arma: "",
-    collar: "",
-    anillo: "",
-  };
-  var inventario = [];
-  window.verItemPuestoClose = verItemPuestoClose;
-  window.verItemPuesto = verItemPuesto;
-  window.inventario = inventario;
-  window.jugadorEquipoEnUso = jugadorEquipoEnUso;
-  window.jugadorStats = jugadorStats;
-  window.sacarItemPuesto = sacarItemPuesto;
-  var draggable;
-  var tamañoCuarto = 50;
-  var spawnArea = tamañoCuarto / 2;
-  var cantidadCajas = 10;
-  var cantidadCofres = 10;
-  var fg = 1;
-  var jugador;
-  var characterControls;
-  var arrayLuces = [];
-  var arrayFuegos = [];
-  var sonidoCorrerFlag = 0;
-  var sonidoAtacarFlag = 0;
-  var arraySolidos = [];
-  var gameTime = 1111104000000;
-  var stats = new Stats();
-  var statsDiv = document.getElementById("statsDiv");
-  var posicionActualJugador = new THREE.Vector3(0, 0, 0);
-  stats.showPanel(0);
-  statsDiv.appendChild(stats.domElement);
-  import { CharacterControls } from "./utils/characterControls.js";
-  import {
-    lootArrayArmadura,
-    lootArrayArma,
-    lootArrayCollar,
-    lootArrayAnillo,
-  } from "./utils/loot.js";
-  // SCENE
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xa8def0);
-  // CAMERA
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    10000
-  );
-  camera.position.y = 15;
-  camera.position.z = 15;
-  camera.position.x = 0;
-  // RENDERER
-  const renderer = new THREE.WebGLRenderer({ antialias: false });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.shadowMap.enabled = true;
-
-  // CONTROLS
-  const orbitControls = new OrbitControls(camera, renderer.domElement);
-  orbitControls.enableDamping = true;
-  orbitControls.minDistance = 2;
-  orbitControls.maxDistance = 25;
-  orbitControls.enablePan = false;
-  orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
-  orbitControls.update();
-  new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
-    // musicaPlay();
-    jugador = gltf.scene;
-    jugador.traverse(function (object) {
-      if (object.isMesh) object.castShadow = true;
-    });
-    jugador.userData.name = "jugador";
-    jugador.position.set(0, 0, 0);
-    jugador.scale.set(0.8, 0.8, 0.8);
-    var jugadorGeometry = new THREE.BoxGeometry(1, 3, 1);
-    jugador.geometry = jugadorGeometry;
-    scene.add(jugador);
-    const gltfAnimations = gltf.animations;
-    const mixer = new THREE.AnimationMixer(jugador);
-    const animationsMap = new Map();
-    gltfAnimations
-      .filter((a) => a.name != "TPose")
-      .forEach((a) => {
-        animationsMap.set(a.name, mixer.clipAction(a));
-      });
-
-    characterControls = new CharacterControls(
-      jugador,
-      mixer,
-      animationsMap,
-      orbitControls,
-      camera,
-      "Idle"
+    var jugadorStats = {
+      fuerza: 2,
+      defensa: 1,
+      salud: 100,
+      nivel: 0,
+      experiencia: 0,
+      monedas: 0,
+    };
+    var jugadorStatsConEquipo = {
+      fuerza: 0,
+      defensa: 0,
+    };
+    var jugadorEquipoEnUso = {
+      armadura: "",
+      arma: "",
+      collar: "",
+      anillo: "",
+    };
+    var inventario = [];
+    window.verItemPuestoClose = verItemPuestoClose;
+    window.verItemPuesto = verItemPuesto;
+    window.sacarItemPuesto = sacarItemPuesto;
+    window.inventario = inventario;
+    window.jugadorEquipoEnUso = jugadorEquipoEnUso;
+    window.jugadorStats = jugadorStats;
+    var draggable;
+    var tamañoCuarto = 50;
+    var spawnArea = tamañoCuarto / 2;
+    var cantidadCajas = 10;
+    var cantidadCofres = 10;
+    var fg = 1;
+    var jugador;
+    var characterControls;
+    var arrayLuces = [];
+    var arrayFuegos = [];
+    var sonidoCorrerFlag = 0;
+    var sonidoAtacarFlag = 0;
+    var arraySolidos = [];
+    var arrayEnemigos = []
+    var gameTime = 1111104000000;
+    var stats = new Stats();
+    var statsDiv = document.getElementById("statsDiv");
+    var posicionActualJugador = new THREE.Vector3(0, 0, 0);
+    stats.showPanel(0);
+    statsDiv.appendChild(stats.domElement);
+    import { CharacterControls } from "./utils/characterControls.js";
+    import {
+      lootArrayArmadura,
+      lootArrayArma,
+      lootArrayCollar,
+      lootArrayAnillo,
+    } from "./utils/loot.js";
+    // SCENE
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xa8def0);
+    // CAMERA
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      10000
     );
-  });
-  //raycaster
-  const raycaster = new THREE.Raycaster();
-  const clicMouse = new THREE.Vector2();
-  const moveMouse = new THREE.Vector2();
-
-  window.addEventListener("click", (event) => {
-    camera.updateProjectionMatrix();
-    if (draggable) {
-      document.body.style.cursor = "default";
-      draggable = null;
-      return;
-    }
-    clicMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    raycaster.setFromCamera(clicMouse, camera);
-    const found = raycaster.intersectObjects(scene.children);
-
-    if (found.length > 0 && found[0].object.userData.draggable) {
-      draggable = found[0].object;
-      document.body.style.cursor = "grab";
-    }
-    var objFound = found[0].object;
-    if (found.length > 0 && objFound.userData.name != undefined) {
-    }
-    if (
-      found.length > 0 &&
-      objFound.userData.tipo == "cofre" &&
-      objFound.userData.estado == "cerrado"
-    ) {
-      var posX = objFound.position.x;
-      var posZ = objFound.position.z;
-      var selectedObject = scene.getObjectByName(objFound.userData.name);
-      abrirCofre(selectedObject);
-    }
-
-    if (found.length > 0 && objFound.parent.userData.tipo == "recurso") {
-      varSiPuedeLevantarLoot(objFound);
-    }
-  });
-
-  window.addEventListener("mousemove", (event) => {
-    moveMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    moveMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(moveMouse, camera);
-    const found = raycaster.intersectObjects(scene.children);
-
-    if (draggable == null) {
-      document.body.style.cursor = "default";
-    }
-    if (found[0].object.userData.draggable && draggable == null) {
-      document.body.style.cursor = "pointer";
-    }
-  });
-
-  function draggObj() {
-    if (draggable != null) {
+    camera.position.y = 15;
+    camera.position.z = 15;
+    camera.position.x = 0;
+    // RENDERER
+    const renderer = new THREE.WebGLRenderer({ antialias: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    // CONTROLS
+    const orbitControls = new OrbitControls(camera, renderer.domElement);
+    orbitControls.enableDamping = true;
+    orbitControls.minDistance = 2;
+    orbitControls.maxDistance = 25;
+    orbitControls.enablePan = false;
+    orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
+    orbitControls.update();
+    new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
+      // musicaPlay();
+      jugador = gltf.scene;
+      jugador.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+      });
+      jugador.userData.name = "jugador";
+      jugador.position.set(0, 0, 0);
+      jugador.scale.set(0.8, 0.8, 0.8);
+      var jugadorGeometry = new THREE.BoxGeometry(1, 3, 1);
+      jugador.geometry = jugadorGeometry;
+      scene.add(jugador);
+      const gltfAnimations = gltf.animations;
+      const mixer = new THREE.AnimationMixer(jugador);
+      const animationsMap = new Map();
+      gltfAnimations
+        .filter((a) => a.name != "TPose")
+        .forEach((a) => {
+          animationsMap.set(a.name, mixer.clipAction(a));
+        });
+      characterControls = new CharacterControls(
+        jugador,
+        mixer,
+        animationsMap,
+        orbitControls,
+        camera,
+        "Idle"
+      );
+    });
+    //raycaster
+    const raycaster = new THREE.Raycaster();
+    const clicMouse = new THREE.Vector2();
+    const moveMouse = new THREE.Vector2();
+    window.addEventListener("click", (event) => {
+      camera.updateProjectionMatrix();
+      if (draggable) {
+        document.body.style.cursor = "default";
+        draggable = null;
+        return;
+      }
+      clicMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(clicMouse, camera);
+      const found = raycaster.intersectObjects(scene.children);
+      if (found.length > 0 && found[0].object.userData.draggable) {
+        draggable = found[0].object;
+        document.body.style.cursor = "grab";
+      }
+      var objFound = found[0].object;
+      if (found.length > 0 && objFound.userData.name != undefined) {
+      }
+      if (
+        found.length > 0 &&
+        objFound.userData.tipo == "cofre" &&
+        objFound.userData.estado == "cerrado"
+      ) {
+        var posX = objFound.position.x;
+        var posZ = objFound.position.z;
+        var selectedObject = scene.getObjectByName(objFound.userData.name);
+        abrirCofre(selectedObject);
+      }
+      if (found.length > 0 && objFound.parent.userData.tipo == "recurso") {
+        varSiPuedeLevantarLoot(objFound);
+      }
+    });
+    window.addEventListener("mousemove", (event) => {
+      moveMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      moveMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(moveMouse, camera);
       const found = raycaster.intersectObjects(scene.children);
-      if (found.length > 0) {
-        for (let o of found) {
-          if (
-            !o.object.userData.ground &&
-            o.object.userData.pared != true &&
-            o.object.userData.nombre != "universo"
-          ) {
-            draggable.position.x = o.point.x;
-            draggable.position.z = o.point.z;
+      if (draggable == null) {
+        document.body.style.cursor = "default";
+      }
+      if (found[0].object.userData.draggable && draggable == null) {
+        document.body.style.cursor = "pointer";
+      }
+    });
+    function draggObj() {
+      if (draggable != null) {
+        raycaster.setFromCamera(moveMouse, camera);
+        const found = raycaster.intersectObjects(scene.children);
+        if (found.length > 0) {
+          for (let o of found) {
+            if (
+              !o.object.userData.ground &&
+              o.object.userData.pared != true &&
+              o.object.userData.nombre != "universo"
+            ) {
+              draggable.position.x = o.point.x;
+              draggable.position.z = o.point.z;
+            }
           }
         }
       }
     }
-  }
-  function checkearSiSeTocan(a, d) {
-    let b1 = a.position.y - a.geometry.parameters.height / 2;
-    let t1 = a.position.y + a.geometry.parameters.height / 2;
-    let r1 = a.position.x + a.geometry.parameters.width / 2;
-    let l1 = a.position.x - a.geometry.parameters.width / 2;
-    let f1 = a.position.z - a.geometry.parameters.depth / 2;
-    let B1 = a.position.z + a.geometry.parameters.depth / 2;
-    let b2 = d.position.y - d.geometry.parameters.height / 2;
-    let t2 = d.position.y + d.geometry.parameters.height / 2;
-    let r2 = d.position.x + d.geometry.parameters.width / 2;
-    let l2 = d.position.x - d.geometry.parameters.width / 2;
-    let f2 = d.position.z - d.geometry.parameters.depth / 2;
-    let B2 = d.position.z + d.geometry.parameters.depth / 2;
-    if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {
-      return false;
+    function checkearSiSeTocan(a, d) {
+      let b1 = a.position.y - a.geometry.parameters.height / 2;
+      let t1 = a.position.y + a.geometry.parameters.height / 2;
+      let r1 = a.position.x + a.geometry.parameters.width / 2;
+      let l1 = a.position.x - a.geometry.parameters.width / 2;
+      let f1 = a.position.z - a.geometry.parameters.depth / 2;
+      let B1 = a.position.z + a.geometry.parameters.depth / 2;
+      let b2 = d.position.y - d.geometry.parameters.height / 2;
+      let t2 = d.position.y + d.geometry.parameters.height / 2;
+      let r2 = d.position.x + d.geometry.parameters.width / 2;
+      let l2 = d.position.x - d.geometry.parameters.width / 2;
+      let f2 = d.position.z - d.geometry.parameters.depth / 2;
+      let B2 = d.position.z + d.geometry.parameters.depth / 2;
+      if (t1 < b2 || r1 < l2 || b1 > t2 || l1 > r2 || f1 > B2 || B1 < f2) {
+        return false;
+      }
+      return true;
     }
-    return true;
-  }
-  function checkearSiSeTocaJugador(a, d) {
-    let r1 = a.position.x + a.geometry.parameters.width / 2;
-    let l1 = a.position.x - a.geometry.parameters.width / 2;
-    let f1 = a.position.z - a.geometry.parameters.depth / 2;
-    let B1 = a.position.z + a.geometry.parameters.depth / 2;
-    let r2 = d.position.x + d.geometry.parameters.width / 2;
-    let l2 = d.position.x - d.geometry.parameters.width / 2;
-    let f2 = d.position.z - d.geometry.parameters.depth / 2;
-    let B2 = d.position.z + d.geometry.parameters.depth / 2;
+    function checkearSiSeTocaJugador(a, d) {
+      let r1 = a.position.x + a.geometry.parameters.width / 2;
+      let l1 = a.position.x - a.geometry.parameters.width / 2;
+      let f1 = a.position.z - a.geometry.parameters.depth / 2;
+      let B1 = a.position.z + a.geometry.parameters.depth / 2;
+      let r2 = d.position.x + d.geometry.parameters.width / 2;
+      let l2 = d.position.x - d.geometry.parameters.width / 2;
+      let f2 = d.position.z - d.geometry.parameters.depth / 2;
+      let B2 = d.position.z + d.geometry.parameters.depth / 2;
 
-    if (r1 < l2 || l1 > r2 || f1 > B2 || B1 < f2) {
-      return false;
-    } else {
-      if (a.position.x > d.position.x) {
-        return "derecha";
-      }
-
-      if (a.position.z < d.position.z) {
-        return "arriba";
-      }
-      if (a.position.z > d.position.z) {
-        return "abajo";
-      }
-
-      if (a.position.x < d.position.x) {
-        return "izquierda";
+      if (r1 < l2 || l1 > r2 || f1 > B2 || B1 < f2) {
+        return false;
+      } else {
+        if (a.position.x > d.position.x) {
+          return "derecha";
+        }
+        if (a.position.z < d.position.z) {
+          return "arriba";
+        }
+        if (a.position.z > d.position.z) {
+          return "abajo";
+        }
+        if (a.position.x < d.position.x) {
+          return "izquierda";
+        }
       }
     }
-  }
-  crearLuces();
-  crearCajas();
-  crearParedes(4);
-  cargarInventario();
-  crearCofres();
-  crearSkybox();
-  function crearCajas() {
-    for (let j = 0; j < cantidadCajas; j++) {
-      // crear una caja
-      const geoBox = new THREE.BoxGeometry(1, 1, 1);
-      var r1 = Math.floor(Math.random() * (80 - 10)) + 10;
-      var r2 = Math.floor(Math.random() * (80 - 10)) + 10;
-      var r3 = Math.floor(Math.random() * (80 - 10)) + 10;
-      var aparienciaColor = "0x" + r1 + r2 + r3;
-      const matBox = new THREE.MeshPhongMaterial({
-        color: parseInt(aparienciaColor),
+    crearLuces();
+    crearCajas();
+    crearParedes(4);
+    cargarInventario();
+    crearCofres();
+    crearSkybox();
+    crearEnemigos();
+    function crearCajas() {
+      for (let j = 0; j < cantidadCajas; j++) {
+        // crear una caja
+        const geoBox = new THREE.BoxGeometry(1, 1, 1);
+        var r1 = Math.floor(Math.random() * (80 - 10)) + 10;
+        var r2 = Math.floor(Math.random() * (80 - 10)) + 10;
+        var r3 = Math.floor(Math.random() * (80 - 10)) + 10;
+        var aparienciaColor = "0x" + r1 + r2 + r3;
+        const matBox = new THREE.MeshPhongMaterial({
+          color: parseInt(aparienciaColor),
+        });
+        const box = new THREE.Mesh(geoBox, matBox);
+        box.castShadow = true;
+        box.receiveShadow = true;
+        box.userData.draggable = true;
+        box.userData.name = "Caja" + j;
+        box.position.x =
+          Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+        box.position.y = 0.5;
+        box.position.z =
+          Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+        scene.add(box);
+        arraySolidos.push(box);
+      }
+    }
+    function crearCofres() {
+      for (let j = 0; j < cantidadCofres; j++) {
+        var geo = new THREE.BoxGeometry(2, 2, 2);
+        // crear un cofre
+        new GLTFLoader().load("models/cofre.glb", function (gltf) {
+          var random = Math.floor(Math.random() * (800 - 0)) + 0 + j;
+          const cofre = gltf.scene;
+          cofre.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
+
+            object.userData.draggable = true;
+            object.name = "Cofre" + random;
+            object.userData = {
+              draggable: false,
+              name: "Cofre" + random,
+              tipo: "cofre",
+              estado: "cerrado",
+            };
+          });
+          var random = Math.floor(Math.random() * (250 - 0)) + 0;
+          cofre.rotation.y = random;
+          cofre.geometry = geo;
+          cofre.scale.set(1.5, 1.5, 1.5);
+          cofre.castShadow = true;
+          cofre.receiveShadow = true;
+          cofre.position.x =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          cofre.position.y = 0;
+          cofre.position.z =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          scene.add(cofre);
+          arraySolidos.push(cofre);
+          camera.updateProjectionMatrix();
+        });
+      }
+    }
+    function crearParedes(cantidadParedes) {
+      var cantidad = cantidadParedes;
+      // crear una pared
+      const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
+      var loader = new THREE.TextureLoader();
+      var texture2 = loader.load("img/pared.jpg", function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(20, 5);
       });
-      const box = new THREE.Mesh(geoBox, matBox);
-      box.castShadow = true;
-      box.receiveShadow = true;
-      box.userData.draggable = true;
-      box.userData.name = "Caja" + j;
-      box.position.x =
-        Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
-      box.position.y = 0.5;
-      box.position.z =
-        Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
-      scene.add(box);
-      arraySolidos.push(box);
+      var materialPared = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        specular: 0x111111,
+        shininess: 10,
+        map: texture2,
+      });
+      const pared = new THREE.Mesh(geoBox, materialPared);
+      pared.castShadow = true;
+      pared.receiveShadow = true;
+      pared.userData.name = "Pared";
+      pared.position.x = 0;
+      pared.position.y = 0;
+      pared.position.z = tamañoCuarto / 2;
+      scene.add(pared);
+      arraySolidos.push(pared);
+      camera.updateProjectionMatrix();
+      const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
+      const pared2 = new THREE.Mesh(geoBox2, materialPared);
+      pared2.castShadow = true;
+      pared2.receiveShadow = true;
+      pared2.userData.name = "Pared2";
+      pared2.position.x = tamañoCuarto / 2;
+      pared2.position.y = 0;
+      pared2.position.z = 0;
+      scene.add(pared2);
+      arraySolidos.push(pared2);
+      camera.updateProjectionMatrix();
+      const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
+      const pared3 = new THREE.Mesh(geoBox3, materialPared);
+      pared3.castShadow = true;
+      pared3.receiveShadow = true;
+      pared3.userData.name = "Pared3";
+      pared3.position.x = -tamañoCuarto / 2;
+      pared3.position.y = 0;
+      pared3.position.z = 0;
+      scene.add(pared3);
+      arraySolidos.push(pared3);
+      camera.updateProjectionMatrix();
+      const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
+      const pared4 = new THREE.Mesh(geoBox4, materialPared);
+      pared4.castShadow = true;
+      pared4.receiveShadow = true;
+      pared4.userData.name = "Pared4";
+      pared4.position.x = 0;
+      pared4.position.y = 0;
+      pared4.position.z = -tamañoCuarto / 2;
+      scene.add(pared4);
+      arraySolidos.push(pared4);
+      pared.userData.ground = false;
+      pared2.userData.ground = false;
+      pared3.userData.ground = false;
+      pared4.userData.ground = false;
+      pared.userData.pared = true;
+      pared2.userData.pared = true;
+      pared3.userData.pared = true;
+      pared4.userData.pared = true;
+      camera.updateProjectionMatrix();
     }
-  }
-  function crearCofres() {
-    for (let j = 0; j < cantidadCofres; j++) {
+    // CONTROL KEYS
+    const keysPressed = {};
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.shiftKey && characterControls) {
+          characterControls.switchRunToggle();
+        } else {
+          keysPressed[event.key.toLowerCase()] = true;
+        }
+      },
+      false
+    );
+    // ESCUCHANDO TECLAS
+    document.body.onkeydown = function (e) {
+      if (e.keyCode == 32) {
+        characterControls.switchAtacar();
+        sonidoAtacarFlag = 1;
+        sonidoAtacar();
+      }
+      if (e.keyCode == 17) {
+        characterControls.switchRoll();
+        sonidoRoll();
+      }
+      if (e.keyCode == 69) {
+        //E
+        characterControls.switchJuntar();
+      }
+      if (e.keyCode == 73) {
+        //I (inventario)
+        abrirInventario();
+      }
+      if (e.keyCode == 27) {
+        //ESC (cerrar inventario)
+        preferencesClose();
+      }
+      if (
+        e.keyCode == 65 ||
+        e.keyCode == 83 ||
+        e.keyCode == 68 ||
+        e.keyCode == 87
+      ) {
+        //A S D W
+        sonidoCorrerFlag = 1;
+        sonidoCaminar();
+      }
+    };
+    document.body.onkeyup = function (e) {
+      if (e.keyCode == 32) {
+        characterControls.switchAtacarStop();
+        sonidoAtacarStop();
+      }
+      if (e.keyCode == 17) {
+        characterControls.switchRollStop();
+      }
+      if (e.keyCode == 69) {
+        //E
+        characterControls.switchJuntarStop();
+      }
+      if (
+        e.keyCode == 65 ||
+        e.keyCode == 83 ||
+        e.keyCode == 68 ||
+        e.keyCode == 87
+      ) {
+        //A S D W
+        sonidoCaminarStop();
+      }
+    };
+    document.addEventListener(
+      "keyup",
+      (event) => {
+        keysPressed[event.key.toLowerCase()] = false;
+      },
+      false
+    );
+    const clock = new THREE.Clock();
+    // RESIZE HANDLER
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    window.addEventListener("resize", onWindowResize);
+    generateFloorBasic();
+    function generateFloorBasic() {
+      const geoPiso = new THREE.PlaneGeometry(
+        tamañoCuarto,
+        tamañoCuarto,
+        tamañoCuarto
+      );
+      const matPiso = new THREE.MeshPhongMaterial({ color: 0x606060 });
+      var loader = new THREE.TextureLoader();
+      var material = new THREE.MeshLambertMaterial({
+        map: loader.load("img/piso.jpg"),
+      });
+      var texture = loader.load("img/piso2.jpg", function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.offset.set(0, 0);
+        texture.repeat.set(20, 20);
+      });
+      var materialPiso = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        specular: 0x111111,
+        shininess: 10,
+        map: texture,
+      });
+      const pisoSimple = new THREE.Mesh(geoPiso, materialPiso);
+      pisoSimple.castShadow = true;
+      pisoSimple.receiveShadow = true;
+      pisoSimple.rotation.x = -Math.PI / 2;
+      pisoSimple.userData.ground = true;
+      scene.add(pisoSimple);
+    }
+    scene.add(new THREE.AmbientLight(0x6fa8dc, 0.8));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0);
+    dirLight.position.set(-50, 50, 0);
+    dirLight.castShadow = true;
+    dirLight.shadow.camera.top = 100;
+    dirLight.shadow.camera.bottom = -100;
+    dirLight.shadow.camera.left = -100;
+    dirLight.shadow.camera.right = 100;
+    dirLight.shadow.camera.near = 0.1;
+    dirLight.shadow.camera.far = 100;
+    dirLight.shadow.mapSize.width = 4096;
+    dirLight.shadow.mapSize.height = 4096;
+    scene.add(dirLight);
+    // ANIMATE
+    function animate() {
+      stats.begin();
+      draggObj();
+      lucesAnimar();
+      horaActual();
+      let mixerUpdateDelta = clock.getDelta();
+      if (characterControls) {
+        characterControls.update(mixerUpdateDelta, keysPressed);
+      }
+      orbitControls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+      chequearChoque();
+      moverEnemigos();
+      stats.end();
+    }
+    animate();
+    document.body.appendChild(renderer.domElement);
+    function horaActual() {
+      var speed = 10000;
+      let clockDiv = document.querySelector("#clock");
+      let sec = Math.floor(gameTime / 1000) % 60;
+      let min = Math.floor(gameTime / 60000) % 60;
+      let hour = Math.floor(gameTime / 3600000) % 24;
+      clockDiv.textContent = `${hour}:${min}`.replace(/\b\d\b/g, "0$&");
+      gameTime += speed;
+    }
+    function crearSkybox() {
+      let materialArray = [];
+      let texture_up = new THREE.TextureLoader().load("img/skybox/up.png");
+      let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.png");
+      let texture_lf = new THREE.TextureLoader().load("img/skybox/lf.png");
+      let texture_ft = new THREE.TextureLoader().load("img/skybox/ft.png");
+      let texture_dn = new THREE.TextureLoader().load("img/skybox/dn.png");
+      let texture_bk = new THREE.TextureLoader().load("img/skybox/bk.png");
+      materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+      materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+      materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+      materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+      materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+      materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
+      for (let i = 0; i < 6; i++) materialArray[i].side = THREE.BackSide;
+      var tamaño = tamañoCuarto * 3;
+      let skyboxGeo = new THREE.BoxGeometry(tamaño, tamaño, tamaño);
+      var skybox = new THREE.Mesh(skyboxGeo, materialArray);
+      skybox.castShadow = true;
+      skybox.receiveShadow = true;
+      skybox.userData = {
+        nombre: "universo",
+        tipo: "infinito",
+      };
+      scene.add(skybox);
+    }
+    function chequearChoque() {
+      if (jugador?.position != undefined) {
+        for (let index = 0; index < arraySolidos.length; index++) {
+          var resultado = checkearSiSeTocaJugador(jugador, arraySolidos[index]);
+          if (resultado == "derecha") {
+            const frenar = new THREE.Vector3(0.5, 0, 0);
+            jugador.position.add(frenar);
+          }
+          if (resultado == "izquierda") {
+            const frenar = new THREE.Vector3(-0.5, 0, 0);
+            jugador.position.add(frenar);
+          }
+          if (resultado == "arriba") {
+            const frenar = new THREE.Vector3(0, 0, -0.5);
+            jugador.position.add(frenar);
+          }
+          if (resultado == "abajo") {
+            const frenar = new THREE.Vector3(0, 0, 0.5);
+            jugador.position.add(frenar);
+          }
+        }
+      }
+    }
+    function cargarInventario() {
+      actualizarStatsJugador();
+      var cartel = document.getElementById("inventarioARellenar");
+      cartel.innerHTML = "";
+      var div = document.createElement("div");
+      div.setAttribute("class", "contenedorItems");
+      div.setAttribute("id", "contenedorItems");
+      cartel.appendChild(div);
+      var contenedorItemsId = document.getElementById("contenedorItems");
+      for (let index = 0; index < inventario.length; index++) {
+        var div = document.createElement("div");
+        div.setAttribute("class", "dropdown");
+        div.setAttribute("id", "dropdownid");
+        contenedorItemsId.appendChild(div);
+        var equipo = document.getElementById("dropdownid");
+        var boton = document.createElement("button");
+        boton.setAttribute(
+          "class",
+          "dropbtn casillero animate__animated animate__fadeIn"
+        );
+        boton.setAttribute("id", "boton" + index);
+        boton.style.backgroundImage =
+          "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
+        boton.style.backgroundSize = "contain";
+        boton.style.backgroundRepeat = "no-repeat";
+        boton.style.backgroundPosition = "center";
+        equipo.appendChild(boton);
+        var div = document.createElement("div");
+        div.setAttribute("class", "dropdown-content");
+        div.setAttribute("id", "dropdown-contentId" + index);
+        equipo.appendChild(div);
+        var desplegable = document.getElementById("dropdown-contentId" + index);
+        let eventoBoton = document.getElementById("boton" + index);
+        eventoBoton.addEventListener(
+          "click",
+          function (event) {
+            var desplegableItem = document.getElementById(
+              "dropdown-contentId" + index
+            );
+            desplegableItem.style.display = "block";
+            var boton = document.getElementById("boton" + index);
+            boton.style.backgroundColor = "#8bd48d94";
+            var mouseX = event.clientX / window.innerWidth + 50;
+            var mouseY = -(event.clientY / window.innerHeight) * 2 + 50;
+            desplegableItem.style.top = mouseY + "px";
+            desplegableItem.style.left = mouseX + "px";
+          },
+          false
+        );
+        eventoBoton.addEventListener(
+          "mouseleave",
+          function (event) {
+            setTimeout(function () {
+              var desplegable = document.getElementById(
+                "dropdown-contentId" + index
+              );
+              desplegable.style.display = "none";
+              var boton = document.getElementById("boton" + index);
+              boton.style.backgroundColor = "";
+            }, 3000);
+          },
+          false
+        );
+        var link = document.createElement("a");
+        link.innerHTML = "Usar";
+        link.setAttribute("class", "accionItemLeyenda");
+        link.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
+        desplegable.appendChild(link);
+        var link = document.createElement("a");
+        link.innerHTML = "Tirar";
+        link.setAttribute("class", "accionItemLeyenda");
+        link.setAttribute("onclick", "opcionesItemInventarioDrop(" + index + ")");
+        desplegable.appendChild(link);
+        var info = document.createElement("div");
+        info.setAttribute("id", "info" + index);
+        info.setAttribute("class", "infoArma");
+        desplegable.appendChild(info);
+        var infoId = document.getElementById("info" + index);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          inventario[index].parent.userData.nombre.toUpperCase();
+        infoId.appendChild(infoItem);
+        if (
+          inventario[index].parent.userData.categoria != "pocion" ||
+          inventario[index].parent.userData.nombre != "Pocion"
+        ) {
+          var infoItem = document.createElement("p");
+          infoItem.innerHTML =
+            "⚔️ ATK: " + inventario[index].parent.userData.ataque;
+          infoId.appendChild(infoItem);
+          var infoItem = document.createElement("p");
+          infoItem.innerHTML =
+            "🛡️ DEF: " + inventario[index].parent.userData.defensa;
+          infoId.appendChild(infoItem);
+          var infoItem = document.createElement("p");
+          infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
+          infoId.appendChild(infoItem);
+        } else {
+          var infoItem = document.createElement("p");
+          infoItem.innerHTML =
+            "🍷 QTY: " + inventario[index].parent.userData.cantidad;
+          infoId.appendChild(infoItem);
+        }
+      }
+      var boton = document.createElement("button");
+      boton.setAttribute("class", "botonSave");
+      boton.setAttribute("onclick", "preferencesClose()");
+      boton.innerHTML = "Cerrar";
+      cartel.appendChild(boton);
+    }
+    window.opcionesItemInventario = opcionesItemInventario;
+    window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
+    function opcionesItemInventario(index) {
+      if (inventario[index]?.parent?.userData?.categoria == "pocion") {
+        jugadorStats.salud += inventario[index]?.parent?.userData?.cantidad;
+        inventario.splice(index, 1);
+        sonidoDropPocion();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "armadura" &&
+        jugadorEquipoEnUso.armadura == ""
+      ) {
+        jugadorEquipoEnUso.armadura = inventario[index];
+        inventario.splice(index, 1);
+        sonidoDropArmadura();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "armadura" &&
+        jugadorEquipoEnUso.armadura != ""
+      ) {
+        inventario.push(jugadorEquipoEnUso.armadura);
+        jugadorEquipoEnUso.armadura = inventario[index];
+        inventario.splice(index, 1);
+        sonidoJuntar();
+        sonidoDropArmadura();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "arma" &&
+        jugadorEquipoEnUso.arma == ""
+      ) {
+        jugadorEquipoEnUso.arma = inventario[index];
+        inventario.splice(index, 1);
+        sonidoDropArma();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "arma" &&
+        jugadorEquipoEnUso.arma != ""
+      ) {
+        inventario.push(jugadorEquipoEnUso.arma);
+        jugadorEquipoEnUso.arma = inventario[index];
+        inventario.splice(index, 1);
+        sonidoJuntar();
+        sonidoDropArma();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "anillo" &&
+        jugadorEquipoEnUso.anillo == ""
+      ) {
+        jugadorEquipoEnUso.anillo = inventario[index];
+        inventario.splice(index, 1);
+        sonidoDropAnillo();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "anillo" &&
+        jugadorEquipoEnUso.anillo != ""
+      ) {
+        inventario.push(jugadorEquipoEnUso.anillo);
+        jugadorEquipoEnUso.anillo = inventario[index];
+        inventario.splice(index, 1);
+        sonidoJuntar();
+        sonidoDropAnillo();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "collar" &&
+        jugadorEquipoEnUso.collar == ""
+      ) {
+        jugadorEquipoEnUso.collar = inventario[index];
+        inventario.splice(index, 1);
+        sonidoDropCollar();
+      }
+      if (
+        inventario[index]?.parent?.userData?.categoria == "collar" &&
+        jugadorEquipoEnUso.collar != ""
+      ) {
+        inventario.push(jugadorEquipoEnUso.collar);
+        jugadorEquipoEnUso.collar = inventario[index];
+        inventario.splice(index, 1);
+        sonidoJuntar();
+        sonidoDropCollar();
+      }
+      cargarInventario();
+      cargarEquipo();
+    }
+    function sacarItemPuesto(tipo) {
+      if (tipo == "armadura" && jugadorEquipoEnUso.armadura != "") {
+        inventario.push(jugadorEquipoEnUso.armadura);
+        jugadorEquipoEnUso.armadura = "";
+        sonidoDropArmadura();
+      }
+      if (tipo == "arma" && jugadorEquipoEnUso.arma != "") {
+        inventario.push(jugadorEquipoEnUso.arma);
+        jugadorEquipoEnUso.arma = "";
+        sonidoDropArma();
+      }
+      if (tipo == "collar" && jugadorEquipoEnUso.collar != "") {
+        inventario.push(jugadorEquipoEnUso.collar);
+        jugadorEquipoEnUso.collar = "";
+        sonidoDropCollar();
+      }
+      if (tipo == "anillo" && jugadorEquipoEnUso.anillo != "") {
+        inventario.push(jugadorEquipoEnUso.anillo);
+        jugadorEquipoEnUso.anillo = "";
+        sonidoDropAnillo();
+      }
+      actualizarStatsJugador();
+      cargarInventario();
+      cargarEquipo();
+    }
+    function cargarEquipo() {
+      var armaduraId = document.getElementById("contenedorArmadura");
+      var armaId = document.getElementById("contenedorArma");
+      var anilloId = document.getElementById("contenedorAnillo");
+      var collarId = document.getElementById("contenedorCollar");
+      if (jugadorEquipoEnUso.armadura != "") {
+        armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
+      } else {
+        armaduraId.style.backgroundImage = "";
+      }
+      if (jugadorEquipoEnUso.arma != "") {
+        armaId.style.backgroundImage = "url(img/item/arma.png)";
+      } else {
+        armaId.style.backgroundImage = "";
+      }
+      if (jugadorEquipoEnUso.anillo != "") {
+        anilloId.style.backgroundImage = "url(img/item/anillo.png)";
+      } else {
+        anilloId.style.backgroundImage = "";
+      }
+      if (jugadorEquipoEnUso.collar != "") {
+        collarId.style.backgroundImage = "url(img/item/collar.png)";
+      } else {
+        collarId.style.backgroundImage = "";
+      }
+    }
+    function opcionesItemInventarioDrop(index) {
+      tirarLoot(inventario[index]);
+      inventario.splice(index, 1);
+      sonidoJuntar();
+      cargarInventario();
+    }
+    function abrirInventario() {
+      var cartel = document.getElementById("optionsMenu");
+      if (cartel.style.display == "block") {
+        cartel.style.display = "none";
+      } else {
+        cartel.style.display = "block";
+      }
+    }
+    function abrirCofre(objeto) {
+      sonidoCofre();
+      var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
+      crearLoot(objeto, randomCantidad);
       var geo = new THREE.BoxGeometry(2, 2, 2);
+      var posX = objeto.position.x;
+      var posZ = objeto.position.z;
       // crear un cofre
-      new GLTFLoader().load("models/cofre.glb", function (gltf) {
-        var random = Math.floor(Math.random() * (800 - 0)) + 0 + j;
+      new GLTFLoader().load("models/cofreabierto.glb", function (gltf) {
+        var random = Math.floor(Math.random() * (800 - 0)) + 0;
         const cofre = gltf.scene;
         cofre.traverse(function (object) {
           if (object.isMesh) object.castShadow = true;
-
           object.userData.draggable = true;
           object.name = "Cofre" + random;
+          cofre.position.set(posX, 0, posZ);
           object.userData = {
             draggable: false,
             name: "Cofre" + random,
             tipo: "cofre",
-            estado: "cerrado",
+            estado: "abierto",
           };
         });
-        var random = Math.floor(Math.random() * (250 - 0)) + 0;
-        cofre.rotation.y = random;
+        cofre.name = "Cofre" + random;
+        cofre.rotation.y = objeto.rotation.y;
         cofre.geometry = geo;
         cofre.scale.set(1.5, 1.5, 1.5);
+        cofre.position.set(posX, 0, posZ);
         cofre.castShadow = true;
         cofre.receiveShadow = true;
-        cofre.position.x =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
-        cofre.position.y = 0;
-        cofre.position.z =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
-
         scene.add(cofre);
-        arraySolidos.push(cofre);
         camera.updateProjectionMatrix();
       });
-    }
-  }
-  function crearParedes(cantidadParedes) {
-    var cantidad = cantidadParedes;
-    // crear una pared
-    const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
-    var loader = new THREE.TextureLoader();
-    var texture2 = loader.load("img/pared.jpg", function (texture) {
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      texture.offset.set(0, 0);
-      texture.repeat.set(20, 5);
-    });
-    var materialPared = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
-      specular: 0x111111,
-      shininess: 10,
-      map: texture2,
-    });
-    const pared = new THREE.Mesh(geoBox, materialPared);
-    pared.castShadow = true;
-    pared.receiveShadow = true;
-    pared.userData.name = "Pared";
-    pared.position.x = 0;
-    pared.position.y = 0;
-    pared.position.z = tamañoCuarto / 2;
-    scene.add(pared);
-    arraySolidos.push(pared);
-    camera.updateProjectionMatrix();
-    const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
-    const pared2 = new THREE.Mesh(geoBox2, materialPared);
-    pared2.castShadow = true;
-    pared2.receiveShadow = true;
-    pared2.userData.name = "Pared2";
-    pared2.position.x = tamañoCuarto / 2;
-    pared2.position.y = 0;
-    pared2.position.z = 0;
-    scene.add(pared2);
-    arraySolidos.push(pared2);
-    camera.updateProjectionMatrix();
-    const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
-    const pared3 = new THREE.Mesh(geoBox3, materialPared);
-    pared3.castShadow = true;
-    pared3.receiveShadow = true;
-    pared3.userData.name = "Pared3";
-    pared3.position.x = -tamañoCuarto / 2;
-    pared3.position.y = 0;
-    pared3.position.z = 0;
-    scene.add(pared3);
-    arraySolidos.push(pared3);
-    camera.updateProjectionMatrix();
-    const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
-    const pared4 = new THREE.Mesh(geoBox4, materialPared);
-    pared4.castShadow = true;
-    pared4.receiveShadow = true;
-    pared4.userData.name = "Pared4";
-    pared4.position.x = 0;
-    pared4.position.y = 0;
-    pared4.position.z = -tamañoCuarto / 2;
-    scene.add(pared4);
-    arraySolidos.push(pared4);
-    pared.userData.ground = false;
-    pared2.userData.ground = false;
-    pared3.userData.ground = false;
-    pared4.userData.ground = false;
-    pared.userData.pared = true;
-    pared2.userData.pared = true;
-    pared3.userData.pared = true;
-    pared4.userData.pared = true;
-    camera.updateProjectionMatrix();
-  }
-  // CONTROL KEYS
-  const keysPressed = {};
-  document.addEventListener(
-    "keydown",
-    (event) => {
-      if (event.shiftKey && characterControls) {
-        characterControls.switchRunToggle();
-      } else {
-        keysPressed[event.key.toLowerCase()] = true;
-      }
-    },
-    false
-  );
-  // ESCUCHANDO TECLAS
-  document.body.onkeydown = function (e) {
-    if (e.keyCode == 32) {
-      characterControls.switchAtacar();
-      sonidoAtacarFlag = 1;
-      sonidoAtacar();
-    }
-    if (e.keyCode == 17) {
-      characterControls.switchRoll();
-      sonidoRoll();
-    }
-    if (e.keyCode == 69) {
-      //E
-      characterControls.switchJuntar();
-    }
-    if (e.keyCode == 73) {
-      //I (inventario)
-      abrirInventario();
-    }
-    if (e.keyCode == 27) {
-      //ESC (cerrar inventario)
-      preferencesClose();
-    }
-    if (
-      e.keyCode == 65 ||
-      e.keyCode == 83 ||
-      e.keyCode == 68 ||
-      e.keyCode == 87
-    ) {
-      //A S D W
-      sonidoCorrerFlag = 1;
-      sonidoCaminar();
-    }
-  };
-  document.body.onkeyup = function (e) {
-    if (e.keyCode == 32) {
-      characterControls.switchAtacarStop();
-      sonidoAtacarStop();
-    }
-    if (e.keyCode == 17) {
-      characterControls.switchRollStop();
-    }
-    if (e.keyCode == 69) {
-      //E
-      characterControls.switchJuntarStop();
-    }
-
-    if (
-      e.keyCode == 65 ||
-      e.keyCode == 83 ||
-      e.keyCode == 68 ||
-      e.keyCode == 87
-    ) {
-      //A S D W
-      sonidoCaminarStop();
-    }
-  };
-  document.addEventListener(
-    "keyup",
-    (event) => {
-      keysPressed[event.key.toLowerCase()] = false;
-    },
-    false
-  );
-
-  const clock = new THREE.Clock();
-  // RESIZE HANDLER
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  }
-  window.addEventListener("resize", onWindowResize);
-  generateFloorBasic();
-  function generateFloorBasic() {
-    const geoPiso = new THREE.PlaneGeometry(
-      tamañoCuarto,
-      tamañoCuarto,
-      tamañoCuarto
-    );
-    const matPiso = new THREE.MeshPhongMaterial({ color: 0x606060 });
-    var loader = new THREE.TextureLoader();
-    var material = new THREE.MeshLambertMaterial({
-      map: loader.load("img/piso.jpg"),
-    });
-
-    var texture = loader.load("img/piso2.jpg", function (texture) {
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      texture.offset.set(0, 0);
-      texture.repeat.set(20, 20);
-    });
-    var materialPiso = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
-      specular: 0x111111,
-      shininess: 10,
-      map: texture,
-    });
-    const pisoSimple = new THREE.Mesh(geoPiso, materialPiso);
-    pisoSimple.castShadow = true;
-    pisoSimple.receiveShadow = true;
-    pisoSimple.rotation.x = -Math.PI / 2;
-    pisoSimple.userData.ground = true;
-    scene.add(pisoSimple);
-  }
-  scene.add(new THREE.AmbientLight(0x6fa8dc, 0.8));
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0);
-  dirLight.position.set(-50, 50, 0);
-  dirLight.castShadow = true;
-  dirLight.shadow.camera.top = 100;
-  dirLight.shadow.camera.bottom = -100;
-  dirLight.shadow.camera.left = -100;
-  dirLight.shadow.camera.right = 100;
-  dirLight.shadow.camera.near = 0.1;
-  dirLight.shadow.camera.far = 100;
-  dirLight.shadow.mapSize.width = 4096;
-  dirLight.shadow.mapSize.height = 4096;
-  scene.add(dirLight);
-  // ANIMATE
-  function animate() {
-    stats.begin();
-    draggObj();
-    lucesAnimar();
-    horaActual();
-    let mixerUpdateDelta = clock.getDelta();
-    if (characterControls) {
-      characterControls.update(mixerUpdateDelta, keysPressed);
-    }
-    orbitControls.update();
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-    chequearChoque();
-    stats.end();
-  }
-  animate();
-  document.body.appendChild(renderer.domElement);
-  function horaActual() {
-    var speed = 10000;
-    let clockDiv = document.querySelector("#clock");
-    let sec = Math.floor(gameTime / 1000) % 60;
-    let min = Math.floor(gameTime / 60000) % 60;
-    let hour = Math.floor(gameTime / 3600000) % 24;
-    clockDiv.textContent = `${hour}:${min}`.replace(/\b\d\b/g, "0$&");
-    gameTime += speed;
-  }
-
-  function crearSkybox() {
-    let materialArray = [];
-    let texture_up = new THREE.TextureLoader().load("img/skybox/up.png");
-    let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.png");
-    let texture_lf = new THREE.TextureLoader().load("img/skybox/lf.png");
-    let texture_ft = new THREE.TextureLoader().load("img/skybox/ft.png");
-    let texture_dn = new THREE.TextureLoader().load("img/skybox/dn.png");
-    let texture_bk = new THREE.TextureLoader().load("img/skybox/bk.png");
-    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
-    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
-    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
-    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
-    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
-    materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
-    for (let i = 0; i < 6; i++) materialArray[i].side = THREE.BackSide;
-    var tamaño = tamañoCuarto * 3;
-    let skyboxGeo = new THREE.BoxGeometry(tamaño, tamaño, tamaño);
-    var skybox = new THREE.Mesh(skyboxGeo, materialArray);
-    skybox.castShadow = true;
-    skybox.receiveShadow = true;
-    skybox.userData = {
-      nombre: "universo",
-      tipo: "infinito",
-    };
-    scene.add(skybox);
-  }
-  function chequearChoque() {
-    if (jugador?.position != undefined) {
-      for (let index = 0; index < arraySolidos.length; index++) {
-        var resultado = checkearSiSeTocaJugador(jugador, arraySolidos[index]);
-        if (resultado == "derecha") {
-          const frenar = new THREE.Vector3(0.5, 0, 0);
-          jugador.position.add(frenar);
-        }
-        if (resultado == "izquierda") {
-          const frenar = new THREE.Vector3(-0.5, 0, 0);
-          jugador.position.add(frenar);
-        }
-        if (resultado == "arriba") {
-          const frenar = new THREE.Vector3(0, 0, -0.5);
-          jugador.position.add(frenar);
-        }
-        if (resultado == "abajo") {
-          const frenar = new THREE.Vector3(0, 0, 0.5);
-          jugador.position.add(frenar);
-        }
-      }
-    }
-  }
-  function cargarInventario() {
-    actualizarStatsJugador();
-    var cartel = document.getElementById("inventarioARellenar");
-    cartel.innerHTML = "";
-    var div = document.createElement("div");
-    div.setAttribute("class", "contenedorItems");
-    div.setAttribute("id", "contenedorItems");
-    cartel.appendChild(div);
-    var contenedorItemsId = document.getElementById("contenedorItems");
-    for (let index = 0; index < inventario.length; index++) {
-      var div = document.createElement("div");
-      div.setAttribute("class", "dropdown");
-      div.setAttribute("id", "dropdownid");
-      contenedorItemsId.appendChild(div);
-      var equipo = document.getElementById("dropdownid");
-      var boton = document.createElement("button");
-      boton.setAttribute(
-        "class",
-        "dropbtn casillero animate__animated animate__fadeIn"
-      );
-      boton.setAttribute("id", "boton" + index);
-      boton.style.backgroundImage =
-        "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
-      boton.style.backgroundSize = "contain";
-      boton.style.backgroundRepeat = "no-repeat";
-      boton.style.backgroundPosition = "center";
-      equipo.appendChild(boton);
-      var div = document.createElement("div");
-      div.setAttribute("class", "dropdown-content");
-      div.setAttribute("id", "dropdown-contentId" + index);
-      equipo.appendChild(div);
-      var desplegable = document.getElementById("dropdown-contentId" + index);
-      let eventoBoton = document.getElementById("boton" + index);
-      eventoBoton.addEventListener(
-        "click",
-        function (event) {
-          var desplegableItem = document.getElementById(
-            "dropdown-contentId" + index
-          );
-          desplegableItem.style.display = "block";
-          var boton = document.getElementById("boton" + index);
-          boton.style.backgroundColor = "#8bd48d94";
-          var mouseX = event.clientX / window.innerWidth + 50;
-          var mouseY = -(event.clientY / window.innerHeight) * 2 + 50;
-          desplegableItem.style.top = mouseY + "px";
-          desplegableItem.style.left = mouseX + "px";
-        },
-        false
-      );
-      eventoBoton.addEventListener(
-        "mouseleave",
-        function (event) {
-          setTimeout(function () {
-            var desplegable = document.getElementById(
-              "dropdown-contentId" + index
-            );
-            desplegable.style.display = "none";
-            var boton = document.getElementById("boton" + index);
-            boton.style.backgroundColor = "";
-          }, 3000);
-        },
-        false
-      );
-      var link = document.createElement("a");
-      link.innerHTML = "Usar";
-      link.setAttribute("class", "accionItemLeyenda");
-      link.setAttribute("onclick", "opcionesItemInventario(" + index + ")");
-      desplegable.appendChild(link);
-      var link = document.createElement("a");
-      link.innerHTML = "Tirar";
-      link.setAttribute("class", "accionItemLeyenda");
-      link.setAttribute("onclick", "opcionesItemInventarioDrop(" + index + ")");
-      desplegable.appendChild(link);
-      var info = document.createElement("div");
-      info.setAttribute("id", "info" + index);
-      info.setAttribute("class", "infoArma");
-      desplegable.appendChild(info);
-      var infoId = document.getElementById("info" + index);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        inventario[index].parent.userData.nombre.toUpperCase();
-      infoId.appendChild(infoItem);
-      if (
-        inventario[index].parent.userData.categoria != "pocion" ||
-        inventario[index].parent.userData.nombre != "Pocion"
-      ) {
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML =
-          "⚔️ ATK: " + inventario[index].parent.userData.ataque;
-        infoId.appendChild(infoItem);
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML =
-          "🛡️ DEF: " + inventario[index].parent.userData.defensa;
-        infoId.appendChild(infoItem);
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
-        infoId.appendChild(infoItem);
-      } else {
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML =
-          "🍷 QTY: " + inventario[index].parent.userData.cantidad;
-        infoId.appendChild(infoItem);
-      }
-    }
-    var boton = document.createElement("button");
-    boton.setAttribute("class", "botonSave");
-    boton.setAttribute("onclick", "preferencesClose()");
-    boton.innerHTML = "Cerrar";
-    cartel.appendChild(boton);
-  }
-  window.opcionesItemInventario = opcionesItemInventario;
-  window.opcionesItemInventarioDrop = opcionesItemInventarioDrop;
-  function opcionesItemInventario(index) {
-    if (inventario[index]?.parent?.userData?.categoria == "pocion") {
-      jugadorStats.salud += inventario[index]?.parent?.userData?.cantidad;
-      inventario.splice(index, 1);
-      sonidoDropPocion();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "armadura" &&
-      jugadorEquipoEnUso.armadura == ""
-    ) {
-      jugadorEquipoEnUso.armadura = inventario[index];
-      inventario.splice(index, 1);
-      sonidoDropArmadura();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "armadura" &&
-      jugadorEquipoEnUso.armadura != ""
-    ) {
-      inventario.push(jugadorEquipoEnUso.armadura);
-      jugadorEquipoEnUso.armadura = inventario[index];
-      inventario.splice(index, 1);
-      sonidoJuntar();
-      sonidoDropArmadura();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "arma" &&
-      jugadorEquipoEnUso.arma == ""
-    ) {
-      jugadorEquipoEnUso.arma = inventario[index];
-      inventario.splice(index, 1);
-      sonidoDropArma();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "arma" &&
-      jugadorEquipoEnUso.arma != ""
-    ) {
-      inventario.push(jugadorEquipoEnUso.arma);
-      jugadorEquipoEnUso.arma = inventario[index];
-      inventario.splice(index, 1);
-      sonidoJuntar();
-      sonidoDropArma();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "anillo" &&
-      jugadorEquipoEnUso.anillo == ""
-    ) {
-      jugadorEquipoEnUso.anillo = inventario[index];
-      inventario.splice(index, 1);
-      sonidoDropAnillo();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "anillo" &&
-      jugadorEquipoEnUso.anillo != ""
-    ) {
-      inventario.push(jugadorEquipoEnUso.anillo);
-      jugadorEquipoEnUso.anillo = inventario[index];
-      inventario.splice(index, 1);
-      sonidoJuntar();
-      sonidoDropAnillo();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "collar" &&
-      jugadorEquipoEnUso.collar == ""
-    ) {
-      jugadorEquipoEnUso.collar = inventario[index];
-      inventario.splice(index, 1);
-      sonidoDropCollar();
-    }
-    if (
-      inventario[index]?.parent?.userData?.categoria == "collar" &&
-      jugadorEquipoEnUso.collar != ""
-    ) {
-      inventario.push(jugadorEquipoEnUso.collar);
-      jugadorEquipoEnUso.collar = inventario[index];
-      inventario.splice(index, 1);
-      sonidoJuntar();
-      sonidoDropCollar();
-    }
-    cargarInventario();
-    cargarEquipo();
-  }
-  function sacarItemPuesto(tipo) {
-    if (tipo == "armadura" && jugadorEquipoEnUso.armadura != "") {
-      inventario.push(jugadorEquipoEnUso.armadura);
-      jugadorEquipoEnUso.armadura = "";
-      sonidoDropArmadura();
-    }
-    if (tipo == "arma" && jugadorEquipoEnUso.arma != "") {
-      inventario.push(jugadorEquipoEnUso.arma);
-      jugadorEquipoEnUso.arma = "";
-      sonidoDropArma();
-    }
-    if (tipo == "collar" && jugadorEquipoEnUso.collar != "") {
-      inventario.push(jugadorEquipoEnUso.collar);
-      jugadorEquipoEnUso.collar = "";
-      sonidoDropCollar();
-    }
-    if (tipo == "anillo" && jugadorEquipoEnUso.anillo != "") {
-      inventario.push(jugadorEquipoEnUso.anillo);
-      jugadorEquipoEnUso.anillo = "";
-      sonidoDropAnillo();
-    }
-    actualizarStatsJugador();
-    cargarInventario();
-    cargarEquipo();
-  }
-  function cargarEquipo() {
-    var armaduraId = document.getElementById("contenedorArmadura");
-    var armaId = document.getElementById("contenedorArma");
-    var anilloId = document.getElementById("contenedorAnillo");
-    var collarId = document.getElementById("contenedorCollar");
-    if (jugadorEquipoEnUso.armadura != "") {
-      armaduraId.style.backgroundImage = "url(img/item/armadura.png)";
-    } else {
-      armaduraId.style.backgroundImage = "";
-    }
-    if (jugadorEquipoEnUso.arma != "") {
-      armaId.style.backgroundImage = "url(img/item/arma.png)";
-    } else {
-      armaId.style.backgroundImage = "";
-    }
-    if (jugadorEquipoEnUso.anillo != "") {
-      anilloId.style.backgroundImage = "url(img/item/anillo.png)";
-    } else {
-      anilloId.style.backgroundImage = "";
-    }
-    if (jugadorEquipoEnUso.collar != "") {
-      collarId.style.backgroundImage = "url(img/item/collar.png)";
-    } else {
-      collarId.style.backgroundImage = "";
-    }
-  }
-  function opcionesItemInventarioDrop(index) {
-    tirarLoot(inventario[index]);
-    inventario.splice(index, 1);
-    sonidoJuntar();
-    cargarInventario();
-  }
-  function abrirInventario() {
-    var cartel = document.getElementById("optionsMenu");
-    if (cartel.style.display == "block") {
-      cartel.style.display = "none";
-    } else {
-      cartel.style.display = "block";
-    }
-  }
-  function abrirCofre(objeto) {
-    sonidoCofre();
-    var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
-    crearLoot(objeto, randomCantidad);
-    var geo = new THREE.BoxGeometry(2, 2, 2);
-    var posX = objeto.position.x;
-    var posZ = objeto.position.z;
-    // crear un cofre
-    new GLTFLoader().load("models/cofreabierto.glb", function (gltf) {
-      var random = Math.floor(Math.random() * (800 - 0)) + 0;
-      const cofre = gltf.scene;
-      cofre.traverse(function (object) {
-        if (object.isMesh) object.castShadow = true;
-        object.userData.draggable = true;
-        object.name = "Cofre" + random;
-        cofre.position.set(posX, 0, posZ);
-        object.userData = {
-          draggable: false,
-          name: "Cofre" + random,
-          tipo: "cofre",
-          estado: "abierto",
-        };
-      });
-      cofre.name = "Cofre" + random;
-      cofre.rotation.y = objeto.rotation.y;
-      cofre.geometry = geo;
-      cofre.scale.set(1.5, 1.5, 1.5);
-      cofre.position.set(posX, 0, posZ);
-      cofre.castShadow = true;
-      cofre.receiveShadow = true;
-      scene.add(cofre);
       camera.updateProjectionMatrix();
-    });
-    camera.updateProjectionMatrix();
-    scene.remove(objeto);
-  }
-  function crearLoot(objeto, cantidad) {
-    for (let index = 0; index < cantidad; index++) {
-      var posX = objeto.position.x;
-      var posZ = objeto.position.z;
-      var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
-      var tipoDeItem = Math.floor(Math.random() * (7 - 1)) + 1;
-      if (tipoDeItem == 1) {
-        var resultadoItem = devolverItemParaLootArmadura(randomItem);
-        sonidoDropArmadura();
+      scene.remove(objeto);
+    }
+    function crearLoot(objeto, cantidad) {
+      for (let index = 0; index < cantidad; index++) {
+        var posX = objeto.position.x;
+        var posZ = objeto.position.z;
+        var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
+        var tipoDeItem = Math.floor(Math.random() * (7 - 1)) + 1;
+        if (tipoDeItem == 1) {
+          var resultadoItem = devolverItemParaLootArmadura(randomItem);
+          sonidoDropArmadura();
+        }
+        if (tipoDeItem == 2) {
+          var resultadoItem = devolverItemParaLootArma(randomItem);
+          sonidoDropArma();
+        }
+        if (tipoDeItem == 3) {
+          var resultadoItem = devolverItemParaLootAnillo(randomItem);
+          sonidoDropAnillo();
+        }
+        if (tipoDeItem == 4) {
+          var resultadoItem = devolverItemParaLootCollar(randomItem);
+          sonidoDropCollar();
+        }
+        if (tipoDeItem == 5) {
+          var resultadoItem = devolverItemParaLootPocion(randomItem);
+          sonidoDropPocion();
+        }
+        if (tipoDeItem == 6) {
+          var resultadoItem = devolverItemParaLootMoneda(randomItem);
+          sonidoDropMoneda();
+        }
+        new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
+          const loot = gltf.scene;
+          loot.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
+          });
+          var randomPosX = Math.floor(Math.random() * (3 - -3)) + -3;
+          var randomPosZ = Math.floor(Math.random() * (3 - -3)) + -3;
+          var geo = new THREE.BoxGeometry(1, 1, 1);
+          loot.position.set(posX + randomPosX, 0.1, posZ + randomPosZ);
+          loot.geometry = geo;
+          loot.scale.set(0.8, 0.8, 0.8);
+          var random = Math.floor(Math.random() * (250 - 0)) + 0;
+          var tipo = tipoLootSegunNombreObjeto3D(loot.children[0].name);
+          if (tipo != "moneda") {
+            loot.rotation.x = -Math.PI / 2;
+            loot.rotation.z = random;
+          }
+          if (tipo == "anillo") {
+            loot.scale.set(0.4, 0.4, 0.4);
+          }
+          if (tipo == "pocion") {
+            loot.scale.set(0.4, 0.4, 0.4);
+          }
+          if (tipo == "moneda") {
+            loot.userData = {
+              nombre: "Monedas",
+              cantidad: Math.floor(Math.random() * (250 - 10)) + 10,
+              tipo: "recurso",
+              categoria: "moneda",
+              imagen: "img/item/moneda.png",
+            };
+          }
+          if (tipo == "pocion") {
+            loot.userData = {
+              nombre: "Pocion",
+              cantidad: Math.floor(Math.random() * (250 - 10)) + 10,
+              tipo: "recurso",
+              categoria: "pocion",
+              imagen: "img/item/pocion.png",
+            };
+          }
+          if (tipo == "armadura") {
+            var nombreRandom =
+              lootArrayArmadura[
+                Math.floor(Math.random() * (lootArrayArmadura.length - 0)) + 0
+              ];
+            loot.userData = {
+              nombre: nombreRandom,
+              ataque: Math.floor(Math.random() * (1250 - 1)) + 1,
+              defensa: Math.floor(Math.random() * (1250 - 1)) + 1,
+              peso: Math.floor(Math.random() * (100 - 1)) + 1,
+              tipo: "recurso",
+              categoria: "armadura",
+              imagen: "img/item/armadura.png",
+              glb: resultadoItem,
+            };
+          }
+          if (tipo == "arma") {
+            var nombreRandom =
+              lootArrayArma[
+                Math.floor(Math.random() * (lootArrayArma.length - 0)) + 0
+              ];
+            loot.userData = {
+              nombre: nombreRandom,
+              ataque: Math.floor(Math.random() * (1250 - 1)) + 1,
+              defensa: Math.floor(Math.random() * (1250 - 1)) + 1,
+              peso: Math.floor(Math.random() * (100 - 1)) + 1,
+              tipo: "recurso",
+              categoria: "arma",
+              imagen: "img/item/arma.png",
+              glb: resultadoItem,
+            };
+          }
+          if (tipo == "collar") {
+            var nombreRandom =
+              lootArrayCollar[
+                Math.floor(Math.random() * (lootArrayCollar.length - 0)) + 0
+              ];
+            loot.userData = {
+              nombre: nombreRandom,
+              ataque: Math.floor(Math.random() * (500 - 1)) + 1,
+              defensa: Math.floor(Math.random() * (500 - 1)) + 1,
+              peso: Math.floor(Math.random() * (5 - 1)) + 1,
+              tipo: "recurso",
+              categoria: "collar",
+              imagen: "img/item/collar.png",
+              glb: resultadoItem,
+            };
+          }
+          if (tipo == "anillo") {
+            var nombreRandom =
+              lootArrayAnillo[
+                Math.floor(Math.random() * (lootArrayAnillo.length - 0)) + 0
+              ];
+            loot.userData = {
+              nombre: nombreRandom,
+              ataque: Math.floor(Math.random() * (300 - 1)) + 1,
+              defensa: Math.floor(Math.random() * (300 - 1)) + 1,
+              peso: Math.floor(Math.random() * (3 - 1)) + 1,
+              tipo: "recurso",
+              categoria: "anillo",
+              imagen: "img/item/anillo.png",
+              glb: resultadoItem,
+            };
+          }
+          var nombreRandomParaBorrar =
+            "objeto" +
+            (Math.floor(Math.random() * (999999 - 0)) + 0) *
+              (Math.floor(Math.random() * (10 - 1)) + 1);
+          loot.name = nombreRandomParaBorrar;
+          scene.add(loot);
+        });
       }
-      if (tipoDeItem == 2) {
-        var resultadoItem = devolverItemParaLootArma(randomItem);
-        sonidoDropArma();
+    }
+    function tipoLootSegunNombreObjeto3D(objeto) {
+      if (objeto.includes("Ingots")) {
+        return "moneda";
       }
-      if (tipoDeItem == 3) {
-        var resultadoItem = devolverItemParaLootAnillo(randomItem);
-        sonidoDropAnillo();
+      if (objeto.includes("Armor")) {
+        return "armadura";
       }
-      if (tipoDeItem == 4) {
-        var resultadoItem = devolverItemParaLootCollar(randomItem);
-        sonidoDropCollar();
+      if (
+        objeto.includes("Sword") ||
+        objeto.includes("Dagger") ||
+        objeto.includes("Axe") ||
+        objeto.includes("Hammer")
+      ) {
+        return "arma";
       }
-      if (tipoDeItem == 5) {
-        var resultadoItem = devolverItemParaLootPocion(randomItem);
-        sonidoDropPocion();
+      if (objeto.includes("Necklace")) {
+        return "collar";
       }
-      if (tipoDeItem == 6) {
-        var resultadoItem = devolverItemParaLootMoneda(randomItem);
-        sonidoDropMoneda();
+      if (objeto.includes("Ring")) {
+        return "anillo";
       }
+      if (objeto.includes("Potion")) {
+        return "pocion";
+      }
+    }
+    function devolverItemParaLootArmadura(randomItem) {
+      var resultadoItem;
+      switch (randomItem) {
+        case 1:
+          resultadoItem = "models/armadura/acero";
+          break;
+        case 2:
+          resultadoItem = "models/armadura/negra";
+        case 3:
+          resultadoItem = "models/armadura/piel";
+          break;
+        case 4:
+          resultadoItem = "models/armadura/oro";
+          break;
+        case 5:
+          resultadoItem = "models/armadura/metal";
+          break;
+        default:
+          resultadoItem = "models/armadura/piel";
+      }
+      return resultadoItem;
+    }
+    function devolverItemParaLootArma(randomItem) {
+      var resultadoItem;
+      switch (randomItem) {
+        case 1:
+          resultadoItem = "models/arma/daga";
+          break;
+        case 2:
+          resultadoItem = "models/arma/espada";
+        case 3:
+          resultadoItem = "models/arma/espadagrande";
+          break;
+        case 4:
+          resultadoItem = "models/arma/hacha";
+          break;
+        case 5:
+          resultadoItem = "models/arma/hachadobleoro";
+          break;
+        case 6:
+          resultadoItem = "models/arma/hachaoro";
+          break;
+        case 7:
+          resultadoItem = "models/arma/martillooro";
+          break;
+        default:
+          resultadoItem = "models/arma/daga";
+      }
+      return resultadoItem;
+    }
+    function devolverItemParaLootAnillo(randomItem) {
+      var resultadoItem;
+      switch (randomItem) {
+        case 1:
+          resultadoItem = "models/anillo/anillo1";
+          break;
+        case 2:
+          resultadoItem = "models/anillo/anillo2";
+        case 3:
+          resultadoItem = "models/anillo/anillo3";
+          break;
+        case 4:
+          resultadoItem = "models/anillo/anillo4";
+          break;
+        default:
+          resultadoItem = "models/anillo/anillo1";
+      }
+      return resultadoItem;
+    }
+    function devolverItemParaLootCollar(randomItem) {
+      var resultadoItem;
+      switch (randomItem) {
+        case 1:
+          resultadoItem = "models/collar/collar1";
+          break;
+        case 2:
+          resultadoItem = "models/collar/collar2";
+        case 3:
+          resultadoItem = "models/collar/collar3";
+          break;
+        default:
+          resultadoItem = "models/collar/collar1";
+      }
+      return resultadoItem;
+    }
+    function devolverItemParaLootPocion(randomItem) {
+      var resultadoItem;
+      switch (randomItem) {
+        case 1:
+          resultadoItem = "models/pocion/pocion";
+          break;
+        default:
+          resultadoItem = "models/pocion/pocion";
+      }
+      return resultadoItem;
+    }
+    function devolverItemParaLootMoneda(randomItem) {
+      var resultadoItem;
+      switch (randomItem) {
+        case 1:
+          resultadoItem = "models/moneda/moneda1";
+          break;
+        default:
+          resultadoItem = "models/moneda/moneda1";
+      }
+      return resultadoItem;
+    }
+    function varSiPuedeLevantarLoot(objeto) {
+      sonidoJuntar();
+      if (objeto.parent.userData.categoria != "moneda") {
+        inventario.push(objeto);
+        var selectedObject = scene.getObjectByName(objeto.parent.name);
+        scene.remove(selectedObject);
+        actualizarStatsJugador();
+        cargarInventario();
+      }
+      if (objeto.parent.userData.categoria == "moneda") {
+        jugadorStats.monedas += objeto.parent.userData.cantidad;
+        var selectedObject = scene.getObjectByName(objeto.parent.name);
+        scene.remove(selectedObject);
+        actualizarStatsJugador();
+        cargarInventario();
+      }
+    }
+    function actualizarStatsJugador() {
+      var arrayAcumuladorAtaque = [];
+      var arrayAcumuladorDefensa = [];
+      var totalAtaque = 0;
+      var totalDefensa = 0;
+      arrayAcumuladorAtaque.push(
+        jugadorEquipoEnUso.armadura?.parent?.userData.ataque
+      );
+      arrayAcumuladorAtaque.push(
+        jugadorEquipoEnUso.arma?.parent?.userData.ataque
+      );
+      arrayAcumuladorAtaque.push(
+        jugadorEquipoEnUso.collar?.parent?.userData.ataque
+      );
+      arrayAcumuladorAtaque.push(
+        jugadorEquipoEnUso.anillo?.parent?.userData.ataque
+      );
+      arrayAcumuladorDefensa.push(
+        jugadorEquipoEnUso.armadura?.parent?.userData.defensa
+      );
+      arrayAcumuladorDefensa.push(
+        jugadorEquipoEnUso.arma?.parent?.userData.defensa
+      );
+      arrayAcumuladorDefensa.push(
+        jugadorEquipoEnUso.collar?.parent?.userData.defensa
+      );
+      arrayAcumuladorDefensa.push(
+        jugadorEquipoEnUso.anillo?.parent?.userData.defensa
+      );
+      for (let i = 0; i < arrayAcumuladorAtaque.length; i++) {
+        if (!isNaN(arrayAcumuladorAtaque[i])) {
+          totalAtaque += arrayAcumuladorAtaque[i];
+        }
+        if (!isNaN(arrayAcumuladorDefensa[i])) {
+          totalDefensa += arrayAcumuladorDefensa[i];
+        }
+      }
+      jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + totalAtaque;
+      jugadorStatsConEquipo.defensa = jugadorStats.defensa + totalDefensa;
+      document.getElementById("monedasId").innerHTML = jugadorStats.monedas;
+      document.getElementById("fuerzaId").innerHTML =
+        jugadorStatsConEquipo.fuerza;
+      document.getElementById("defensaId").innerHTML =
+        jugadorStatsConEquipo.defensa;
+      document.getElementById("saludId").innerHTML = jugadorStats.salud;
+      document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
+      document.getElementById("experienciaId").innerHTML =
+        jugadorStats.experiencia;
+    }
+    var audioCaminar = new Audio("audio/caminar.mp3");
+    var audioAtacar = new Audio("audio/espada.mp3");
+    var audioCofre = new Audio("audio/cofre.mp3");
+    var audioRoll = new Audio("audio/roll.mp3");
+    var musica = new Audio("audio/musica.mp3");
+    var audioArmadura = new Audio("audio/dropArmadura.mp3");
+    var audioArma = new Audio("audio/dropArma.mp3");
+    var audioAnillo = new Audio("audio/dropAnillo.mp3");
+    var audioCollar = new Audio("audio/dropCollar.mp3");
+    var audioPocion = new Audio("audio/dropPocion.mp3");
+    var audioMoneda = new Audio("audio/dropMoneda.mp3");
+    var audioJuntar = new Audio("audio/juntar.mp3");
+    function sonidoCaminar() {
+      if (sonidoCorrerFlag == 1) {
+        audioCaminar.play();
+      }
+    }
+    function sonidoCaminarStop() {
+      audioCaminar.pause();
+      sonidoCorrerFlag = 0;
+    }
+    function sonidoAtacar() {
+      if (sonidoAtacarFlag == 1) {
+        audioAtacar.play();
+      }
+    }
+    function sonidoAtacarStop() {
+      audioAtacar.pause();
+      sonidoAtacarFlag = 0;
+    }
+    function sonidoCofre() {
+      audioCofre.play();
+    }
+    function sonidoRoll() {
+      audioRoll.play();
+    }
+    function musicaPlay() {
+      musica.play();
+      musica.loop = true;
+    }
+    function sonidoJuntar() {
+      audioJuntar.play();
+    }
+    function sonidoDropArmadura() {
+      audioArmadura.play();
+    }
+    function sonidoDropArma() {
+      audioArma.play();
+    }
+    function sonidoDropAnillo() {
+      audioAnillo.play();
+    }
+    function sonidoDropCollar() {
+      audioCollar.play();
+    }
+    function sonidoDropPocion() {
+      audioPocion.play();
+    }
+    function sonidoDropMoneda() {
+      audioMoneda.play();
+    }
+
+    function crearLuces() {
+      var anguloLuz = 1;
+      var luz1 = new THREE.SpotLight(0xe69138, 0.01);
+      luz1.position.set(tamañoCuarto / 2 - 1, 2, tamañoCuarto / 2 - 1);
+      luz1.shadow.camera.far = 50;
+      luz1.shadow.camera.near = 0.01;
+      luz1.castShadow = true;
+      luz1.angle = anguloLuz;
+      luz1.castShadow = true;
+      arrayLuces.push(luz1);
+      scene.add(luz1);
+      var rotacion = 2 * Math.PI * (135 / 360);
+      var despazamientoFuegoX = -0.5;
+      var despazamientoFuegoZ = -0.5;
+      crearAntorcha(
+        tamañoCuarto / 2 - 1,
+        tamañoCuarto / 2 - 1,
+        rotacion,
+        despazamientoFuegoX,
+        despazamientoFuegoZ
+      );
+      var luz2 = new THREE.SpotLight(0xe69138, 0.3);
+      luz2.position.set(-(tamañoCuarto / 2 - 1), 2, -(tamañoCuarto / 2 - 1));
+      luz2.shadow.camera.far = 50;
+      luz2.shadow.camera.near = 0.01;
+      luz2.angle = anguloLuz;
+      luz2.castShadow = true;
+      arrayLuces.push(luz2);
+      scene.add(luz2);
+      var rotacion = 2 * Math.PI * (-45 / 360);
+      var despazamientoFuegoX = +0.5;
+      var despazamientoFuegoZ = +0.5;
+      crearAntorcha(
+        -(tamañoCuarto / 2 - 1),
+        -(tamañoCuarto / 2 - 1),
+        rotacion,
+        despazamientoFuegoX,
+        despazamientoFuegoZ
+      );
+      var luz3 = new THREE.SpotLight(0xe69138, 1.5);
+      luz3.position.set(tamañoCuarto / 2 - 1, 2, -(tamañoCuarto / 2 - 1));
+      luz3.shadow.camera.far = 50;
+      luz3.shadow.camera.near = 0.01;
+      luz3.angle = anguloLuz;
+      luz3.castShadow = true;
+      arrayLuces.push(luz3);
+      scene.add(luz3);
+      var rotacion = 2 * Math.PI * (225 / 360);
+      var despazamientoFuegoX = -0.5;
+      var despazamientoFuegoZ = +0.5;
+      crearAntorcha(
+        tamañoCuarto / 2 - 1,
+        -(tamañoCuarto / 2 - 1),
+        rotacion,
+        despazamientoFuegoX,
+        despazamientoFuegoZ
+      );
+      var luz4 = new THREE.SpotLight(0xe69138, 0.7);
+      luz4.position.set(-(tamañoCuarto / 2 - 1), 2, tamañoCuarto / 2 - 1);
+      luz4.shadow.camera.far = 50;
+      luz4.shadow.camera.near = 0.01;
+      luz4.angle = anguloLuz;
+      luz4.castShadow = true;
+      arrayLuces.push(luz4);
+      scene.add(luz4);
+      var rotacion = Math.PI / 4;
+      var despazamientoFuegoX = 0.5;
+      var despazamientoFuegoZ = -0.5;
+      crearAntorcha(
+        -(tamañoCuarto / 2 - 1),
+        tamañoCuarto / 2 - 1,
+        rotacion,
+        despazamientoFuegoX,
+        despazamientoFuegoZ
+      );
+    }
+    function lucesAnimar() {
+      // for (let i = 0; i < arrayLuces.length; i++) {
+      var colorLuz;
+      var intensidad;
+      var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
+      if (randomColorLuz == 1) {
+        colorLuz = "0xCC0000";
+      }
+      if (randomColorLuz == 2) {
+        colorLuz = "0xE69138";
+      }
+      if (randomColorLuz == 3) {
+        colorLuz = "0xFFD966";
+      } else {
+        colorLuz = "0xF6B26B";
+      }
+      // arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
+      // arrayLuces[i].intensity = intensidad
+
+      // if (arrayLuces[i].intensity < 1.8 && fg == 1) {
+      //   arrayLuces[i].intensity += 0.01;
+
+      //   if (arrayLuces[i].intensity >= 1.8) {
+      //     fg = 0;
+      //   }
+      // }
+      // if (fg == 0) {
+      //   arrayLuces[i].intensity -= 0.01;
+
+      //   if (arrayLuces[i].intensity <= 0) {
+      //     fg = 1;
+      //   }
+      // }
+      for (let w = 0; w < arrayFuegos.length; w++) {
+        var materialFuego = new THREE.MeshPhongMaterial({
+          color: parseInt(colorLuz),
+        });
+        arrayFuegos[w].material = materialFuego;
+        var flag = Math.floor(Math.random() * (20 - 1)) + 1;
+
+        if (flag == 2) {
+          var geo = new THREE.SphereGeometry(0.25, 0.15, 0.15);
+        } else {
+          var geo = new THREE.SphereGeometry(0.2, 0.1, 0.1);
+        }
+        if (flag == 4) {
+          var geo = new THREE.SphereGeometry(0.23, 0.13, 0.13);
+        }
+
+        arrayFuegos[w].geometry = geo;
+      }
+    }
+    // }
+    function crearAntorcha(
+      posX,
+      posZ,
+      rotacion,
+      despazamientoFuegoX,
+      despazamientoFuegoZ
+    ) {
+      new GLTFLoader().load("models/torch.glb", function (gltf) {
+        const test = gltf.scene;
+        test.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+          var loader = new THREE.TextureLoader();
+          var textura = loader.load("img/metal.jpg", function (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.offset.set(0, 0);
+            texture.repeat.set(100, 100);
+          });
+          var texturaMapeada = new THREE.MeshPhongMaterial({
+            specular: 0x111111,
+            shininess: 10,
+            map: textura,
+          });
+          object.material = texturaMapeada;
+        });
+        var geo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        test.geometry = geo;
+        test.position.x = posX;
+        test.position.z = posZ;
+        test.position.y = 3;
+        test.rotation.y = rotacion;
+        test.scale.set(0.8, 0.8, 0.8);
+        scene.add(test);
+        arraySolidos.push(test);
+      });
+      const geometry = new THREE.SphereGeometry(0.2, 0.1, 0.1);
+      const material = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+      const sphere = new THREE.Mesh(geometry, material);
+      sphere.position.x = posX + despazamientoFuegoX;
+      sphere.position.z = posZ + despazamientoFuegoZ;
+      sphere.position.y = 3.6;
+      arrayFuegos.push(sphere);
+      scene.add(sphere);
+      crearColumna(posX - despazamientoFuegoX, posZ - despazamientoFuegoZ);
+    }
+    function crearColumna(posX, posZ) {
+      new GLTFLoader().load("models/columna.glb", function (gltf) {
+        const test = gltf.scene;
+        test.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+          var loader = new THREE.TextureLoader();
+          var textura = loader.load("img/test.jpg", function (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.offset.set(0, 0);
+            texture.repeat.set(500, 500);
+          });
+          var texturaMapeada = new THREE.MeshPhongMaterial({
+            specular: 0x111111,
+            shininess: 0.2,
+            map: textura,
+          });
+          object.material = texturaMapeada;
+        });
+        var geo = new THREE.BoxGeometry(1, 2, 1);
+        test.geometry = geo;
+        test.position.x = posX;
+        test.position.z = posZ;
+        test.scale.set(1, 1.24, 1);
+        scene.add(test);
+        arraySolidos.push(test);
+      });
+    }
+    function verItemPuesto(item) {
+      var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura");
+      var vistaPreviaArmaId = document.getElementById("vistaPreviaArma");
+      var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar");
+      var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo");
+      if (item == "armadura" && jugadorEquipoEnUso.armadura != "") {
+        vistaPreviaArmaduraId.style.display = "block";
+        vistaPreviaArmaduraId.innerHTML = "";
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          jugadorEquipoEnUso.armadura.parent.userData.nombre.toUpperCase();
+        vistaPreviaArmaduraId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚔️ ATK: " + jugadorEquipoEnUso.armadura.parent.userData.ataque;
+        vistaPreviaArmaduraId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🛡️ DEF: " + jugadorEquipoEnUso.armadura.parent.userData.defensa;
+        vistaPreviaArmaduraId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚖️ WT: " + jugadorEquipoEnUso.armadura.parent.userData.peso;
+        vistaPreviaArmaduraId.appendChild(infoItem);
+      }
+      if (item == "arma" && jugadorEquipoEnUso.arma != "") {
+        vistaPreviaArmaId.style.display = "block";
+        vistaPreviaArmaId.innerHTML = "";
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          jugadorEquipoEnUso.arma.parent.userData.nombre.toUpperCase();
+        vistaPreviaArmaId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚔️ ATK: " + jugadorEquipoEnUso.arma.parent.userData.ataque;
+        vistaPreviaArmaId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🛡️ DEF: " + jugadorEquipoEnUso.arma.parent.userData.defensa;
+        vistaPreviaArmaId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚖️ WT: " + jugadorEquipoEnUso.arma.parent.userData.peso;
+        vistaPreviaArmaId.appendChild(infoItem);
+      }
+      if (item == "anillo" && jugadorEquipoEnUso.anillo != "") {
+        vistaPreviaAnilloId.style.display = "block";
+        vistaPreviaAnilloId.innerHTML = "";
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          jugadorEquipoEnUso.anillo.parent.userData.nombre.toUpperCase();
+        vistaPreviaAnilloId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚔️ ATK: " + jugadorEquipoEnUso.anillo.parent.userData.ataque;
+        vistaPreviaAnilloId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🛡️ DEF: " + jugadorEquipoEnUso.anillo.parent.userData.defensa;
+        vistaPreviaAnilloId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚖️ WT: " + jugadorEquipoEnUso.anillo.parent.userData.peso;
+        vistaPreviaAnilloId.appendChild(infoItem);
+      }
+      if (item == "collar" && jugadorEquipoEnUso.collar != "") {
+        vistaPreviaCollarId.style.display = "block";
+        vistaPreviaCollarId.innerHTML = "";
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          jugadorEquipoEnUso.collar.parent.userData.nombre.toUpperCase();
+        vistaPreviaCollarId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚔️ ATK: " + jugadorEquipoEnUso.collar.parent.userData.ataque;
+        vistaPreviaCollarId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🛡️ DEF: " + jugadorEquipoEnUso.collar.parent.userData.defensa;
+        vistaPreviaCollarId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚖️ WT: " + jugadorEquipoEnUso.collar.parent.userData.peso;
+        vistaPreviaCollarId.appendChild(infoItem);
+      }
+    }
+    function verItemPuestoClose() {
+      var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura");
+      var vistaPreviaArmaId = document.getElementById("vistaPreviaArma");
+      var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar");
+      var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo");
+      vistaPreviaArmaduraId.style.display = "none";
+      vistaPreviaArmaId.style.display = "none";
+      vistaPreviaCollarId.style.display = "none";
+      vistaPreviaAnilloId.style.display = "none";
+    }
+    function tirarLoot(objeto) {
+      var posX = jugador.position.x;
+      var posZ = jugador.position.z;
+      var resultadoItem = objeto.parent.userData.glb;
       new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
         const loot = gltf.scene;
         loot.traverse(function (object) {
@@ -1048,709 +1709,66 @@
         loot.position.set(posX + randomPosX, 0.1, posZ + randomPosZ);
         loot.geometry = geo;
         loot.scale.set(0.8, 0.8, 0.8);
-        var random = Math.floor(Math.random() * (250 - 0)) + 0;
-        var tipo = tipoLootSegunNombreObjeto3D(loot.children[0].name);
-        if (tipo != "moneda") {
-          loot.rotation.x = -Math.PI / 2;
-          loot.rotation.z = random;
-        }
-        if (tipo == "anillo") {
-          loot.scale.set(0.4, 0.4, 0.4);
-        }
-        if (tipo == "pocion") {
-          loot.scale.set(0.4, 0.4, 0.4);
-        }
-        if (tipo == "moneda") {
-          loot.userData = {
-            nombre: "Monedas",
-            cantidad: Math.floor(Math.random() * (250 - 10)) + 10,
-            tipo: "recurso",
-            categoria: "moneda",
-            imagen: "img/item/moneda.png",
-          };
-        }
-        if (tipo == "pocion") {
-          loot.userData = {
-            nombre: "Pocion",
-            cantidad: Math.floor(Math.random() * (250 - 10)) + 10,
-            tipo: "recurso",
-            categoria: "pocion",
-            imagen: "img/item/pocion.png",
-          };
-        }
-        if (tipo == "armadura") {
-          var nombreRandom =
-            lootArrayArmadura[
-              Math.floor(Math.random() * (lootArrayArmadura.length - 0)) + 0
-            ];
-          loot.userData = {
-            nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (1250 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (1250 - 1)) + 1,
-            peso: Math.floor(Math.random() * (100 - 1)) + 1,
-            tipo: "recurso",
-            categoria: "armadura",
-            imagen: "img/item/armadura.png",
-            glb: resultadoItem,
-          };
-        }
-        if (tipo == "arma") {
-          var nombreRandom =
-            lootArrayArma[
-              Math.floor(Math.random() * (lootArrayArma.length - 0)) + 0
-            ];
-          loot.userData = {
-            nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (1250 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (1250 - 1)) + 1,
-            peso: Math.floor(Math.random() * (100 - 1)) + 1,
-            tipo: "recurso",
-            categoria: "arma",
-            imagen: "img/item/arma.png",
-            glb: resultadoItem,
-          };
-        }
-        if (tipo == "collar") {
-          var nombreRandom =
-            lootArrayCollar[
-              Math.floor(Math.random() * (lootArrayCollar.length - 0)) + 0
-            ];
-          loot.userData = {
-            nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (500 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (500 - 1)) + 1,
-            peso: Math.floor(Math.random() * (5 - 1)) + 1,
-            tipo: "recurso",
-            categoria: "collar",
-            imagen: "img/item/collar.png",
-            glb: resultadoItem,
-          };
-        }
-        if (tipo == "anillo") {
-          var nombreRandom =
-            lootArrayAnillo[
-              Math.floor(Math.random() * (lootArrayAnillo.length - 0)) + 0
-            ];
-          loot.userData = {
-            nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (300 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (300 - 1)) + 1,
-            peso: Math.floor(Math.random() * (3 - 1)) + 1,
-            tipo: "recurso",
-            categoria: "anillo",
-            imagen: "img/item/anillo.png",
-            glb: resultadoItem,
-          };
-        }
+        loot.userData = {
+          nombre: objeto.parent.userData.nombre,
+          ataque: objeto.parent.userData.ataque,
+          defensa: objeto.parent.userData.defensa,
+          peso: objeto.parent.userData.peso,
+          tipo: "recurso",
+          categoria: objeto.parent.userData.categoria,
+          imagen: objeto.parent.userData.imagen,
+          glb: objeto.parent.userData.glb,
+        };
         var nombreRandomParaBorrar =
-          "objeto" +
-          (Math.floor(Math.random() * (999999 - 0)) + 0) *
-            (Math.floor(Math.random() * (10 - 1)) + 1);
-        loot.name = nombreRandomParaBorrar;
+            "objeto" +
+            (Math.floor(Math.random() * (999999 - 0)) + 0) *
+              (Math.floor(Math.random() * (10 - 1)) + 1);
+          loot.name = nombreRandomParaBorrar;
+
         scene.add(loot);
       });
     }
-  }
-  function tipoLootSegunNombreObjeto3D(objeto) {
-    if (objeto.includes("Ingots")) {
-      return "moneda";
-    }
-    if (objeto.includes("Armor")) {
-      return "armadura";
-    }
-    if (
-      objeto.includes("Sword") ||
-      objeto.includes("Dagger") ||
-      objeto.includes("Axe") ||
-      objeto.includes("Hammer")
-    ) {
-      return "arma";
-    }
-    if (objeto.includes("Necklace")) {
-      return "collar";
-    }
-    if (objeto.includes("Ring")) {
-      return "anillo";
-    }
-    if (objeto.includes("Potion")) {
-      return "pocion";
-    }
-  }
-  function devolverItemParaLootArmadura(randomItem) {
-    var resultadoItem;
-    switch (randomItem) {
-      case 1:
-        resultadoItem = "models/armadura/acero";
-        break;
-      case 2:
-        resultadoItem = "models/armadura/negra";
-      case 3:
-        resultadoItem = "models/armadura/piel";
-        break;
-      case 4:
-        resultadoItem = "models/armadura/oro";
-        break;
-      case 5:
-        resultadoItem = "models/armadura/metal";
-        break;
-      default:
-        resultadoItem = "models/armadura/piel";
-    }
-    return resultadoItem;
-  }
-  function devolverItemParaLootArma(randomItem) {
-    var resultadoItem;
-    switch (randomItem) {
-      case 1:
-        resultadoItem = "models/arma/daga";
-        break;
-      case 2:
-        resultadoItem = "models/arma/espada";
-      case 3:
-        resultadoItem = "models/arma/espadagrande";
-        break;
-      case 4:
-        resultadoItem = "models/arma/hacha";
-        break;
-      case 5:
-        resultadoItem = "models/arma/hachadobleoro";
-        break;
-      case 6:
-        resultadoItem = "models/arma/hachaoro";
-        break;
-      case 7:
-        resultadoItem = "models/arma/martillooro";
-        break;
-      default:
-        resultadoItem = "models/arma/daga";
-    }
-    return resultadoItem;
-  }
-  function devolverItemParaLootAnillo(randomItem) {
-    var resultadoItem;
-    switch (randomItem) {
-      case 1:
-        resultadoItem = "models/anillo/anillo1";
-        break;
-      case 2:
-        resultadoItem = "models/anillo/anillo2";
-      case 3:
-        resultadoItem = "models/anillo/anillo3";
-        break;
-      case 4:
-        resultadoItem = "models/anillo/anillo4";
-        break;
-      default:
-        resultadoItem = "models/anillo/anillo1";
-    }
-    return resultadoItem;
-  }
-  function devolverItemParaLootCollar(randomItem) {
-    var resultadoItem;
-    switch (randomItem) {
-      case 1:
-        resultadoItem = "models/collar/collar1";
-        break;
-      case 2:
-        resultadoItem = "models/collar/collar2";
-      case 3:
-        resultadoItem = "models/collar/collar3";
-        break;
-      default:
-        resultadoItem = "models/collar/collar1";
-    }
-    return resultadoItem;
-  }
-  function devolverItemParaLootPocion(randomItem) {
-    var resultadoItem;
-    switch (randomItem) {
-      case 1:
-        resultadoItem = "models/pocion/pocion";
-        break;
-      default:
-        resultadoItem = "models/pocion/pocion";
-    }
-    return resultadoItem;
-  }
-  function devolverItemParaLootMoneda(randomItem) {
-    var resultadoItem;
-    switch (randomItem) {
-      case 1:
-        resultadoItem = "models/moneda/moneda1";
-        break;
-      default:
-        resultadoItem = "models/moneda/moneda1";
-    }
-    return resultadoItem;
-  }
-  function varSiPuedeLevantarLoot(objeto) {
-    sonidoJuntar();
-
-    if (objeto.parent.userData.categoria != "moneda") {
-      inventario.push(objeto);
-      var selectedObject = scene.getObjectByName(objeto.parent.name);
-      scene.remove(selectedObject);
-      actualizarStatsJugador();
-      cargarInventario();
-    }
-    if (objeto.parent.userData.categoria == "moneda") {
-      jugadorStats.monedas += objeto.parent.userData.cantidad;
-      var selectedObject = scene.getObjectByName(objeto.parent.name);
-      scene.remove(selectedObject);
-      actualizarStatsJugador();
-      cargarInventario();
-    }
-  }
-  function actualizarStatsJugador() {
-    var arrayAcumuladorAtaque = [];
-    var arrayAcumuladorDefensa = [];
-    var totalAtaque = 0;
-    var totalDefensa = 0;
-    arrayAcumuladorAtaque.push(
-      jugadorEquipoEnUso.armadura?.parent?.userData.ataque
-    );
-    arrayAcumuladorAtaque.push(
-      jugadorEquipoEnUso.arma?.parent?.userData.ataque
-    );
-    arrayAcumuladorAtaque.push(
-      jugadorEquipoEnUso.collar?.parent?.userData.ataque
-    );
-    arrayAcumuladorAtaque.push(
-      jugadorEquipoEnUso.anillo?.parent?.userData.ataque
-    );
-    arrayAcumuladorDefensa.push(
-      jugadorEquipoEnUso.armadura?.parent?.userData.defensa
-    );
-    arrayAcumuladorDefensa.push(
-      jugadorEquipoEnUso.arma?.parent?.userData.defensa
-    );
-    arrayAcumuladorDefensa.push(
-      jugadorEquipoEnUso.collar?.parent?.userData.defensa
-    );
-    arrayAcumuladorDefensa.push(
-      jugadorEquipoEnUso.anillo?.parent?.userData.defensa
-    );
-    for (let i = 0; i < arrayAcumuladorAtaque.length; i++) {
-      if (!isNaN(arrayAcumuladorAtaque[i])) {
-        totalAtaque += arrayAcumuladorAtaque[i];
-      }
-      if (!isNaN(arrayAcumuladorDefensa[i])) {
-        totalDefensa += arrayAcumuladorDefensa[i];
-      }
-    }
-    jugadorStatsConEquipo.fuerza = jugadorStats.fuerza + totalAtaque;
-    jugadorStatsConEquipo.defensa = jugadorStats.defensa + totalDefensa;
-    document.getElementById("monedasId").innerHTML = jugadorStats.monedas;
-    document.getElementById("fuerzaId").innerHTML =
-      jugadorStatsConEquipo.fuerza;
-    document.getElementById("defensaId").innerHTML =
-      jugadorStatsConEquipo.defensa;
-    document.getElementById("saludId").innerHTML = jugadorStats.salud;
-    document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
-    document.getElementById("experienciaId").innerHTML =
-      jugadorStats.experiencia;
-  }
-  var audioCaminar = new Audio("audio/caminar.mp3");
-  var audioAtacar = new Audio("audio/espada.mp3");
-  var audioCofre = new Audio("audio/cofre.mp3");
-  var audioRoll = new Audio("audio/roll.mp3");
-  var musica = new Audio("audio/musica.mp3");
-  var audioArmadura = new Audio("audio/dropArmadura.mp3");
-  var audioArma = new Audio("audio/dropArma.mp3");
-  var audioAnillo = new Audio("audio/dropAnillo.mp3");
-  var audioCollar = new Audio("audio/dropCollar.mp3");
-  var audioPocion = new Audio("audio/dropPocion.mp3");
-  var audioMoneda = new Audio("audio/dropMoneda.mp3");
-  var audioJuntar = new Audio("audio/juntar.mp3");
-  function sonidoCaminar() {
-    if (sonidoCorrerFlag == 1) {
-      audioCaminar.play();
-    }
-  }
-  function sonidoCaminarStop() {
-    audioCaminar.pause();
-    sonidoCorrerFlag = 0;
-  }
-  function sonidoAtacar() {
-    if (sonidoAtacarFlag == 1) {
-      audioAtacar.play();
-    }
-  }
-  function sonidoAtacarStop() {
-    audioAtacar.pause();
-    sonidoAtacarFlag = 0;
-  }
-  function sonidoCofre() {
-    audioCofre.play();
-  }
-  function sonidoRoll() {
-    audioRoll.play();
-  }
-  function musicaPlay() {
-    musica.play();
-    musica.loop = true;
-  }
-  function sonidoJuntar() {
-    audioJuntar.play();
-  }
-  function sonidoDropArmadura() {
-    audioArmadura.play();
-  }
-  function sonidoDropArma() {
-    audioArma.play();
-  }
-  function sonidoDropAnillo() {
-    audioAnillo.play();
-  }
-  function sonidoDropCollar() {
-    audioCollar.play();
-  }
-  function sonidoDropPocion() {
-    audioPocion.play();
-  }
-  function sonidoDropMoneda() {
-    audioMoneda.play();
-  }
-
-  function crearLuces() {
-    var anguloLuz = 1;
-
-    var luz1 = new THREE.SpotLight(0xe69138, 0.01);
-    luz1.position.set(tamañoCuarto / 2 - 1, 2, tamañoCuarto / 2 - 1);
-    luz1.shadow.camera.far = 50;
-    luz1.shadow.camera.near = 0.01;
-    luz1.castShadow = true;
-    luz1.angle = anguloLuz;
-    luz1.castShadow = true;
-    arrayLuces.push(luz1);
-    scene.add(luz1);
-    var rotacion = 2 * Math.PI * (135 / 360);
-    var despazamientoFuegoX = -0.5;
-    var despazamientoFuegoZ = -0.5;
-    crearAntorcha(
-      tamañoCuarto / 2 - 1,
-      tamañoCuarto / 2 - 1,
-      rotacion,
-      despazamientoFuegoX,
-      despazamientoFuegoZ
-    );
-    var luz2 = new THREE.SpotLight(0xe69138, 0.3);
-    luz2.position.set(-(tamañoCuarto / 2 - 1), 2, -(tamañoCuarto / 2 - 1));
-    luz2.shadow.camera.far = 50;
-    luz2.shadow.camera.near = 0.01;
-    luz2.angle = anguloLuz;
-    luz2.castShadow = true;
-    arrayLuces.push(luz2);
-    scene.add(luz2);
-    var rotacion = 2 * Math.PI * (-45 / 360);
-    var despazamientoFuegoX = +0.5;
-    var despazamientoFuegoZ = +0.5;
-    crearAntorcha(
-      -(tamañoCuarto / 2 - 1),
-      -(tamañoCuarto / 2 - 1),
-      rotacion,
-      despazamientoFuegoX,
-      despazamientoFuegoZ
-    );
-    var luz3 = new THREE.SpotLight(0xe69138, 1.5);
-    luz3.position.set(tamañoCuarto / 2 - 1, 2, -(tamañoCuarto / 2 - 1));
-    luz3.shadow.camera.far = 50;
-    luz3.shadow.camera.near = 0.01;
-    luz3.angle = anguloLuz;
-    luz3.castShadow = true;
-    arrayLuces.push(luz3);
-    scene.add(luz3);
-    var rotacion = 2 * Math.PI * (225 / 360);
-    var despazamientoFuegoX = -0.5;
-    var despazamientoFuegoZ = +0.5;
-    crearAntorcha(
-      tamañoCuarto / 2 - 1,
-      -(tamañoCuarto / 2 - 1),
-      rotacion,
-      despazamientoFuegoX,
-      despazamientoFuegoZ
-    );
-    var luz4 = new THREE.SpotLight(0xe69138, 0.7);
-    luz4.position.set(-(tamañoCuarto / 2 - 1), 2, tamañoCuarto / 2 - 1);
-    luz4.shadow.camera.far = 50;
-    luz4.shadow.camera.near = 0.01;
-    luz4.angle = anguloLuz;
-    luz4.castShadow = true;
-    arrayLuces.push(luz4);
-    scene.add(luz4);
-    var rotacion = Math.PI / 4;
-    var despazamientoFuegoX = 0.5;
-    var despazamientoFuegoZ = -0.5;
-    crearAntorcha(
-      -(tamañoCuarto / 2 - 1),
-      tamañoCuarto / 2 - 1,
-      rotacion,
-      despazamientoFuegoX,
-      despazamientoFuegoZ
-    );
-  }
-  function lucesAnimar() {
-    // for (let i = 0; i < arrayLuces.length; i++) {
-    var colorLuz;
-    var intensidad;
-    var randomColorLuz = Math.floor(Math.random() * (100 - 0)) + 0;
-    if (randomColorLuz == 1) {
-      colorLuz = "0xCC0000";
-    }
-    if (randomColorLuz == 2) {
-      colorLuz = "0xE69138";
-    }
-    if (randomColorLuz == 3) {
-      colorLuz = "0xFFD966";
-    } else {
-      colorLuz = "0xF6B26B";
-    }
-    // arrayLuces[i].color = new THREE.Color(parseInt(colorLuz));
-    // arrayLuces[i].intensity = intensidad
-
-    // if (arrayLuces[i].intensity < 1.8 && fg == 1) {
-    //   arrayLuces[i].intensity += 0.01;
-
-    //   if (arrayLuces[i].intensity >= 1.8) {
-    //     fg = 0;
-    //   }
-    // }
-    // if (fg == 0) {
-    //   arrayLuces[i].intensity -= 0.01;
-
-    //   if (arrayLuces[i].intensity <= 0) {
-    //     fg = 1;
-    //   }
-    // }
-    for (let w = 0; w < arrayFuegos.length; w++) {
-      var materialFuego = new THREE.MeshPhongMaterial({
-        color: parseInt(colorLuz),
-      });
-      arrayFuegos[w].material = materialFuego;
-      var flag = Math.floor(Math.random() * (20 - 1)) + 1;
-
-      if (flag == 2) {
-        var geo = new THREE.SphereGeometry(0.25, 0.15, 0.15);
-      } else {
-        var geo = new THREE.SphereGeometry(0.2, 0.1, 0.1);
-      }
-      if (flag == 4) {
-        var geo = new THREE.SphereGeometry(0.23, 0.13, 0.13);
-      }
-
-      arrayFuegos[w].geometry = geo;
-    }
-  }
-  // }
-  function crearAntorcha(
-    posX,
-    posZ,
-    rotacion,
-    despazamientoFuegoX,
-    despazamientoFuegoZ
-  ) {
-    new GLTFLoader().load("models/torch.glb", function (gltf) {
-      const test = gltf.scene;
-      test.traverse(function (object) {
-        if (object.isMesh) object.castShadow = true;
-        var loader = new THREE.TextureLoader();
-        var textura = loader.load("img/metal.jpg", function (texture) {
-          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-          texture.offset.set(0, 0);
-          texture.repeat.set(100, 100);
+   function crearEnemigos(){
+    new GLTFLoader().load("models/enemigo/Alien.gltf", function (gltf) {
+        const enemigo = gltf.scene;
+        enemigo.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
         });
-        var texturaMapeada = new THREE.MeshPhongMaterial({
-          specular: 0x111111,
-          shininess: 10,
-          map: textura,
-        });
-        object.material = texturaMapeada;
+        var geo = new THREE.BoxGeometry(1, 2, 1);
+        enemigo.geometry = geo;
+        enemigo.position.x = 5;
+        enemigo.position.z = 5;
+        enemigo.scale.set(1, 1, 1);
+        enemigo.userData = {
+          nombre: "Enemigo",
+          ataque: 2,
+          defensa: 1,
+        };
+        scene.add(enemigo);
+        arrayEnemigos.push(enemigo);
+        arraySolidos.push(enemigo);
       });
-      var geo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-      test.geometry = geo;
-      test.position.x = posX;
-      test.position.z = posZ;
-      test.position.y = 3;
-      test.rotation.y = rotacion;
-      test.scale.set(0.8, 0.8, 0.8);
-      scene.add(test);
-      arraySolidos.push(test);
-    });
-    const geometry = new THREE.SphereGeometry(0.2, 0.1, 0.1);
-    const material = new THREE.MeshPhongMaterial({ color: 0xffff00 });
-    const sphere = new THREE.Mesh(geometry, material);
-    sphere.position.x = posX + despazamientoFuegoX;
-    sphere.position.z = posZ + despazamientoFuegoZ;
-    sphere.position.y = 3.6;
+   }
 
-    arrayFuegos.push(sphere);
-    scene.add(sphere);
-    crearColumna(posX - despazamientoFuegoX, posZ - despazamientoFuegoZ);
-  }
-  function crearColumna(posX, posZ) {
-    new GLTFLoader().load("models/columna.glb", function (gltf) {
-      const test = gltf.scene;
-      test.traverse(function (object) {
-        if (object.isMesh) object.castShadow = true;
-        var loader = new THREE.TextureLoader();
-        var textura = loader.load("img/test.jpg", function (texture) {
-          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-          texture.offset.set(0, 0);
-          texture.repeat.set(500, 500);
-        });
-        var texturaMapeada = new THREE.MeshPhongMaterial({
-          specular: 0x111111,
-          shininess: 0.2,
-          map: textura,
-        });
-        object.material = texturaMapeada;
-      });
-      var geo = new THREE.BoxGeometry(1, 2, 1);
-      test.geometry = geo;
-      test.position.x = posX;
-      test.position.z = posZ;
-      test.scale.set(1, 1.24, 1);
-      scene.add(test);
-      arraySolidos.push(test);
-    });
-  }
-
-  function verItemPuesto(item) {
-    var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura");
-    var vistaPreviaArmaId = document.getElementById("vistaPreviaArma");
-    var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar");
-    var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo");
-
-    if (item == "armadura" && jugadorEquipoEnUso.armadura != "") {
-      vistaPreviaArmaduraId.style.display = "block";
-      vistaPreviaArmaduraId.innerHTML = "";
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        jugadorEquipoEnUso.armadura.parent.userData.nombre.toUpperCase();
-      vistaPreviaArmaduraId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚔️ ATK: " + jugadorEquipoEnUso.armadura.parent.userData.ataque;
-      vistaPreviaArmaduraId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "🛡️ DEF: " + jugadorEquipoEnUso.armadura.parent.userData.defensa;
-      vistaPreviaArmaduraId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚖️ WT: " + jugadorEquipoEnUso.armadura.parent.userData.peso;
-      vistaPreviaArmaduraId.appendChild(infoItem);
+function moverEnemigos(){
+var posPjX = jugador?.position.x
+var posPjZ = jugador?.position.z
+  for (let i = 0; i < arrayEnemigos.length; i++) {
+  var posCPUX = arrayEnemigos[i].position.x
+  var posCPUZ = arrayEnemigos[i].position.z
+    if(posPjX > posCPUX){  
+      arrayEnemigos[i].position.x += 0.05    
     }
-
-    if (item == "arma" && jugadorEquipoEnUso.arma != "") {
-      vistaPreviaArmaId.style.display = "block";
-      vistaPreviaArmaId.innerHTML = "";
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        jugadorEquipoEnUso.arma.parent.userData.nombre.toUpperCase();
-      vistaPreviaArmaId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚔️ ATK: " + jugadorEquipoEnUso.arma.parent.userData.ataque;
-      vistaPreviaArmaId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "🛡️ DEF: " + jugadorEquipoEnUso.arma.parent.userData.defensa;
-      vistaPreviaArmaId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚖️ WT: " + jugadorEquipoEnUso.arma.parent.userData.peso;
-      vistaPreviaArmaId.appendChild(infoItem);
+    if(posPjX < posCPUX){  
+      arrayEnemigos[i].position.x -= 0.05 
     }
-
-    if (item == "anillo" && jugadorEquipoEnUso.anillo != "") {
-      vistaPreviaAnilloId.style.display = "block";
-      vistaPreviaAnilloId.innerHTML = "";
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        jugadorEquipoEnUso.anillo.parent.userData.nombre.toUpperCase();
-      vistaPreviaAnilloId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚔️ ATK: " + jugadorEquipoEnUso.anillo.parent.userData.ataque;
-      vistaPreviaAnilloId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "🛡️ DEF: " + jugadorEquipoEnUso.anillo.parent.userData.defensa;
-      vistaPreviaAnilloId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚖️ WT: " + jugadorEquipoEnUso.anillo.parent.userData.peso;
-      vistaPreviaAnilloId.appendChild(infoItem);
+    if(posPjZ > posCPUZ){ 
+      arrayEnemigos[i].position.z += 0.05 
     }
-
-    if (item == "collar" && jugadorEquipoEnUso.collar != "") {
-      vistaPreviaCollarId.style.display = "block";
-      vistaPreviaCollarId.innerHTML = "";
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        jugadorEquipoEnUso.collar.parent.userData.nombre.toUpperCase();
-      vistaPreviaCollarId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚔️ ATK: " + jugadorEquipoEnUso.collar.parent.userData.ataque;
-      vistaPreviaCollarId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "🛡️ DEF: " + jugadorEquipoEnUso.collar.parent.userData.defensa;
-      vistaPreviaCollarId.appendChild(infoItem);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
-        "⚖️ WT: " + jugadorEquipoEnUso.collar.parent.userData.peso;
-      vistaPreviaCollarId.appendChild(infoItem);
+    if(posPjZ < posCPUZ){   
+      arrayEnemigos[i].position.z -= 0.05
     }
   }
-  function verItemPuestoClose() {
-    var vistaPreviaArmaduraId = document.getElementById("vistaPreviaArmadura");
-    var vistaPreviaArmaId = document.getElementById("vistaPreviaArma");
-    var vistaPreviaCollarId = document.getElementById("vistaPreviaCollar");
-    var vistaPreviaAnilloId = document.getElementById("vistaPreviaAnillo");
-
-    vistaPreviaArmaduraId.style.display = "none";
-    vistaPreviaArmaId.style.display = "none";
-    vistaPreviaCollarId.style.display = "none";
-    vistaPreviaAnilloId.style.display = "none";
-  }
-
-  function tirarLoot(objeto) {
-    var posX = jugador.position.x;
-    var posZ = jugador.position.z;
-    var resultadoItem = objeto.parent.userData.glb;
-    new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
-      const loot = gltf.scene;
-      loot.traverse(function (object) {
-        if (object.isMesh) object.castShadow = true;
-      });
-      var randomPosX = Math.floor(Math.random() * (3 - -3)) + -3;
-      var randomPosZ = Math.floor(Math.random() * (3 - -3)) + -3;
-      var geo = new THREE.BoxGeometry(1, 1, 1);
-      loot.position.set(posX + randomPosX, 0.1, posZ + randomPosZ);
-      loot.geometry = geo;
-      loot.scale.set(0.8, 0.8, 0.8);
-
-      loot.userData = {
-        nombre: objeto.parent.userData.nombre,
-        ataque: objeto.parent.userData.ataque,
-        defensa: objeto.parent.userData.defensa,
-        peso: objeto.parent.userData.peso,
-        tipo: "recurso",
-        categoria: objeto.parent.userData.categoria,
-        imagen: objeto.parent.userData.imagen,
-        glb: objeto.parent.userData.glb,
-      };
-      var nombreRandomParaBorrar =
-          "objeto" +
-          (Math.floor(Math.random() * (999999 - 0)) + 0) *
-            (Math.floor(Math.random() * (10 - 1)) + 1);
-        loot.name = nombreRandomParaBorrar;
-
-      scene.add(loot);
-    });
-  }
+}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
