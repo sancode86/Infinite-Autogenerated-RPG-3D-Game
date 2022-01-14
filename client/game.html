@@ -699,6 +699,36 @@
           }
         }
       }
+
+
+
+      for (let index = 0; index < arraySolidos.length; index++) {
+        for (let w = 0; w < arrayEnemigos.length; w++) {
+            var resultado = checkearSiSeTocaJugador(arrayEnemigos[w], arraySolidos[index]);
+            if (resultado == "derecha") {
+              const frenar = new THREE.Vector3(0.5, 0, 0);
+              arrayEnemigos[w].position.add(frenar);
+            }
+            if (resultado == "izquierda") {
+              const frenar = new THREE.Vector3(-0.5, 0, 0);
+              arrayEnemigos[w].position.add(frenar);
+            }
+            if (resultado == "arriba") {
+              const frenar = new THREE.Vector3(0, 0, -0.5);
+              arrayEnemigos[w].position.add(frenar);
+            }
+            if (resultado == "abajo") {
+              const frenar = new THREE.Vector3(0, 0, 0.5);
+              arrayEnemigos[w].position.add(frenar);
+            }
+          }
+        }
+
+
+
+
+
+
     }
     function cargarInventario() {
       actualizarStatsJugador();
@@ -1754,8 +1784,8 @@ function moverEnemigos(){
 var posPjX = jugador?.position.x
 var posPjZ = jugador?.position.z
   for (let i = 0; i < arrayEnemigos.length; i++) {
-  var posCPUX = arrayEnemigos[i].position.x
-  var posCPUZ = arrayEnemigos[i].position.z
+  var posCPUX = arrayEnemigos[i].position.x;
+  var posCPUZ = arrayEnemigos[i].position.z;
     if(posPjX > posCPUX){  
       arrayEnemigos[i].position.x += 0.05    
     }
