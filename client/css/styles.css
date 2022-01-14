@@ -65,7 +65,7 @@ h2 {
 }
 
 .sidebar {
-  text-align: center;
+  /* text-align: center;
   height: 100%;
   width: fit-content;
   position: fixed;
@@ -73,11 +73,29 @@ h2 {
   top: 0;
   left: 0;
   background-color: #111111c7;
+  overflow-x: hidden; */
+
+
+
+  text-align: center;
+  height: 40px;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  background-color: #111111c7;
   overflow-x: hidden;
+  justify-content: space-between;
+  display: flex;
+  padding: 10px;
+
+
 }
 
 .sidebar a {
-  padding: 8px 12px 8px 12px;
+  padding: 12px 12px 12px 12px;
+  margin-right: 20px;
   text-decoration: none;
   font-size: 20px;
   color: #818181;

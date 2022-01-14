@@ -1754,44 +1754,47 @@
     });
   }
   function crearEnemigos() {
-
-
-    var randomCantidadEnemigos = (Math.floor(Math.random() * (5 - 0)) + 0);
-
-for (let w = 0; w < randomCantidadEnemigos; w++) {
-
-  var randomSkin = (Math.floor(Math.random() * (22 - 1)) + 1);
-
-    new GLTFLoader().load("models/enemigo/" + randomSkin + ".gltf", function (gltf) {
-      const enemigo = gltf.scene;
-      enemigo.traverse(function (object) {
-        if (object.isMesh) object.castShadow = true;
-      });
-      var geo = new THREE.BoxGeometry(1, 2, 1);
-      enemigo.geometry = geo;  
-      enemigo.position.x =  Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) + -(spawnArea - 5);
-      enemigo.position.y = 0;
-      enemigo.position.z = Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) + -(spawnArea - 5);
-      enemigo.scale.set(1, 1, 1);
-      var velocidad = (Math.random() * (0.04 - 0.01)) + 0.01;
-      console.log(velocidad)
-      enemigo.userData = {
-        nombre: "Enemigo",
-        ataque: 2,
-        defensa: 1,
-        velocidad: velocidad
-      };
-      var nombreRandomParaBorrar =
-        "enemigo" +
-        (Math.floor(Math.random() * (999999 - 0)) + 0) *
-          (Math.floor(Math.random() * (10 - 1)) + 1);
-      enemigo.name = nombreRandomParaBorrar;
-      scene.add(enemigo);
-      arrayEnemigos.push(enemigo);
-      arraySolidos.push(enemigo);
-    });
+    var randomCantidadEnemigos = Math.floor(Math.random() * (5 - 0)) + 0;
+    for (let w = 0; w < randomCantidadEnemigos; w++) {
+      var randomSkin = Math.floor(Math.random() * (22 - 1)) + 1;
+      new GLTFLoader().load(
+        "models/enemigo/" + randomSkin + ".gltf",
+        function (gltf) {
+          const enemigo = gltf.scene;
+          enemigo.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
+          });
+          var geo = new THREE.BoxGeometry(1, 2, 1);
+          enemigo.geometry = geo;
+          enemigo.position.x =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          enemigo.position.y = 0;
+          enemigo.position.z =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          enemigo.scale.set(1, 1, 1);
+          var velocidad = Math.random() * (0.06 - 0.01) + 0.01;
+          console.log(velocidad);
+          enemigo.userData = {
+            nombre: "Enemigo",
+            salud: 100,
+            ataque: 2,
+            defensa: 1,
+            velocidad: velocidad,
+          };
+          var nombreRandomParaBorrar =
+            "enemigo" +
+            (Math.floor(Math.random() * (999999 - 0)) + 0) *
+              (Math.floor(Math.random() * (10 - 1)) + 1);
+          enemigo.name = nombreRandomParaBorrar;
+          scene.add(enemigo);
+          arrayEnemigos.push(enemigo);
+          arraySolidos.push(enemigo);
+        }
+      );
+    }
   }
-}
 
   function moverEnemigos() {
     var posPjX = jugador?.position.x;
@@ -1801,10 +1804,10 @@ for (let w = 0; w < randomCantidadEnemigos; w++) {
       var posCPUX = arrayEnemigos[i].position.x;
       var posCPUZ = arrayEnemigos[i].position.z;
       if (posPjX > posCPUX) {
-        arrayEnemigos[i].position.x +=  arrayEnemigos[i].userData.velocidad;
+        arrayEnemigos[i].position.x += arrayEnemigos[i].userData.velocidad;
       }
       if (posPjX < posCPUX) {
-        arrayEnemigos[i].position.x -= arrayEnemigos[i].userData.velocidad;;
+        arrayEnemigos[i].position.x -= arrayEnemigos[i].userData.velocidad;
       }
       if (posPjZ > posCPUZ) {
         arrayEnemigos[i].position.z += arrayEnemigos[i].userData.velocidad;
