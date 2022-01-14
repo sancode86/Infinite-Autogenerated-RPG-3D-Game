@@ -1780,9 +1780,11 @@
       });
    }
 
-function moverEnemigos(){
+function moverEnemigos(){ 
+
 var posPjX = jugador?.position.x
 var posPjZ = jugador?.position.z
+
   for (let i = 0; i < arrayEnemigos.length; i++) {
   var posCPUX = arrayEnemigos[i].position.x;
   var posCPUZ = arrayEnemigos[i].position.z;
@@ -1798,6 +1800,11 @@ var posPjZ = jugador?.position.z
     if(posPjZ < posCPUZ){   
       arrayEnemigos[i].position.z -= 0.05
     }
+
+    var vector = new THREE.Vector3( jugador.position.x, 0, jugador.position.z);
+    arrayEnemigos[i].lookAt(vector)
+
+
   }
 }
 </script>
