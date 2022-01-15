@@ -27,6 +27,7 @@
       <a href="#" onclick="preferencesOpen()"
         ><i class="fa-solid fa-user"></i>
       </a>
+      <p id="saludBarra" class="navItem">🤍 100</p>
     </div>
     <div
       data-tilt
@@ -1357,6 +1358,8 @@
     document.getElementById("defensaId").innerHTML =
       jugadorStatsConEquipo.defensa;
     document.getElementById("saludId").innerHTML = jugadorStats.salud;
+    document.getElementById("saludBarra").innerHTML = "🤍 " + jugadorStats.salud;
+    
     document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
     document.getElementById("experienciaId").innerHTML =
       jugadorStats.experiencia;
@@ -1820,5 +1823,29 @@
       arrayEnemigos[i].lookAt(vector);
     }
   }
+  // function generarNuevaOrientacion() {
+  //   return (direction = new THREE.Vector3(
+  //     Math.random() * 2 - 1,
+  //     1,
+  //     Math.random() * 2 - 1
+  //   ).normalize());
+  // }
+  // for (let j = 0; j < arrayEnemigos.length; j++) {
+  //     var random = Math.floor(Math.random() * (200 - 0)) + 0;
+  //     var orientacion = arrayEnemigos[j].userData.orientacion;
+  //     var vel = arrayEnemigos[j].userData.velocidad;
+  //     if (random == 10) {
+  //       var nuevaOrientacion = generarNuevaOrientacion();
+  //       shift.copy(nuevaOrientacion).multiplyScalar(vel);
+  //       arrayEnemigos[j].position.add(shift);
+  //       arrayEnemigos[j].userData.orientacion = nuevaOrientacion;     
+  //     } else {
+  //       shift.copy(orientacion).multiplyScalar(vel);
+  //       arrayEnemigos[j].position.add(shift);
+        
+  //     }
+  //     //POR HACER
+  //     // rotarSerAlMoverse(arraySeres[j]);
+  //   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
