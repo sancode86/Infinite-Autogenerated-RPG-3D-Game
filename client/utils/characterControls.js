@@ -1,8 +1,9 @@
 import { DIRECTIONS, W, A, S, D, SHIFT } from "./utils.js";
 import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
 
-export class CharacterControls {
+var morir = 0;
 
+export class CharacterControls {
   jugador;
   mixer;
   animationsMap = new Map(); // Walk, Run, Idle
@@ -12,7 +13,7 @@ export class CharacterControls {
   toggleRun = true;
   currentAction;
   // temporary data
-  
+
   walkDirection = new THREE.Vector3();
   rotateAngle = new THREE.Vector3(0, 1, 0);
   rotateQuarternion = new THREE.Quaternion();
@@ -47,62 +48,66 @@ export class CharacterControls {
     this.toggleRun = !this.toggleRun;
   }
   switchAtacar() {
-    // console.log("atacar");
     this.atacar = 1;
   }
   switchAtacarStop() {
-    // console.log("stop atacar");
     this.atacar = 0;
   }
   switchRoll() {
-    // console.log("switchRoll");
     this.roll = 1;
-  }  
+  }
   switchRollStop() {
-    // console.log("switchRoll");
     this.roll = 0;
   }
   switchJuntar() {
-    // console.log("juntar");
     this.juntar = 1;
   }
-
   switchMorir() {
-    // console.log("juntar");
     this.morir = 1;
- 
+    morir = 1;
   }
   switchMorirStop() {
-    // console.log("juntar");
     this.morir = 0;
   }
-
-
-
+  switchTpose() {
+    this.tpose = 1;
+  }
+  switchGolpeado() {
+    this.golpeado = 1;
+  }
+  switchGolpeadoStop() {
+    this.golpeado = 0;
+  }
   switchJuntarStop() {
     // console.log("juntar");
     this.juntar = 0;
   }
   update(delta, keysPressed) {
-    const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);  
+    const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);
     var play = "";
-    if (directionPressed && this.toggleRun) {
+    if (directionPressed && this.toggleRun && morir == 0) {
       play = "Run";
-    } else if (directionPressed) {
+    } else if (directionPressed && morir == 0) {
       play = "Walk";
     } else {
       play = "Idle_Attacking";
     }
-    if (this.juntar == 1) {
+    if (this.juntar == 1 && morir == 0) {
       play = "PickUp";
     }
     if (this.morir == 1) {
-      play = "Death";    
+      play = "Death";
     }
-    if (this.atacar == 1) {
+    if (this.golpeado == 1) {
+      play = "RecieveHit";
+    }
+    if (this.tpose == 1) {
+      play = "TPose";
+    }
+    if (this.atacar == 1 && morir == 0) {
       play = "Sword_Attack";
     }
-    if (directionPressed && this.roll == 1) {
+    if (directionPressed && this.roll == 1 && morir == 0) {
       play = "Roll";
     }
     if (this.currentAction != play) {
@@ -113,7 +118,11 @@ export class CharacterControls {
       this.currentAction = play;
     }
     this.mixer.update(delta);
-    if (this.currentAction == "Run" || this.currentAction == "Walk" || this.currentAction == "Roll") {
+    if (
+      this.currentAction == "Run" ||
+      this.currentAction == "Walk" ||
+      this.currentAction == "Roll"
+    ) {
       // calculate towards camera direction
       var angleYCameraDirection = Math.atan2(
         this.camera.position.x - this.jugador.position.x,
@@ -136,9 +145,9 @@ export class CharacterControls {
       // run/walk velocity
       var velocity =
         this.currentAction == "Run" ? this.runVelocity : this.walkVelocity;
-        if(this.currentAction == "Roll" ) {
-          velocity = this.rollVelocity;
-        }
+      if (this.currentAction == "Roll") {
+        velocity = this.rollVelocity;
+      }
       // move jugador & camera
       const moveX = -this.walkDirection.x * velocity * delta;
       const moveZ = -this.walkDirection.z * velocity * delta;

@@ -166,6 +166,7 @@
   window.inventario = inventario;
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
+  var  jugadorAtacando = 0;
   var morir = 0;
   var draggable;
   var tamañoCuarto = 50;
@@ -446,13 +447,14 @@
       shininess: 10,
       map: texture2,
     });
+    //pared ATRAS
     const pared = new THREE.Mesh(geoBox, materialPared);
     pared.castShadow = true;
     pared.receiveShadow = true;
     pared.userData.name = "Pared";
     pared.position.x = 0;
     pared.position.y = 0;
-    pared.position.z = tamañoCuarto / 2;
+    pared.position.z = tamañoCuarto / 2;  
     scene.add(pared);
     arraySolidos.push(pared);
     camera.updateProjectionMatrix();
@@ -516,6 +518,7 @@
     if (e.keyCode == 32) {
       characterControls.switchAtacar();
       sonidoAtacarFlag = 1;
+      jugadorAtacando = 1
       sonidoAtacar();
     }
     if (e.keyCode == 17) {
@@ -548,6 +551,7 @@
   document.body.onkeyup = function (e) {
     if (e.keyCode == 32) {
       characterControls.switchAtacarStop();
+      jugadorAtacando = 0
       sonidoAtacarStop();
     }
     if (e.keyCode == 17) {
@@ -1381,7 +1385,7 @@
   var audioMoneda = new Audio("audio/dropMoneda.mp3");
   var audioJuntar = new Audio("audio/juntar.mp3");
   function sonidoCaminar() {
-    if (sonidoCorrerFlag == 1) {
+    if (sonidoCorrerFlag == 1 && morir == 0) {
       audioCaminar.play();
     }
   }
@@ -1798,6 +1802,8 @@
           scene.add(enemigo);
           arrayEnemigos.push(enemigo);
           arraySolidos.push(enemigo);
+
+
         }
       );
     }
@@ -1806,25 +1812,30 @@
   function moverEnemigos() {
     var posPjX = jugador?.position.x;
     var posPjZ = jugador?.position.z;
+    if (morir == 0) {
+      for (let i = 0; i < arrayEnemigos.length; i++) {
+        var posCPUX = arrayEnemigos[i].position.x;
+        var posCPUZ = arrayEnemigos[i].position.z;
+        if (posPjX > posCPUX) {
+          arrayEnemigos[i].position.x += arrayEnemigos[i].userData.velocidad;
+        }
+        if (posPjX < posCPUX) {
+          arrayEnemigos[i].position.x -= arrayEnemigos[i].userData.velocidad;
+        }
+        if (posPjZ > posCPUZ) {
+          arrayEnemigos[i].position.z += arrayEnemigos[i].userData.velocidad;
+        }
+        if (posPjZ < posCPUZ) {
+          arrayEnemigos[i].position.z -= arrayEnemigos[i].userData.velocidad;
+        }
 
-    for (let i = 0; i < arrayEnemigos.length; i++) {
-      var posCPUX = arrayEnemigos[i].position.x;
-      var posCPUZ = arrayEnemigos[i].position.z;
-      if (posPjX > posCPUX) {
-        arrayEnemigos[i].position.x += arrayEnemigos[i].userData.velocidad;
+        var vector = new THREE.Vector3(
+          jugador.position.x,
+          0,
+          jugador.position.z
+        );
+        arrayEnemigos[i].lookAt(vector);
       }
-      if (posPjX < posCPUX) {
-        arrayEnemigos[i].position.x -= arrayEnemigos[i].userData.velocidad;
-      }
-      if (posPjZ > posCPUZ) {
-        arrayEnemigos[i].position.z += arrayEnemigos[i].userData.velocidad;
-      }
-      if (posPjZ < posCPUZ) {
-        arrayEnemigos[i].position.z -= arrayEnemigos[i].userData.velocidad;
-      }
-
-      var vector = new THREE.Vector3(jugador.position.x, 0, jugador.position.z);
-      arrayEnemigos[i].lookAt(vector);
     }
   }
   // function generarNuevaOrientacion() {
@@ -1857,14 +1868,41 @@
       for (let index = 0; index < arrayEnemigos.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arrayEnemigos[index]);
         if (resultado != false) {
-          recibirDaño(arrayEnemigos[index]);
+          console.log(arrayEnemigos[index].userData.salud, " salud enemigo.")
+          recibirDaño(arrayEnemigos[index]);        
+          animacionSerGolpeado();
+          enemigoSonido();
         }
+        if (resultado != false && jugadorAtacando == 1) {
+          causarDaño(index);         
+        }
+        
       }
     }
   }
+  function animacionSerGolpeado(){
+    characterControls.switchGolpeado();
+    setTimeout(function () {
+      characterControls.switchGolpeadoStop();
+        }, 500);
+  }
   function recibirDaño(enemigo) {
-    jugadorStats.salud -= enemigo.userData.ataque;
+    jugadorStats.salud -= enemigo.userData.ataque;   
     actualizarStatsJugador();
+  }
+  function causarDaño(index) {  
+    arrayEnemigos[index].userData.salud -= jugadorStatsConEquipo.fuerza 
+    verSiMonstruoMuere(index);
+  }
+  function verSiMonstruoMuere(enemigo) {
+    if(arrayEnemigos[enemigo].userData.salud <= 0){
+    console.log(arrayEnemigos[enemigo], " muere")
+    var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
+      scene.remove(selectedObject);
+      var buscarEemigo = arraySolidos.indexOf(elemento => elemento.name == enemigo.name)
+      arrayEnemigos.splice(enemigo, 1);
+      arraySolidos.splice(buscarEemigo, 1);
+    }
   }
 
   function chequearMorir() {
@@ -1881,6 +1919,12 @@
         }, 1000);
       }
     }
+  }
+
+  function enemigoSonido() {
+  var random = Math.floor(Math.random() * (5 - 1)) + 1;
+    var audioEnemigo = new Audio("audio/enemigo/"+ random +".mp3");
+      audioEnemigo.play();  
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
