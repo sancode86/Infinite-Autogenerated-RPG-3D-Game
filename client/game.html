@@ -166,7 +166,7 @@
   window.inventario = inventario;
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
-  var  jugadorAtacando = 0;
+  var jugadorAtacando = 0;
   var morir = 0;
   var draggable;
   var tamañoCuarto = 50;
@@ -454,7 +454,7 @@
     pared.userData.name = "Pared";
     pared.position.x = 0;
     pared.position.y = 0;
-    pared.position.z = tamañoCuarto / 2;  
+    pared.position.z = tamañoCuarto / 2;
     scene.add(pared);
     arraySolidos.push(pared);
     camera.updateProjectionMatrix();
@@ -518,7 +518,7 @@
     if (e.keyCode == 32) {
       characterControls.switchAtacar();
       sonidoAtacarFlag = 1;
-      jugadorAtacando = 1
+      jugadorAtacando = 1;
       sonidoAtacar();
     }
     if (e.keyCode == 17) {
@@ -551,7 +551,7 @@
   document.body.onkeyup = function (e) {
     if (e.keyCode == 32) {
       characterControls.switchAtacarStop();
-      jugadorAtacando = 0
+      jugadorAtacando = 0;
       sonidoAtacarStop();
     }
     if (e.keyCode == 17) {
@@ -1802,8 +1802,6 @@
           scene.add(enemigo);
           arrayEnemigos.push(enemigo);
           arraySolidos.push(enemigo);
-
-
         }
       );
     }
@@ -1868,38 +1866,39 @@
       for (let index = 0; index < arrayEnemigos.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arrayEnemigos[index]);
         if (resultado != false) {
-          console.log(arrayEnemigos[index].userData.salud, " salud enemigo.")
-          recibirDaño(arrayEnemigos[index]);        
+          console.log(arrayEnemigos[index].userData.salud, " salud enemigo.");
+          recibirDaño(arrayEnemigos[index]);
           animacionSerGolpeado();
           enemigoSonido();
         }
         if (resultado != false && jugadorAtacando == 1) {
-          causarDaño(index);         
+          causarDaño(index);
         }
-        
       }
     }
   }
-  function animacionSerGolpeado(){
+  function animacionSerGolpeado() {
     characterControls.switchGolpeado();
     setTimeout(function () {
       characterControls.switchGolpeadoStop();
-        }, 500);
+    }, 500);
   }
   function recibirDaño(enemigo) {
-    jugadorStats.salud -= enemigo.userData.ataque;   
+    jugadorStats.salud -= enemigo.userData.ataque;
     actualizarStatsJugador();
   }
-  function causarDaño(index) {  
-    arrayEnemigos[index].userData.salud -= jugadorStatsConEquipo.fuerza 
+  function causarDaño(index) {
+    arrayEnemigos[index].userData.salud -= jugadorStatsConEquipo.fuerza;
     verSiMonstruoMuere(index);
   }
   function verSiMonstruoMuere(enemigo) {
-    if(arrayEnemigos[enemigo].userData.salud <= 0){
-    console.log(arrayEnemigos[enemigo], " muere")
-    var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
+    if (arrayEnemigos[enemigo].userData.salud <= 0) {
+      console.log(arrayEnemigos[enemigo], " muere");
+      var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
       scene.remove(selectedObject);
-      var buscarEemigo = arraySolidos.indexOf(elemento => elemento.name == enemigo.name)
+      var buscarEemigo = arraySolidos.indexOf(
+        (elemento) => elemento.name == enemigo.name
+      );
       arrayEnemigos.splice(enemigo, 1);
       arraySolidos.splice(buscarEemigo, 1);
     }
@@ -1922,9 +1921,39 @@
   }
 
   function enemigoSonido() {
-  var random = Math.floor(Math.random() * (5 - 1)) + 1;
-    var audioEnemigo = new Audio("audio/enemigo/"+ random +".mp3");
-      audioEnemigo.play();  
+    var random = Math.floor(Math.random() * (5 - 1)) + 1;
+    var audioEnemigo = new Audio("audio/enemigo/" + random + ".mp3");
+    audioEnemigo.play();
+  }
+
+  sangre();
+
+  function sangre() {
+    var particleCount = 1800;
+    var particles = new THREE.BoxGeometry(1,1,1);
+    var pMaterial = new THREE.ParticleBasicMaterial({
+      color: 0xffffff,
+      size: 20,
+    });
+
+    // now create the individual particles
+    for (var p = 0; p < particleCount; p++) {
+      // create a particle with random
+      // position values, -250 -> 250
+      var pX = Math.random() * 500 - 250;
+      var pY = Math.random() * 500 - 250;
+      var pZ = Math.random() * 500 - 250;
+      var particle = new THREE.Vertex(new THREE.Vector3(pX, pY, pZ));
+
+      // add it to the geometry
+      particles.vertices.push(particle);
+    }
+
+    // create the particle system
+    var particleSystem = new THREE.ParticleSystem(particles, pMaterial);
+
+    // add it to the scene
+    scene.add(particleSystem);
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
