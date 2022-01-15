@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
 html,
 body {
   margin: 0;
@@ -21,9 +24,7 @@ body {
   cursor: grab;
 }
 label {
-  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
   color: #323232;
   font-weight: bold;
 }
@@ -32,15 +33,11 @@ h1 {
   /* font-family: 'Rubik', sans-serif; */
   font-weight: bold;
   font-style: italic;
-  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
 }
 
 h2 {
-  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
   color: #323232;
   /* font-family: 'Rubik', sans-serif; */
   font-weight: bold;
@@ -125,8 +122,8 @@ h2 {
 }
 .optionsMenu {
   cursor: grab;
-  border: 1px solid #ffffff8f;
-  background-color: #ffffffb3;
+  border: 1px solid #7272728f;
+  background-color: #474747c2;
   width: 450px;
   min-height: 450px;
   margin: auto;
@@ -141,6 +138,12 @@ h2 {
   /* box-shadow: rgb(0 0 0 / 15%) 1.95px 1.95px 2.6px; */
   box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
 }
+.optionsMenu > h1 {
+color: white !important;
+}
+.optionsMenu > p {
+  color: white !important;
+  }
 .options {
   margin: auto;
   width: fit-content;
@@ -160,7 +163,7 @@ h2 {
   color: #fff;
   cursor: pointer;
   display: inline-block;
-  font-family: "Farfetch Basis", "Helvetica Neue", Arial, sans-serif;
+
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -187,9 +190,6 @@ h2 {
 
 .hora {
   color: #818181;
-  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 12px;
   font-weight: 800;
   padding: 4px;
@@ -197,9 +197,9 @@ h2 {
 }
 
 * {
-  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  font-family: 'Roboto', sans-serif;
+   
 }
 .casillero {
   width: 50px;
@@ -259,14 +259,14 @@ h2 {
   border-top: 2px solid rgb(129, 129, 129);
   padding: 5px;
   border-radius: 0px 0px 5px 5px;
-  font-family: "Farfetch Basis", "Helvetica Neue", Arial, sans-serif;
+
 }
 .infoArma > p {
   color: white;
-  font-family: "Farfetch Basis", "Helvetica Neue", Arial, sans-serif;
+
 }
 .accionItemLeyenda {
-  font-family: "Farfetch Basis", "Helvetica Neue", Arial, sans-serif;
+
   font-weight: 600;
 }
 .contenedorItems {
@@ -366,9 +366,15 @@ h2 {
 }
 .statsPj {
   line-height: 0.8;
+  color:  white !important;
+  font-size: large !important;
+}
+.statsPj > h1{
+  color:  white !important;
 }
 .textoStatsPj {
   text-align: left;
+  color:  white;
 }
 
 .vistaPreviaArmadura {

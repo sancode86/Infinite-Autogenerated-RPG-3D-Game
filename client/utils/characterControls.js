@@ -1,6 +1,8 @@
 import { DIRECTIONS, W, A, S, D, SHIFT } from "./utils.js";
 import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
+
 export class CharacterControls {
+
   jugador;
   mixer;
   animationsMap = new Map(); // Walk, Run, Idle
@@ -10,6 +12,7 @@ export class CharacterControls {
   toggleRun = true;
   currentAction;
   // temporary data
+  
   walkDirection = new THREE.Vector3();
   rotateAngle = new THREE.Vector3(0, 1, 0);
   rotateQuarternion = new THREE.Quaternion();
@@ -63,6 +66,19 @@ export class CharacterControls {
     // console.log("juntar");
     this.juntar = 1;
   }
+
+  switchMorir() {
+    // console.log("juntar");
+    this.morir = 1;
+ 
+  }
+  switchMorirStop() {
+    // console.log("juntar");
+    this.morir = 0;
+  }
+
+
+
   switchJuntarStop() {
     // console.log("juntar");
     this.juntar = 0;
@@ -79,6 +95,9 @@ export class CharacterControls {
     }
     if (this.juntar == 1) {
       play = "PickUp";
+    }
+    if (this.morir == 1) {
+      play = "Death";    
     }
     if (this.atacar == 1) {
       play = "Sword_Attack";

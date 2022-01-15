@@ -25,7 +25,7 @@
     <div class="sidebar">
       <div class="hora" id="clock"></div>
       <a href="#" onclick="preferencesOpen()"
-        ><i class="fa-solid fa-user"></i>
+        ><i class="fa-solid fa-briefcase"></i>
       </a>
       <p id="saludBarra" class="navItem">🤍 100</p>
     </div>
@@ -94,7 +94,7 @@
             ></button>
           </th>
           <th id="statsPj" class="statsPj">
-            <h1>Información</h1>
+            <h1>STATS</h1>
             <div class="textoStatsPj">
               <table class="tabla">
                 <tr>
@@ -104,7 +104,7 @@
                     <p>🛡️ Defensa:</p>
                     <p>❤️ Salud:</p>
                     <p>📖 Exp:</p>
-                    <p>💰 Monedas:</p>
+                    <p>💰 Dinero:</p>
                   </th>
 
                   <th>
@@ -132,7 +132,7 @@
 <script>
   $(".js-tilt").tilt({
     glare: true,
-    maxGlare: 0.5,
+    maxGlare: 0.1,
   });
 </script>
 <script type="module">
@@ -166,6 +166,7 @@
   window.inventario = inventario;
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
+  var morir = 0;
   var draggable;
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
@@ -639,6 +640,8 @@
     requestAnimationFrame(animate);
     chequearChoque();
     moverEnemigos();
+    chequearRecibirDaño();
+    chequearMorir();
     stats.end();
   }
   animate();
@@ -1358,8 +1361,9 @@
     document.getElementById("defensaId").innerHTML =
       jugadorStatsConEquipo.defensa;
     document.getElementById("saludId").innerHTML = jugadorStats.salud;
-    document.getElementById("saludBarra").innerHTML = "🤍 " + jugadorStats.salud;
-    
+    document.getElementById("saludBarra").innerHTML =
+      "🤍 " + jugadorStats.salud;
+
     document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
     document.getElementById("experienciaId").innerHTML =
       jugadorStats.experiencia;
@@ -1778,7 +1782,7 @@
             -(spawnArea - 5);
           enemigo.scale.set(1, 1, 1);
           var velocidad = Math.random() * (0.06 - 0.01) + 0.01;
-          console.log(velocidad);
+
           enemigo.userData = {
             nombre: "Enemigo",
             salud: 100,
@@ -1838,14 +1842,45 @@
   //       var nuevaOrientacion = generarNuevaOrientacion();
   //       shift.copy(nuevaOrientacion).multiplyScalar(vel);
   //       arrayEnemigos[j].position.add(shift);
-  //       arrayEnemigos[j].userData.orientacion = nuevaOrientacion;     
+  //       arrayEnemigos[j].userData.orientacion = nuevaOrientacion;
   //     } else {
   //       shift.copy(orientacion).multiplyScalar(vel);
   //       arrayEnemigos[j].position.add(shift);
-        
+
   //     }
   //     //POR HACER
   //     // rotarSerAlMoverse(arraySeres[j]);
   //   }
+
+  function chequearRecibirDaño() {
+    if (jugador?.position != undefined) {
+      for (let index = 0; index < arrayEnemigos.length; index++) {
+        var resultado = checkearSiSeTocaJugador(jugador, arrayEnemigos[index]);
+        if (resultado != false) {
+          recibirDaño(arrayEnemigos[index]);
+        }
+      }
+    }
+  }
+  function recibirDaño(enemigo) {
+    jugadorStats.salud -= enemigo.userData.ataque;
+    actualizarStatsJugador();
+  }
+
+  function chequearMorir() {
+    if (jugador?.position != undefined) {
+      if (jugadorStats.salud <= 0) {
+        morir = 1;
+        characterControls.switchMorir();
+        console.log("moriste");
+      }
+      if (morir == 1) {
+        setTimeout(function () {
+          characterControls.switchMorirStop();
+          jugador.rotation.x = -Math.PI / 2;
+        }, 2000);
+      }
+    }
+  }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
