@@ -186,7 +186,7 @@
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 0;
-  var cantidadPiedras = 10;
+  var cantidadPiedras = 3;
   var cantidadCofres = 10;
   var fg = 1;
   var jugador;
@@ -523,6 +523,7 @@ function crearPiedras(){
     scene.add(pared);
     arraySolidos.push(pared);
     camera.updateProjectionMatrix();
+    //pared DERECHA
     const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
     const pared2 = new THREE.Mesh(geoBox2, materialPared);
     pared2.castShadow = true;
@@ -530,7 +531,7 @@ function crearPiedras(){
     pared2.userData.name = "Pared2";
     pared2.position.x = tamañoCuarto / 2;
     pared2.position.y = 0;
-    pared2.position.z = 0;
+    pared2.position.z = 0;   
     scene.add(pared2);
     arraySolidos.push(pared2);
     camera.updateProjectionMatrix();
@@ -761,18 +762,22 @@ function crearPiedras(){
         if (resultado == "derecha") {
           const frenar = new THREE.Vector3(0.5, 0, 0);
           jugador.position.add(frenar);
+          console.log("D")
         }
         if (resultado == "izquierda") {
           const frenar = new THREE.Vector3(-0.5, 0, 0);
           jugador.position.add(frenar);
+          console.log("IZQ")
         }
         if (resultado == "arriba") {
           const frenar = new THREE.Vector3(0, 0, -0.5);
           jugador.position.add(frenar);
+          console.log("AR")
         }
         if (resultado == "abajo") {
           const frenar = new THREE.Vector3(0, 0, 0.5);
           jugador.position.add(frenar);
+          console.log("AB")
         }
       }
     }
@@ -2096,7 +2101,7 @@ function crearPiedras(){
       segs = 0;
     }
     var segs2 = Math.floor(segs);
-    console.log(segs2);
+ 
     if (bufferActivado === true && segs >= 30) {
       bufferActivado = false;
       segs = 0;
