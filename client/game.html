@@ -166,6 +166,7 @@
     anillo: "",
   };
   var segsCoolDown = 0;
+  var cantidadObjetosRandom = 1
   var coolDownFlag = 0;
   var particulasBuff = [];
   var inventario = [];
@@ -386,6 +387,7 @@
   crearParedes(4);
   cargarInventario();
   crearCofres();
+  crearObjetosRandom();
   crearSkybox();
   crearEnemigos();
   crearPiedras()
@@ -2157,6 +2159,46 @@ function crearPiedras(){
     }
     document.getElementById("morirCartel").style.left = (window.innerWidth/2 - 300) + "px";
     document.getElementById("morirCartel").style.display = "block";
+  }
+
+
+  function crearObjetosRandom(){
+    for (let j = 0; j < cantidadObjetosRandom; j++) {
+      var randomModelos = Math.floor(Math.random() * (9 - 1)) + 1;
+      var geo = new THREE.BoxGeometry(2, 2, 2);
+      // crear un cofre
+      new GLTFLoader().load("models/varios/" + randomModelos + ".glb", function (gltf) {
+        var random = Math.floor(Math.random() * (800 - 0)) + 0 + j;
+        const objetoExtra = gltf.scene;
+        objetoExtra.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+
+          object.userData.draggable = true;
+          object.name = "objetoExtra" + random;
+          object.userData = {
+            draggable: false,
+            name: "objetoExtra" + random,
+            tipo: "objetoExtra",          
+          };
+        });
+        var random = Math.floor(Math.random() * (250 - 0)) + 0;
+        objetoExtra.rotation.y = random;
+        objetoExtra.geometry = geo;
+        objetoExtra.scale.set(1.5, 1.5, 1.5);
+        objetoExtra.castShadow = true;
+        objetoExtra.receiveShadow = true;
+        objetoExtra.position.x =
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
+          objetoExtra.position.y = 0;
+          objetoExtra.position.z =
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
+        scene.add(objetoExtra);
+        arraySolidos.push(objetoExtra);
+        camera.updateProjectionMatrix();
+      });
+    }
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
