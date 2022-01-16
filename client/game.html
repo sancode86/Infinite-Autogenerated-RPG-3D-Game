@@ -27,6 +27,9 @@
       <a href="#" onclick="preferencesOpen()"
         ><i class="fa-solid fa-briefcase"></i>
       </a>
+      <a href="#" onclick="activarBuffer()"
+      ><i class="fa-solid fa-sun"></i>
+    </a>
       <p id="saludBarra" class="navItem">🤍 100</p>
     </div>
     <div
@@ -159,13 +162,17 @@
     collar: "",
     anillo: "",
   };
+  var particulasBuff = [];
   var inventario = [];
+  var bufferActivado = false
   window.verItemPuestoClose = verItemPuestoClose;
   window.verItemPuesto = verItemPuesto;
   window.sacarItemPuesto = sacarItemPuesto;
   window.inventario = inventario;
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
+  window.activarBuffer = activarBuffer;
+  
   var jugadorAtacando = 0;
   var morir = 0;
   var draggable;
@@ -361,6 +368,7 @@
       }
     }
   }
+  buffer();
   crearLuces();
   crearCajas();
   crearParedes(4);
@@ -633,6 +641,7 @@
   function animate() {
     stats.begin();
     draggObj();
+    animarBuffer();
     lucesAnimar();
     horaActual();
     let mixerUpdateDelta = clock.getDelta();
@@ -1888,7 +1897,14 @@
     actualizarStatsJugador();
   }
   function causarDaño(index) {
-    arrayEnemigos[index].userData.salud -= jugadorStatsConEquipo.fuerza;
+
+    if(bufferActivado === true){
+      var extraBuffer = 2
+    }else{
+      var extraBuffer = 1
+    }
+
+    arrayEnemigos[index].userData.salud -= (jugadorStatsConEquipo.fuerza) * extraBuffer;
     verSiMonstruoMuere(index);
   }
   function verSiMonstruoMuere(enemigo) {
@@ -1909,51 +1925,75 @@
       if (jugadorStats.salud <= 0) {
         morir = 1;
         characterControls.switchMorir();
+        bufferActivado = false;
         console.log("moriste");
       }
       if (morir == 1) {
         setTimeout(function () {
           characterControls.switchMorirStop();
-          jugador.rotation.x = -Math.PI / 2;
+          jugador.rotation.x = -Math.PI / 2;     
         }, 1000);
       }
     }
   }
 
   function enemigoSonido() {
-    var random = Math.floor(Math.random() * (5 - 1)) + 1;
-    var audioEnemigo = new Audio("audio/enemigo/" + random + ".mp3");
-    audioEnemigo.play();
-  }
-
-  sangre();
-
-  function sangre() {
-    var particleCount = 1800;
-    var particles = new THREE.BoxGeometry(1,1,1);
-    var pMaterial = new THREE.ParticleBasicMaterial({
-      color: 0xffffff,
-      size: 20,
-    });
-
-    // now create the individual particles
-    for (var p = 0; p < particleCount; p++) {
-      // create a particle with random
-      // position values, -250 -> 250
-      var pX = Math.random() * 500 - 250;
-      var pY = Math.random() * 500 - 250;
-      var pZ = Math.random() * 500 - 250;
-      var particle = new THREE.Vertex(new THREE.Vector3(pX, pY, pZ));
-
-      // add it to the geometry
-      particles.vertices.push(particle);
+    if (morir == 0) {
+      var random = Math.floor(Math.random() * (5 - 1)) + 1;
+      var audioEnemigo = new Audio("audio/enemigo/" + random + ".mp3");
+      audioEnemigo.play();
     }
-
-    // create the particle system
-    var particleSystem = new THREE.ParticleSystem(particles, pMaterial);
-
-    // add it to the scene
-    scene.add(particleSystem);
   }
+
+  function buffer() {
+    var particleCount = 2;
+    var pMaterial = new THREE.PointsMaterial({
+      color: 0xFF0000,
+      size: 10,
+    });
+    const geoBox = new THREE.SphereGeometry(0.1, 0.1, 0.1);
+    for (var p = 0; p < particleCount; p++) {
+      const buff = new THREE.Mesh(geoBox, pMaterial);    
+        if(p/2 == 0){
+          buff.userData.name = 0;      
+        }else{
+          buff.userData.name = 1;      
+        }
+        buff.position.y = -5
+      particulasBuff.push(buff);
+      scene.add(buff);
+    }
+  }
+
+  function animarBuffer() {
+    if(bufferActivado === true){
+    var orbita = 1.8;
+    if (jugador?.position != undefined) {
+      for (var i = 0; i < particulasBuff.length; i++) {
+        var date = Date.now() * 0.006;
+        if(particulasBuff[i].userData.name == 0){          
+        var inversa = -1;
+        }else{
+          var inversa = 1;
+        }
+        particulasBuff[i].position.set(
+          (jugador.position.x + (inversa * (Math.cos(date) * orbita))),
+          0.8,
+          (jugador.position.z +(inversa *(Math.sin(date) * orbita)))
+        );   
+
+      }
+    }
+  }else{
+    for (var i = 0; i < particulasBuff.length; i++) {
+    particulasBuff[i].position.y = -5
+    }
+  }
+}
+function activarBuffer(){
+
+  bufferActivado = !bufferActivado;
+
+}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
