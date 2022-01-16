@@ -27,7 +27,7 @@
       <a href="#" onclick="preferencesOpen()"
         ><i class="fa-solid fa-briefcase"></i>
       </a>
-      <a href="#" onclick="activarBuffer()"><i class="fa-solid fa-sun"></i> </a>
+      <a href="#" onclick="activarBuffer()"><i id="buffer" class="fa-solid fa-sun"></i> </a>
       <p id="saludBarra" class="navItem">🤍 100</p>
     </div>
     <div
@@ -160,6 +160,8 @@
     collar: "",
     anillo: "",
   };
+  var segsCoolDown = 0
+  var coolDownFlag = 0;
   var particulasBuff = [];
   var inventario = [];
   var bufferActivado = false;
@@ -170,7 +172,7 @@
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
   window.activarBuffer = activarBuffer;
-
+  var segs = 0;
   var jugadorAtacando = 0;
   var morir = 0;
   var draggable;
@@ -641,6 +643,8 @@
     draggObj();
     animarBuffer();
     lucesAnimar();
+    duracionBuffer();
+    coolDown();
     horaActual();
     let mixerUpdateDelta = clock.getDelta();
     if (characterControls) {
@@ -1945,7 +1949,7 @@
 
   function buffer() {
     var pMaterial = new THREE.PointsMaterial({
-      color: 0xCC0000,
+      color: 0xcc0000,
       size: 10,
     });
     new GLTFLoader().load("models/arma/espada.glb", function (gltf) {
@@ -1991,7 +1995,7 @@
             jugador.position.x + inversa * (Math.cos(date) * orbita),
             0.8,
             jugador.position.z + inversa * (Math.sin(date) * orbita)
-          );         
+          );
         }
       }
     } else {
@@ -2001,7 +2005,79 @@
     }
   }
   function activarBuffer() {
+    if (coolDownFlag == 0) {
     bufferActivado = !bufferActivado;
+    }
+    if (bufferActivado === true) {
+      duracionBuffer();
+    }
+  }
+
+  function duracionBuffer() {
+    if (bufferActivado === true) {
+      if (gameTime % 2 == 0) {
+        segs += 0.05;
+      }
+    } else {
+      segs = 0;
+    }
+    var segs2 = Math.floor(segs);
+    console.log(segs2);
+    if (bufferActivado === true && segs >= 30) {   
+      bufferActivado = false;
+      segs = 0;
+      coolDownFlag = 1;
+      coolDown();
+    }
+  }
+
+  function coolDown() {
+    if (coolDownFlag == 1) {
+      if (gameTime % 2 == 0) {
+        segsCoolDown += 0.05;
+      }
+      var segs2 = Math.floor(segsCoolDown);
+    
+      mostrarTimerCoolDown(segs2);
+
+      if (segs2 >= 10) {
+        segsCoolDown = 0;
+        coolDownFlag = 0;
+        console.log("cooldown finalizado");
+        var bufferId = document.getElementById("buffer");
+        bufferId.setAttribute("class", "fa-solid fa-sun")
+      }
+    }
+  }
+  function mostrarTimerCoolDown(segundos){
+      var bufferId = document.getElementById("buffer");
+      if(segundos == 9){
+        bufferId.setAttribute("class", "fa-solid fa-1")
+      }
+      if(segundos == 8){
+        bufferId.setAttribute("class", "fa-solid fa-2")
+      }
+      if(segundos == 7){
+        bufferId.setAttribute("class", "fa-solid fa-3")
+      }
+      if(segundos == 6){
+        bufferId.setAttribute("class", "fa-solid fa-4")
+      }
+      if(segundos == 5){
+        bufferId.setAttribute("class", "fa-solid fa-5")
+      }
+      if(segundos == 4){
+        bufferId.setAttribute("class", "fa-solid fa-6")
+      }
+      if(segundos == 3){
+        bufferId.setAttribute("class", "fa-solid fa-7")
+      }
+      if(segundos == 2){
+        bufferId.setAttribute("class", "fa-solid fa-8")
+      }
+      if(segundos == 1){
+        bufferId.setAttribute("class", "fa-solid fa-9")
+      }
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
