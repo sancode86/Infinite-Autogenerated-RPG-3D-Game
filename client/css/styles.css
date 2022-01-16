@@ -80,7 +80,8 @@ h2 {
   left: 0;
   background-color: #111111c7;
   overflow-x: hidden;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  justify-content: center;
   display: flex;
   padding: 10px;
   display: -ms-flexbox;
@@ -190,10 +191,9 @@ color: white !important;
 
 .hora {
   color: #818181;
-  font-size: 12px;
   font-weight: 800;
-  padding: 4px;
-  padding-top: 10px;
+  padding: 20px;
+ 
 }
 
 * {

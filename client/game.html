@@ -170,6 +170,7 @@
   var particulasBuff = [];
   var inventario = [];
   var bufferActivado = false;
+  var sonidoMorirFlag = 0
   window.verItemPuestoClose = verItemPuestoClose;
   window.verItemPuesto = verItemPuesto;
   window.sacarItemPuesto = sacarItemPuesto;
@@ -183,7 +184,7 @@
   var draggable;
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
-  var cantidadCajas = 10;
+  var cantidadCajas = 0;
   var cantidadPiedras = 10;
   var cantidadCofres = 10;
   var fg = 1;
@@ -321,19 +322,15 @@
             !o.object.userData.ground &&
             o.object.userData.pared != true &&
             o.object.userData.nombre != "universo"
-          ) {   
-            console.log(draggable) 
-
+          ) { 
             if(draggable.userData.tipo != "piedra"){
               draggable.position.x = o.point.x;
               draggable.position.z = o.point.z;
             }
-
             if(draggable.userData.tipo == "piedra"){
             draggable.parent.position.x = o.point.x;
             draggable.parent.position.z = o.point.z;
             }
-
           }
         }
       }
@@ -366,7 +363,6 @@
     let l2 = d.position.x - d.geometry.parameters.width / 2;
     let f2 = d.position.z - d.geometry.parameters.depth / 2;
     let B2 = d.position.z + d.geometry.parameters.depth / 2;
-
     if (r1 < l2 || l1 > r2 || f1 > B2 || B1 < f2) {
       return false;
     } else {
@@ -419,9 +415,7 @@
       scene.add(box);
       arraySolidos.push(box);
     }
-
   }
-
 function crearPiedras(){ 
   for (let j = 0; j < cantidadPiedras; j++) {
   const geometriaPiedra = new THREE.BoxGeometry(1, 1, 1);
@@ -462,15 +456,6 @@ function crearPiedras(){
       });
     }
 }
-
-
-
-
-
-
-
-
-
   function crearCofres() {
     for (let j = 0; j < cantidadCofres; j++) {
       var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -1466,11 +1451,31 @@ function crearPiedras(){
   var audioPocion = new Audio("audio/dropPocion.mp3");
   var audioMoneda = new Audio("audio/dropMoneda.mp3");
   var audioJuntar = new Audio("audio/juntar.mp3");
+
+ 
   function sonidoCaminar() {
     if (sonidoCorrerFlag == 1 && morir == 0) {
       audioCaminar.play();
     }
   }
+
+  function sonidoHerirse() {
+    var random = Math.floor(Math.random() * (3 - 1)) + 1;   
+      var audio = new Audio("audio/guerrero/"+random+".mp3");
+      audio.play();  
+  }
+  function sonidoMorir() {
+    if(sonidoMorirFlag == 0){
+
+      var audio = new Audio("audio/guerrero/morir.mp3");
+      audio.play();  
+      sonidoMorirFlag = 1
+    }
+  }
+
+
+
+
   function sonidoCaminarStop() {
     audioCaminar.pause();
     sonidoCorrerFlag = 0;
@@ -1640,7 +1645,6 @@ function crearPiedras(){
       if (flag == 4) {
         var geo = new THREE.SphereGeometry(0.23, 0.13, 0.13);
       }
-
       arrayFuegos[w].geometry = geo;
     }
   }
@@ -1842,7 +1846,6 @@ function crearPiedras(){
         (Math.floor(Math.random() * (999999 - 0)) + 0) *
           (Math.floor(Math.random() * (10 - 1)) + 1);
       loot.name = nombreRandomParaBorrar;
-
       scene.add(loot);
     });
   }
@@ -1888,7 +1891,6 @@ function crearPiedras(){
       );
     }
   }
-
   function moverEnemigos() {
     var posPjX = jugador?.position.x;
     var posPjZ = jugador?.position.z;
@@ -1908,7 +1910,6 @@ function crearPiedras(){
         if (posPjZ < posCPUZ) {
           arrayEnemigos[i].position.z -= arrayEnemigos[i].userData.velocidad;
         }
-
         var vector = new THREE.Vector3(
           jugador.position.x,
           0,
@@ -1975,7 +1976,6 @@ function crearPiedras(){
     } else {
       var extraBuffer = 1;
     }
-
     arrayEnemigos[index].userData.salud -=
       jugadorStatsConEquipo.fuerza * extraBuffer;
     verSiMonstruoMuere(index);
@@ -1983,7 +1983,11 @@ function crearPiedras(){
   function verSiMonstruoMuere(enemigo) {
     if (arrayEnemigos[enemigo].userData.salud <= 0) {
       console.log(arrayEnemigos[enemigo], " muere");
+
+      var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
       var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
+      crearLoot(selectedObject, randomCantidad);
+    
       scene.remove(selectedObject);
       var buscarEemigo = arraySolidos.indexOf(
         (elemento) => elemento.name == enemigo.name
@@ -1992,11 +1996,11 @@ function crearPiedras(){
       arraySolidos.splice(buscarEemigo, 1);
     }
   }
-
   function chequearMorir() {
     if (jugador?.position != undefined) {
       if (jugadorStats.salud <= 0) {
         morir = 1;
+        sonidoMorir();
         characterControls.switchMorir();
         bufferActivado = false;
         apagarLuces();
@@ -2010,7 +2014,6 @@ function crearPiedras(){
       }
     }
   }
-
   function enemigoSonido() {
     if (morir == 0) {
       var random = Math.floor(Math.random() * (5 - 1)) + 1;
@@ -2018,7 +2021,6 @@ function crearPiedras(){
       audioEnemigo.play();
     }
   }
-
   function buffer() {
     var pMaterial = new THREE.PointsMaterial({
       color: 0xcc0000,
@@ -2051,7 +2053,6 @@ function crearPiedras(){
       scene.add(buff);
     });
   }
-
   function animarBuffer() {
     if (bufferActivado === true) {
       var orbita = 1.8;
