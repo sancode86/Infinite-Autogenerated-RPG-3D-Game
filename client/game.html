@@ -22,12 +22,17 @@
   ></script>
   <body>
     <div class="statsDiv" id="statsDiv"></div>
+    <div class="morirCartel" id="morirCartel" style="display: none">
+      <h1 class="glow">HAS MUERTO</h1>
+    </div>
     <div class="sidebar">
       <div class="hora" id="clock"></div>
       <a href="#" onclick="preferencesOpen()"
         ><i class="fa-solid fa-briefcase"></i>
       </a>
-      <a href="#" onclick="activarBuffer()"><i id="buffer" class="fa-solid fa-sun"></i> </a>
+      <a href="#" onclick="activarBuffer()"
+        ><i id="buffer" class="fa-solid fa-sun"></i>
+      </a>
       <p id="saludBarra" class="navItem">🤍 100</p>
     </div>
     <div
@@ -160,7 +165,7 @@
     collar: "",
     anillo: "",
   };
-  var segsCoolDown = 0
+  var segsCoolDown = 0;
   var coolDownFlag = 0;
   var particulasBuff = [];
   var inventario = [];
@@ -624,7 +629,8 @@
     pisoSimple.userData.ground = true;
     scene.add(pisoSimple);
   }
-  scene.add(new THREE.AmbientLight(0x6fa8dc, 0.8));
+  const luzGeneral = new THREE.AmbientLight(0x6fa8dc, 0.8);
+  scene.add(luzGeneral);
   const dirLight = new THREE.DirectionalLight(0xffffff, 0);
   dirLight.position.set(-50, 50, 0);
   dirLight.castShadow = true;
@@ -1928,6 +1934,7 @@
         morir = 1;
         characterControls.switchMorir();
         bufferActivado = false;
+        apagarLuces();
         console.log("moriste");
       }
       if (morir == 1) {
@@ -2006,13 +2013,12 @@
   }
   function activarBuffer() {
     if (coolDownFlag == 0) {
-    bufferActivado = !bufferActivado;
+      bufferActivado = !bufferActivado;
     }
     if (bufferActivado === true) {
       duracionBuffer();
     }
   }
-
   function duracionBuffer() {
     if (bufferActivado === true) {
       if (gameTime % 2 == 0) {
@@ -2023,61 +2029,68 @@
     }
     var segs2 = Math.floor(segs);
     console.log(segs2);
-    if (bufferActivado === true && segs >= 30) {   
+    if (bufferActivado === true && segs >= 30) {
       bufferActivado = false;
       segs = 0;
       coolDownFlag = 1;
       coolDown();
     }
   }
-
   function coolDown() {
     if (coolDownFlag == 1) {
       if (gameTime % 2 == 0) {
         segsCoolDown += 0.05;
       }
       var segs2 = Math.floor(segsCoolDown);
-    
       mostrarTimerCoolDown(segs2);
-
       if (segs2 >= 10) {
         segsCoolDown = 0;
         coolDownFlag = 0;
-        console.log("cooldown finalizado");
         var bufferId = document.getElementById("buffer");
-        bufferId.setAttribute("class", "fa-solid fa-sun")
+        bufferId.setAttribute("class", "fa-solid fa-sun");
       }
     }
   }
-  function mostrarTimerCoolDown(segundos){
-      var bufferId = document.getElementById("buffer");
-      if(segundos == 9){
-        bufferId.setAttribute("class", "fa-solid fa-1")
-      }
-      if(segundos == 8){
-        bufferId.setAttribute("class", "fa-solid fa-2")
-      }
-      if(segundos == 7){
-        bufferId.setAttribute("class", "fa-solid fa-3")
-      }
-      if(segundos == 6){
-        bufferId.setAttribute("class", "fa-solid fa-4")
-      }
-      if(segundos == 5){
-        bufferId.setAttribute("class", "fa-solid fa-5")
-      }
-      if(segundos == 4){
-        bufferId.setAttribute("class", "fa-solid fa-6")
-      }
-      if(segundos == 3){
-        bufferId.setAttribute("class", "fa-solid fa-7")
-      }
-      if(segundos == 2){
-        bufferId.setAttribute("class", "fa-solid fa-8")
-      }
-      if(segundos == 1){
-        bufferId.setAttribute("class", "fa-solid fa-9")
-      }
+  function mostrarTimerCoolDown(segundos) {
+    var bufferId = document.getElementById("buffer");
+    if (segundos == 9) {
+      bufferId.setAttribute("class", "fa-solid fa-1");
+    }
+    if (segundos == 8) {
+      bufferId.setAttribute("class", "fa-solid fa-2");
+    }
+    if (segundos == 7) {
+      bufferId.setAttribute("class", "fa-solid fa-3");
+    }
+    if (segundos == 6) {
+      bufferId.setAttribute("class", "fa-solid fa-4");
+    }
+    if (segundos == 5) {
+      bufferId.setAttribute("class", "fa-solid fa-5");
+    }
+    if (segundos == 4) {
+      bufferId.setAttribute("class", "fa-solid fa-6");
+    }
+    if (segundos == 3) {
+      bufferId.setAttribute("class", "fa-solid fa-7");
+    }
+    if (segundos == 2) {
+      bufferId.setAttribute("class", "fa-solid fa-8");
+    }
+    if (segundos == 1) {
+      bufferId.setAttribute("class", "fa-solid fa-9");
+    }
+  }
+  function apagarLuces() {
+    luzGeneral.color.setHex(0x000000);
+    luzGeneral.intensity = 5;
+
+    for (let i = 0; i < arrayLuces.length; i++) {
+      arrayLuces[i].color.setHex(0x000000);
+      arrayLuces[i].intensity = 5;
+    }
+    document.getElementById("morirCartel").style.left = (window.innerWidth/2 - 300) + "px";
+    document.getElementById("morirCartel").style.display = "block";
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
