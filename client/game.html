@@ -184,6 +184,7 @@
   var tamañoCuarto = 50;
   var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 10;
+  var cantidadPiedras = 10;
   var cantidadCofres = 10;
   var fg = 1;
   var jugador;
@@ -277,7 +278,7 @@
     clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(clicMouse, camera);
     const found = raycaster.intersectObjects(scene.children);
-    if (found.length > 0 && found[0].object.userData.draggable) {
+    if (found.length > 0 && found[0].object.userData.draggable) {    
       draggable = found[0].object;
       document.body.style.cursor = "grab";
     }
@@ -320,9 +321,19 @@
             !o.object.userData.ground &&
             o.object.userData.pared != true &&
             o.object.userData.nombre != "universo"
-          ) {
-            draggable.position.x = o.point.x;
-            draggable.position.z = o.point.z;
+          ) {   
+            console.log(draggable) 
+
+            if(draggable.userData.tipo != "piedra"){
+              draggable.position.x = o.point.x;
+              draggable.position.z = o.point.z;
+            }
+
+            if(draggable.userData.tipo == "piedra"){
+            draggable.parent.position.x = o.point.x;
+            draggable.parent.position.z = o.point.z;
+            }
+
           }
         }
       }
@@ -381,6 +392,7 @@
   crearCofres();
   crearSkybox();
   crearEnemigos();
+  crearPiedras()
   function crearCajas() {
     for (let j = 0; j < cantidadCajas; j++) {
       // crear una caja
@@ -398,14 +410,67 @@
       box.userData.draggable = true;
       box.userData.name = "Caja" + j;
       box.position.x =
-        Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
       box.position.y = 0.5;
       box.position.z =
-        Math.floor(Math.random() * (spawnArea - -spawnArea)) + -spawnArea;
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
       scene.add(box);
       arraySolidos.push(box);
     }
+
   }
+
+function crearPiedras(){ 
+  for (let j = 0; j < cantidadPiedras; j++) {
+  const geometriaPiedra = new THREE.BoxGeometry(1, 1, 1);
+    var randomSkin = Math.floor(Math.random() * (7 - 1) + 1);
+    new GLTFLoader().load("models/piedra/"+randomSkin+".glb", function (gltf) {
+        var nombrePiedra =
+          "piedra" +
+          (Math.floor(Math.random() * (999999 - 0)) + 0) *
+            (Math.floor(Math.random() * (10 - 1)) + 1);
+        var piedra = gltf.scene;
+        piedra.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+
+          object.userData.draggable = true;
+          object.name = nombrePiedra;
+          object.userData = {
+            draggable: true,
+            name: nombrePiedra,
+            tipo: "piedra"
+          };
+        });
+        var random = Math.floor(Math.random() * (250 - 0)) + 0;
+        piedra.rotation.y = random;
+        piedra.geometry = geometriaPiedra;
+        piedra.scale.set(2, 2, 2);
+        piedra.castShadow = true;
+        piedra.receiveShadow = true;  
+        piedra.position.x =
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
+          piedra.position.y = 0;
+          piedra.position.z =
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
+        scene.add(piedra);     
+        arraySolidos.push(piedra);
+        camera.updateProjectionMatrix();
+      });
+    }
+}
+
+
+
+
+
+
+
+
+
   function crearCofres() {
     for (let j = 0; j < cantidadCofres; j++) {
       var geo = new THREE.BoxGeometry(2, 2, 2);
