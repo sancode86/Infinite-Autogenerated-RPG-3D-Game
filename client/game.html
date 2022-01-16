@@ -27,9 +27,7 @@
       <a href="#" onclick="preferencesOpen()"
         ><i class="fa-solid fa-briefcase"></i>
       </a>
-      <a href="#" onclick="activarBuffer()"
-      ><i class="fa-solid fa-sun"></i>
-    </a>
+      <a href="#" onclick="activarBuffer()"><i class="fa-solid fa-sun"></i> </a>
       <p id="saludBarra" class="navItem">🤍 100</p>
     </div>
     <div
@@ -164,7 +162,7 @@
   };
   var particulasBuff = [];
   var inventario = [];
-  var bufferActivado = false
+  var bufferActivado = false;
   window.verItemPuestoClose = verItemPuestoClose;
   window.verItemPuesto = verItemPuesto;
   window.sacarItemPuesto = sacarItemPuesto;
@@ -172,7 +170,7 @@
   window.jugadorEquipoEnUso = jugadorEquipoEnUso;
   window.jugadorStats = jugadorStats;
   window.activarBuffer = activarBuffer;
-  
+
   var jugadorAtacando = 0;
   var morir = 0;
   var draggable;
@@ -1897,14 +1895,14 @@
     actualizarStatsJugador();
   }
   function causarDaño(index) {
-
-    if(bufferActivado === true){
-      var extraBuffer = 2
-    }else{
-      var extraBuffer = 1
+    if (bufferActivado === true) {
+      var extraBuffer = 2;
+    } else {
+      var extraBuffer = 1;
     }
 
-    arrayEnemigos[index].userData.salud -= (jugadorStatsConEquipo.fuerza) * extraBuffer;
+    arrayEnemigos[index].userData.salud -=
+      jugadorStatsConEquipo.fuerza * extraBuffer;
     verSiMonstruoMuere(index);
   }
   function verSiMonstruoMuere(enemigo) {
@@ -1931,7 +1929,7 @@
       if (morir == 1) {
         setTimeout(function () {
           characterControls.switchMorirStop();
-          jugador.rotation.x = -Math.PI / 2;     
+          jugador.rotation.x = -Math.PI / 2;
         }, 1000);
       }
     }
@@ -1946,54 +1944,64 @@
   }
 
   function buffer() {
-    var particleCount = 2;
     var pMaterial = new THREE.PointsMaterial({
-      color: 0xFF0000,
+      color: 0xCC0000,
       size: 10,
     });
-    const geoBox = new THREE.SphereGeometry(0.1, 0.1, 0.1);
-    for (var p = 0; p < particleCount; p++) {
-      const buff = new THREE.Mesh(geoBox, pMaterial);    
-        if(p/2 == 0){
-          buff.userData.name = 0;      
-        }else{
-          buff.userData.name = 1;      
-        }
-        buff.position.y = -5
+    new GLTFLoader().load("models/arma/espada.glb", function (gltf) {
+      var buff = gltf.scene;
+      buff.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+        object.material = pMaterial;
+      });
+      buff.scale.set(0.5, 0.5, 0.5);
+      buff.userData.name = 0;
+      buff.position.y = -5;
+      buff.material = pMaterial;
       particulasBuff.push(buff);
       scene.add(buff);
-    }
+    });
+    new GLTFLoader().load("models/arma/espada.glb", function (gltf) {
+      var buff = gltf.scene;
+      buff.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+        object.material = pMaterial;
+      });
+      buff.scale.set(0.5, 0.5, 0.5);
+      buff.userData.name = 1;
+      buff.position.y = -5;
+      buff.material = pMaterial;
+      particulasBuff.push(buff);
+      scene.add(buff);
+    });
   }
 
   function animarBuffer() {
-    if(bufferActivado === true){
-    var orbita = 1.8;
-    if (jugador?.position != undefined) {
-      for (var i = 0; i < particulasBuff.length; i++) {
-        var date = Date.now() * 0.006;
-        if(particulasBuff[i].userData.name == 0){          
-        var inversa = -1;
-        }else{
-          var inversa = 1;
+    if (bufferActivado === true) {
+      var orbita = 1.8;
+      if (jugador?.position != undefined) {
+        for (var i = 0; i < particulasBuff.length; i++) {
+          var date = Date.now() * 0.006;
+          if (particulasBuff[i].userData.name == 0) {
+            var inversa = -1;
+          } else {
+            var inversa = 1;
+          }
+          particulasBuff[i].position.set(
+            jugador.position.x + inversa * (Math.cos(date) * orbita),
+            0.8,
+            jugador.position.z + inversa * (Math.sin(date) * orbita)
+          );         
         }
-        particulasBuff[i].position.set(
-          (jugador.position.x + (inversa * (Math.cos(date) * orbita))),
-          0.8,
-          (jugador.position.z +(inversa *(Math.sin(date) * orbita)))
-        );   
-
+      }
+    } else {
+      for (var i = 0; i < particulasBuff.length; i++) {
+        particulasBuff[i].position.y = -5;
       }
     }
-  }else{
-    for (var i = 0; i < particulasBuff.length; i++) {
-    particulasBuff[i].position.y = -5
-    }
   }
-}
-function activarBuffer(){
-
-  bufferActivado = !bufferActivado;
-
-}
+  function activarBuffer() {
+    bufferActivado = !bufferActivado;
+  }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
