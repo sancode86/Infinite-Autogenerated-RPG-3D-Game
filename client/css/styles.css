@@ -504,7 +504,7 @@ color: white !important;
   border: 1px solid #7272728f;
   background-color: #474747c2;
   width: 450px;
-  min-height: 450px;
+  min-height: 160px;
   margin: auto;
   line-height: 2;
   padding: 20px;
@@ -559,4 +559,12 @@ color: white !important;
 .botonSave2:hover,
 .botonSave2:focus {
   opacity: 0.75;
+}
+.mercadoTitulo{
+  line-height: 0.8;
+  color:  white !important;
+  font-size: large !important;
+}
+.dineroMercado{
+  color:  white !important;
 }
