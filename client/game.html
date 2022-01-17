@@ -2055,7 +2055,7 @@
   }
   function verSiMonstruoMuere(enemigo) {
     if (arrayEnemigos[enemigo].userData.salud <= 0) {
-      console.log(arrayEnemigos[enemigo], " muere");
+
       acumularExperiencia("matar");
       var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
       var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
@@ -2077,7 +2077,7 @@
         characterControls.switchMorir();
         bufferActivado = false;
         apagarLuces();
-        console.log("moriste");
+     
       }
       if (morir == 1) {
         setTimeout(function () {
@@ -2391,11 +2391,12 @@ if(posibilidadDeCrearMercado == 7){
       });
   } }
 
+
   function abrirMercado(){
-    
+    // inventarioMercado = []
     var randomCantidadArticulos = Math.floor(Math.random() * (10 - 2)) + 2;
-    crearArticuloVenta(randomCantidadArticulos)
-    crearItemsMercado();
+    crearArticulosVenta(randomCantidadArticulos)
+    rellenarMercado();
    document.getElementById("mercado").style.display = "block"
   }
   function cerrarMercado(){
@@ -2404,20 +2405,20 @@ if(posibilidadDeCrearMercado == 7){
   
 
 
-  function crearItemsMercado(){
+  function rellenarMercado(){
     var contenedor = document.getElementById("contenedorMercado");
 for (let index = 0; index < inventarioMercado.length; index++) {
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown");
-      div.setAttribute("id", "dropdownid");
+      div.setAttribute("id", "dropdownidMercado");
       contenedor.appendChild(div);
-      var equipo = document.getElementById("dropdownid");
+      var equipo = document.getElementById("dropdownidMercado");
       var boton = document.createElement("button");
       boton.setAttribute(
         "class",
         "dropbtn casillero animate__animated animate__fadeIn"
       );
-      boton.setAttribute("id", "boton" + index);
+      boton.setAttribute("id", "botonMercado" + index);
       boton.style.backgroundImage =
         "url(" + JSON.stringify(inventarioMercado[index].userData.imagen) + ")";
       boton.style.backgroundSize = "contain";
@@ -2426,18 +2427,18 @@ for (let index = 0; index < inventarioMercado.length; index++) {
       equipo.appendChild(boton);
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown-content");
-      div.setAttribute("id", "dropdown-contentId" + index);
+      div.setAttribute("id", "dropdown-contentIdMercado" + index);
       equipo.appendChild(div);
-      var desplegable = document.getElementById("dropdown-contentId" + index);
-      let eventoBoton = document.getElementById("boton" + index);
+      var desplegable = document.getElementById("dropdown-contentIdMercado" + index);
+      let eventoBoton = document.getElementById("botonMercado" + index);
       eventoBoton.addEventListener(
         "click",
         function (event) {
           var desplegableItem = document.getElementById(
-            "dropdown-contentId" + index
+            "dropdown-contentIdMercado" + index
           );
           desplegableItem.style.display = "block";
-          var boton = document.getElementById("boton" + index);
+          var boton = document.getElementById("botonMercado" + index);
           boton.style.backgroundColor = "#8bd48d94";
           var mouseX = event.clientX / window.innerWidth + 50;
           var mouseY = -(event.clientY / window.innerHeight) * 2 + 50;
@@ -2451,10 +2452,10 @@ for (let index = 0; index < inventarioMercado.length; index++) {
         function (event) {
           setTimeout(function () {
             var desplegable = document.getElementById(
-              "dropdown-contentId" + index
+              "dropdown-contentIdMercado" + index
             );
             desplegable.style.display = "none";
-            var boton = document.getElementById("boton" + index);
+            var boton = document.getElementById("botonMercado" + index);
             boton.style.backgroundColor = "";
           }, 3000);
         },
@@ -2469,10 +2470,10 @@ for (let index = 0; index < inventarioMercado.length; index++) {
       link.setAttribute("onclick", "comprar(" + index + ")");
       desplegable.appendChild(link);
       var info = document.createElement("div");
-      info.setAttribute("id", "info" + index);
+      info.setAttribute("id", "infoMercado" + index);
       info.setAttribute("class", "infoArma");
       desplegable.appendChild(info);
-      var infoId = document.getElementById("info" + index);
+      var infoId = document.getElementById("infoMercado" + index);
       var infoItem = document.createElement("p");
       infoItem.innerHTML =
       inventarioMercado[index].userData.nombre.toUpperCase();
@@ -2500,7 +2501,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
       }
     }
   }
-  function crearArticuloVenta(cantidad) {  
+  function crearArticulosVenta(cantidad) {  
     for (let index = 0; index < cantidad; index++) {     
       var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
       var tipoDeItem = Math.floor(Math.random() * (6 - 1)) + 1;
@@ -2624,6 +2625,9 @@ for (let index = 0; index < inventarioMercado.length; index++) {
             glb: resultadoItem,
           };
         }
+        loot.parent = {
+          userData: loot.userData,          
+        }
         var nombreRandomParaBorrar =
           "objeto" +
           (Math.floor(Math.random() * (999999 - 0)) + 0) *
@@ -2632,9 +2636,16 @@ for (let index = 0; index < inventarioMercado.length; index++) {
         inventarioMercado.push(loot)
       });
     }
-    console.log(inventarioMercado)
+ 
   }
-  function comprar(){
+  function comprar(index){
+
+    console.log("comprando ",inventarioMercado[index] )
+    console.log("mercado ",inventarioMercado )
+    console.log("inventario ",inventario )
+    inventario.push(inventarioMercado[index])
+    inventarioMercado.splice(index, 1);
+    cargarInventario();
 
 }
 
