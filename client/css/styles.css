@@ -483,3 +483,19 @@ color: white !important;
   font-size: xx-large;
   width: 350px;
 }
+
+.glow2 { 
+  color: #fff;
+  text-align: center;
+  animation: glow2 1s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow2 {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #54e600, 0 0 40px #54e600, 0 0 50px #54e600, 0 0 60px #54e600, 0 0 70px #54e600;
+  }
+  
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #61e29b, 0 0 40px #61e29b, 0 0 50px #61e29b, 0 0 60px #61e29b, 0 0 70px #61e29b, 0 0 80px #61e29b;
+  }
+}
