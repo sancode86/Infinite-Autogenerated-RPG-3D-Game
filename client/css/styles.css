@@ -499,3 +499,64 @@ color: white !important;
     text-shadow: 0 0 20px #fff, 0 0 30px #61e29b, 0 0 40px #61e29b, 0 0 50px #61e29b, 0 0 60px #61e29b, 0 0 70px #61e29b, 0 0 80px #61e29b;
   }
 }
+.mercado {
+  cursor: grab;
+  border: 1px solid #7272728f;
+  background-color: #474747c2;
+  width: 450px;
+  min-height: 450px;
+  margin: auto;
+  line-height: 2;
+  padding: 20px;
+  position: fixed;
+  align-items: center;
+  align-content: center;
+  border-radius: 5px;
+  top: 15%;
+  left: 45%;
+  /* box-shadow: rgb(0 0 0 / 15%) 1.95px 1.95px 2.6px; */
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+}
+.contenedorMercado{
+  min-height: 100px;
+  padding: 5px;
+  width: 440px;
+  margin: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+.botonSave2 {
+  background-color: #222;
+  border-radius: 4px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 5;
+  max-width: 125px;
+  min-height: 44px;
+  min-width: 10px;
+  outline: none;
+  overflow: hidden;
+  padding: 9px 20px 8px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+}
+
+.botonSave2:hover,
+.botonSave2:focus {
+  opacity: 0.75;
+}

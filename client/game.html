@@ -46,6 +46,20 @@
       <p id="saludBarra" class="navItem">🤍 100</p>
     </div>
     <div
+    data-tilt
+    data-tilt-max-glare="1"
+    data-tilt-glare="true"
+    data-tilt-perspective="1000"
+    data-tilt-scale="1"
+    data-tilt-speed="400"
+    id="mercado"
+    class="mercado animate__animated animate__fadeIn center"
+    style="display: none"
+  >
+  <div class="contenedorMercado" id="contenedorMercado"></div>
+  <button class="botonSave2" onclick="cerrarMercado()">Cerrar</button>
+  </div>
+    <div
       data-tilt
       data-tilt-max-glare="1"
       data-tilt-glare="true"
@@ -184,6 +198,8 @@
   var bufferActivado = false;
   var sonidoMorirFlag = 0;
   window.verItemPuestoClose = verItemPuestoClose;
+  window.comprar = comprar;
+  window.cerrarMercado = cerrarMercado;  
   window.verItemPuesto = verItemPuesto;
   window.sacarItemPuesto = sacarItemPuesto;
   window.inventario = inventario;
@@ -2375,7 +2391,120 @@ if(posibilidadDeCrearMercado == 7){
   } }
 
   function abrirMercado(){
-    console.log("mercado abrir")
+    crearItemsMercado();
+   document.getElementById("mercado").style.display = "block"
   }
+  function cerrarMercado(){
+    document.getElementById("mercado").style.display = "none"
+  }
+  
+
+
+  function crearItemsMercado(){
+    var contenedor = document.getElementById("contenedorMercado");
+for (let index = 0; index < inventario.length; index++) {
+      var div = document.createElement("div");
+      div.setAttribute("class", "dropdown");
+      div.setAttribute("id", "dropdownid");
+      contenedor.appendChild(div);
+      var equipo = document.getElementById("dropdownid");
+      var boton = document.createElement("button");
+      boton.setAttribute(
+        "class",
+        "dropbtn casillero animate__animated animate__fadeIn"
+      );
+      boton.setAttribute("id", "boton" + index);
+      boton.style.backgroundImage =
+        "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
+      boton.style.backgroundSize = "contain";
+      boton.style.backgroundRepeat = "no-repeat";
+      boton.style.backgroundPosition = "center";
+      equipo.appendChild(boton);
+      var div = document.createElement("div");
+      div.setAttribute("class", "dropdown-content");
+      div.setAttribute("id", "dropdown-contentId" + index);
+      equipo.appendChild(div);
+      var desplegable = document.getElementById("dropdown-contentId" + index);
+      let eventoBoton = document.getElementById("boton" + index);
+      eventoBoton.addEventListener(
+        "click",
+        function (event) {
+          var desplegableItem = document.getElementById(
+            "dropdown-contentId" + index
+          );
+          desplegableItem.style.display = "block";
+          var boton = document.getElementById("boton" + index);
+          boton.style.backgroundColor = "#8bd48d94";
+          var mouseX = event.clientX / window.innerWidth + 50;
+          var mouseY = -(event.clientY / window.innerHeight) * 2 + 50;
+          desplegableItem.style.top = mouseY + "px";
+          desplegableItem.style.left = mouseX + "px";
+        },
+        false
+      );
+      eventoBoton.addEventListener(
+        "mouseleave",
+        function (event) {
+          setTimeout(function () {
+            var desplegable = document.getElementById(
+              "dropdown-contentId" + index
+            );
+            desplegable.style.display = "none";
+            var boton = document.getElementById("boton" + index);
+            boton.style.backgroundColor = "";
+          }, 3000);
+        },
+        false
+      );
+      var link = document.createElement("a");
+      link.innerHTML = "💰 " + (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel;     
+      desplegable.appendChild(link);
+      var link = document.createElement("a");
+      link.innerHTML = "Comprar";
+      link.setAttribute("class", "accionItemLeyenda");
+      link.setAttribute("onclick", "comprar(" + index + ")");
+      desplegable.appendChild(link);
+      var info = document.createElement("div");
+      info.setAttribute("id", "info" + index);
+      info.setAttribute("class", "infoArma");
+      desplegable.appendChild(info);
+      var infoId = document.getElementById("info" + index);
+      var infoItem = document.createElement("p");
+      infoItem.innerHTML =
+        inventario[index].parent.userData.nombre.toUpperCase();
+      infoId.appendChild(infoItem);
+      if (
+        inventario[index].parent.userData.categoria != "pocion" ||
+        inventario[index].parent.userData.nombre != "Pocion"
+      ) {
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "⚔️ ATK: " + inventario[index].parent.userData.ataque;
+        infoId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🛡️ DEF: " + inventario[index].parent.userData.defensa;
+        infoId.appendChild(infoItem);
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
+        infoId.appendChild(infoItem);
+      } else {
+        var infoItem = document.createElement("p");
+        infoItem.innerHTML =
+          "🍷 QTY: " + inventario[index].parent.userData.cantidad;
+        infoId.appendChild(infoItem);
+      }
+    }
+
+
+
+
+
+
+  }
+  function comprar(){
+
+  }
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
