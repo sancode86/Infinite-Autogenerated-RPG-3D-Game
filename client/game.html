@@ -409,6 +409,7 @@
   crearSkybox();
   crearEnemigos();
   crearPiedras();
+  crearMercado();
   function crearCajas() {
     for (let j = 0; j < cantidadCajas; j++) {
       // crear una caja
@@ -2236,7 +2237,7 @@
           if(randomModelos == 1 || randomModelos == 2){
             objetoExtra.scale.set(0.8, 0.8, 0.8);
           }else{
-            objetoExtra.scale.set(1.5, 1.5, 1.5);
+            objetoExtra.scale.set(1.2, 1.2, 1.2);
           }
           objetoExtra.castShadow = true;
           objetoExtra.receiveShadow = true;
@@ -2319,5 +2320,52 @@
       document.getElementById("levelup").style.display = "none";
     }, 3000);
   }
+
+
+
+  function crearMercado(){
+
+
+    var posibilidadDeCrearMercado = Math.floor(Math.random() * (10 - 0)) + 0;
+if(posibilidadDeCrearMercado == 7){
+    var geo = new THREE.BoxGeometry(3, 3, 3);
+      // crear un Mercado
+      var nombreMercado =
+          "mercado" +
+          (Math.floor(Math.random() * (999999 - 0)) + 0) *
+            (Math.floor(Math.random() * (10 - 1)) + 1);
+      new GLTFLoader().load("models/mercado.glb", function (gltf) {
+        var random = Math.floor(Math.random() * (800 - 0));
+        const Mercado = gltf.scene;
+        Mercado.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+
+          object.userData.draggable = true;
+          object.name = nombreMercado;
+          object.userData = {
+            draggable: false,
+            name: "Mercado",
+            tipo: "Mercado",
+            estado: "abierto",
+          };
+        });
+        var random = Math.floor(Math.random() * (250 - 0)) + 0;
+        Mercado.rotation.y = random;
+        Mercado.geometry = geo;
+        Mercado.scale.set(0.31, 0.31, 0.31);
+        Mercado.castShadow = true;
+        Mercado.receiveShadow = true;
+        Mercado.position.x =
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
+          Mercado.position.y = 2;
+          Mercado.position.z =
+          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+          -(spawnArea - 5);
+        scene.add(Mercado);
+        arraySolidos.push(Mercado);
+        camera.updateProjectionMatrix();
+      });
+  } }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
