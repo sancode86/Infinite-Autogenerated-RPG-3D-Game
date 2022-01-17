@@ -471,3 +471,6 @@ color: white !important;
   padding: 0px;
   color: white;
 }
+.barraSalud {
+  background-color: red !important;
+}
