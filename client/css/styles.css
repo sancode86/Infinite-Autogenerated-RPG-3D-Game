@@ -456,3 +456,18 @@ color: white !important;
     text-shadow: 0 0 20px #fff, 0 0 30px #ff4d4d, 0 0 40px #ff4d4d, 0 0 50px #ff4d4d, 0 0 60px #ff4d4d, 0 0 70px #ff4da6, 0 0 80px #f1464e;
   }
 }
+.infoEnemigo{  
+  position: absolute;
+  left: 260px;
+  justify-content: center;
+  text-align: center;
+  font-size: xx-large;
+  width: 350px;
+}
+.infoEnemigo > p{
+  font-size: large;
+  line-height: normal;
+  margin: 0px;
+  padding: 0px;
+  color: white;
+}

@@ -25,6 +25,11 @@
     <div class="morirCartel" id="morirCartel" style="display: none">
       <h1 class="glow">HAS MUERTO</h1>
     </div>
+    <div class="infoEnemigo" id="infoEnemigo" style="display: none">
+      <br>
+      <p>Enemigo</p>
+      <progress id="infoEnemigoBarra" value="100" max="100">100%</progress>
+    </div>
     <div class="sidebar">
       <div class="hora" id="clock"></div>
       <a href="#" onclick="preferencesOpen()"
@@ -300,6 +305,13 @@
     }
     if (found.length > 0 && objFound.parent.userData.tipo == "recurso") {
       varSiPuedeLevantarLoot(objFound);
+    }
+
+    if (
+      found.length > 0 &&
+      objFound.parent?.parent?.userData?.nombre == "Enemigo"
+    ) {
+      mostrarVidaEnemigo(objFound.parent.parent.userData.salud);
     }
   });
   window.addEventListener("mousemove", (event) => {
@@ -1968,7 +1980,6 @@
       for (let index = 0; index < arrayEnemigos.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arrayEnemigos[index]);
         if (resultado != false) {
-          console.log(arrayEnemigos[index].userData.salud, " salud enemigo.");
           recibirDaño(arrayEnemigos[index]);
           animacionSerGolpeado();
           enemigoSonido();
@@ -1997,6 +2008,9 @@
     }
     arrayEnemigos[index].userData.salud -=
       jugadorStatsConEquipo.fuerza * extraBuffer;
+
+    mostrarVidaEnemigo(arrayEnemigos[index].userData.salud);
+
     verSiMonstruoMuere(index);
   }
   function verSiMonstruoMuere(enemigo) {
@@ -2224,8 +2238,6 @@
     for (let i = 0; i < arrayParedes.length; i++) {
       if (jugador?.position != undefined) {
         var resultado = checkearSiSeTocaJugador(jugador, arrayParedes[i]);
-
-
         if (resultado != "" && arrayParedes[i].userData.name == "Pared2") {
           jugador.position.x += -0.5;
         }
@@ -2238,9 +2250,18 @@
         if (resultado != "" && arrayParedes[i].userData.name == "Pared") {
           jugador.position.z += -0.5;
         }
-
       }
     }
+  }
+  function mostrarVidaEnemigo(enemigoVidaRestante) {
+    document.getElementById("infoEnemigo").style.display = "block";
+    document.getElementById("infoEnemigo").style.left =
+      window.innerWidth / 2 - 130 + "px";
+    document.getElementById("infoEnemigoBarra").value = enemigoVidaRestante;
+
+    setTimeout(function () {
+      document.getElementById("infoEnemigo").style.display = "none";
+    }, 2000);
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
