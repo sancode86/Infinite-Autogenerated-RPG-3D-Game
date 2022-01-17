@@ -2394,7 +2394,9 @@ if(posibilidadDeCrearMercado == 7){
 
 
   function abrirMercado(){   
-    document.getElementById("dineroMercado").innerHTML = "💰 " + jugadorStats.monedas
+    var contenedor = document.getElementById("contenedorMercado");
+    contenedor.innerHTML = ""
+    document.getElementById("dineroMercado").innerHTML = "💰 " + jugadorStats.monedas   
     var randomCantidadArticulos = Math.floor(Math.random() * (10 - 2)) + 2;
     crearArticulosVenta(randomCantidadArticulos)
     rellenarMercado();
@@ -2403,21 +2405,21 @@ if(posibilidadDeCrearMercado == 7){
 
 
   function cerrarMercado(){   
-    inventarioMercado = [] 
+    // inventarioMercado = [] 
     document.getElementById("mercado").style.display = "none"
   }
   
 
 
   function rellenarMercado(){   
-    var contenedor = document.getElementById("contenedorMercado");
-    contenedor.innerHTML = ""
+    var contenedor = document.getElementById("contenedorMercado");  
+   
 for (let index = 0; index < inventarioMercado.length; index++) {
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown");
       div.setAttribute("id", "dropdownidMercado");
       contenedor.appendChild(div);
-      var equipo = document.getElementById("dropdownidMercado");
+      var equipoMercado = document.getElementById("dropdownidMercado");
       var boton = document.createElement("button");
       boton.setAttribute(
         "class",
@@ -2429,14 +2431,14 @@ for (let index = 0; index < inventarioMercado.length; index++) {
       boton.style.backgroundSize = "contain";
       boton.style.backgroundRepeat = "no-repeat";
       boton.style.backgroundPosition = "center";
-      equipo.appendChild(boton);
+      equipoMercado.appendChild(boton);
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown-content");
       div.setAttribute("id", "dropdown-contentIdMercado" + index);
-      equipo.appendChild(div);
-      var desplegable = document.getElementById("dropdown-contentIdMercado" + index);
-      let eventoBoton = document.getElementById("botonMercado" + index);
-      eventoBoton.addEventListener(
+      equipoMercado.appendChild(div);
+      var desplegable2 = document.getElementById("dropdown-contentIdMercado" + index);
+      let eventoBoton2 = document.getElementById("botonMercado" + index);
+      eventoBoton2.addEventListener(
         "click",
         function (event) {
           var desplegableItem = document.getElementById(
@@ -2452,57 +2454,57 @@ for (let index = 0; index < inventarioMercado.length; index++) {
         },
         false
       );
-      eventoBoton.addEventListener(
+      eventoBoton2.addEventListener(
         "mouseleave",
         function (event) {
           setTimeout(function () {
-            var desplegable = document.getElementById(
+            var desplegable2 = document.getElementById(
               "dropdown-contentIdMercado" + index
             );
-            desplegable.style.display = "none";
+            desplegable2.style.display = "none";
             var boton = document.getElementById("botonMercado" + index);
             boton.style.backgroundColor = "";
           }, 3000);
         },
         false
       );
-      var link = document.createElement("a");
-      link.innerHTML = "💰 " + (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel;     
-      desplegable.appendChild(link);
-      var link = document.createElement("a");
-      link.innerHTML = "Comprar";
-      link.setAttribute("class", "accionItemLeyenda");
-      link.setAttribute("onclick", "comprar(" + index + ")");
-      desplegable.appendChild(link);
+      var link2 = document.createElement("a");
+      link2.innerHTML = "💰 " + (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel;     
+      desplegable2.appendChild(link2);
+      var link2 = document.createElement("a");
+      link2.innerHTML = "Comprar";
+      link2.setAttribute("class", "accionItemLeyenda");
+      link2.setAttribute("onclick", "comprar(" + index + ")");
+      desplegable2.appendChild(link2);
       var info = document.createElement("div");
       info.setAttribute("id", "infoMercado" + index);
       info.setAttribute("class", "infoArma");
-      desplegable.appendChild(info);
-      var infoId = document.getElementById("infoMercado" + index);
-      var infoItem = document.createElement("p");
-      infoItem.innerHTML =
+      desplegable2.appendChild(info);
+      var infoId2 = document.getElementById("infoMercado" + index);
+      var infoItem2 = document.createElement("p");
+      infoItem2.innerHTML =
       inventarioMercado[index].userData.nombre.toUpperCase();
-      infoId.appendChild(infoItem);
+      infoId2.appendChild(infoItem2);
       if (
         inventarioMercado[index].userData.categoria != "pocion" ||
         inventarioMercado[index].userData.nombre != "Pocion"
       ) {
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML =
+        var infoItem2 = document.createElement("p");
+        infoItem2.innerHTML =
           "⚔️ ATK: " + inventarioMercado[index].userData.ataque;
-        infoId.appendChild(infoItem);
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML =
+          infoId2.appendChild(infoItem2);
+        var infoItem2 = document.createElement("p");
+        infoItem2.innerHTML =
           "🛡️ DEF: " + inventarioMercado[index].userData.defensa;
-        infoId.appendChild(infoItem);
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML = "⚖️ WT: " + inventarioMercado[index].userData.peso;
-        infoId.appendChild(infoItem);
+          infoId2.appendChild(infoItem2);
+        var infoItem2 = document.createElement("p");
+        infoItem2.innerHTML = "⚖️ WT: " + inventarioMercado[index].userData.peso;
+        infoId2.appendChild(infoItem2);
       } else {
-        var infoItem = document.createElement("p");
-        infoItem.innerHTML =
+        var infoItem2 = document.createElement("p");
+        infoItem2.innerHTML =
           "🍷 QTY: " + inventarioMercado[index].userData.cantidad;
-        infoId.appendChild(infoItem);
+          infoId2.appendChild(infoItem2);
       }
     }
   }
@@ -2648,6 +2650,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
     inventario.push(inventarioMercado[index])
     inventarioMercado.splice(index, 1);
     cargarInventario();
+    rellenarMercado();
 
 }
 
