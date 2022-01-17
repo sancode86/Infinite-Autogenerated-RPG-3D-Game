@@ -474,3 +474,12 @@ color: white !important;
 .barraSalud {
   background-color: red !important;
 }
+.levelup{
+  color: white;
+  position: absolute;
+  left: 260px;
+  justify-content: center;
+  text-align: center;
+  font-size: xx-large;
+  width: 350px;
+}

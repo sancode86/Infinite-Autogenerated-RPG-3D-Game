@@ -25,6 +25,11 @@
     <div class="morirCartel" id="morirCartel" style="display: none">
       <h1 class="glow">HAS MUERTO</h1>
     </div>
+    <div class="levelup" id="levelup" style="display: none">
+      <br>
+      <p>LEVEL UP</p>
+      
+    </div>
     <div class="infoEnemigo" id="infoEnemigo" style="display: none">
       <br>
       <p>Enemigo</p>
@@ -123,7 +128,7 @@
                     <p id="fuerzaId">2</p>
                     <p id="defensaId">1</p>
                     <p id="saludId">100</p>
-                    <p id="experienciaId">0</p>
+                    <p id="experienciaId">0/100</p>
                     <p id="monedasId">0</p>
                   </th>
                 </tr>
@@ -1096,6 +1101,7 @@
   }
   function abrirCofre(objeto) {
     sonidoCofre();
+    acumularExperiencia("juntar");
     var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
     crearLoot(objeto, randomCantidad);
     var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -1473,7 +1479,7 @@
 
     document.getElementById("nivelId").innerHTML = jugadorStats.nivel;
     document.getElementById("experienciaId").innerHTML =
-      jugadorStats.experiencia;
+      jugadorStats.experiencia+"/100";
   }
   var audioCaminar = new Audio("audio/caminar.mp3");
   var audioAtacar = new Audio("audio/espada.mp3");
@@ -2016,7 +2022,7 @@
   function verSiMonstruoMuere(enemigo) {
     if (arrayEnemigos[enemigo].userData.salud <= 0) {
       console.log(arrayEnemigos[enemigo], " muere");
-
+      acumularExperiencia("matar");
       var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
       var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
       crearLoot(selectedObject, randomCantidad);
@@ -2195,7 +2201,7 @@
 
   function crearObjetosRandom() {
     for (let j = 0; j < cantidadObjetosRandom; j++) {
-      var randomModelos = Math.floor(Math.random() * (9 - 1)) + 1;
+      var randomModelos = Math.floor(Math.random() * (10 - 1)) + 1;
       var geo = new THREE.BoxGeometry(2, 2, 2);
       // crear un cofre
       new GLTFLoader().load(
@@ -2217,7 +2223,11 @@
           var random = Math.floor(Math.random() * (250 - 0)) + 0;
           objetoExtra.rotation.y = random;
           objetoExtra.geometry = geo;
-          objetoExtra.scale.set(1.5, 1.5, 1.5);
+          if(randomModelos == 1 || randomModelos == 2){
+            objetoExtra.scale.set(0.8, 0.8, 0.8);
+          }else{
+            objetoExtra.scale.set(1.5, 1.5, 1.5);
+          }
           objetoExtra.castShadow = true;
           objetoExtra.receiveShadow = true;
           objetoExtra.position.x =
@@ -2261,6 +2271,40 @@
 
     setTimeout(function () {
       document.getElementById("infoEnemigo").style.display = "none";
+    }, 2000);
+  }
+  function acumularExperiencia(accion){
+    if(accion == "matar"){
+      var extra = 10;
+    }else{
+      var extra = 0;
+    }
+    if(jugadorStats.nivel != 0){
+      jugadorStats.experiencia += (10 + extra)/ jugadorStats.nivel;
+    }else{
+      jugadorStats.experiencia += (10 + extra);
+    }
+
+    if(jugadorStats.experiencia == 100){   
+      jugadorStats.experiencia = 0;
+      jugadorStats.nivel += 1
+      jugadorStats.fuerza += jugadorStats.nivel
+      jugadorStats.defensa += jugadorStats.nivel
+      mostrarLevelUp()
+    }
+
+
+
+
+    actualizarStatsJugador();
+  }
+
+  function mostrarLevelUp(){
+    document.getElementById("levelup").style.display = "block";
+    document.getElementById("levelup").style.left =
+      window.innerWidth / 2 - 130 + "px";
+    setTimeout(function () {
+      document.getElementById("levelup").style.display = "none";
     }, 2000);
   }
 </script>
