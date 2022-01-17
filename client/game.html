@@ -124,9 +124,9 @@
                   </th>
 
                   <th>
-                    <p id="nivelId">0</p>
-                    <p id="fuerzaId">2</p>
-                    <p id="defensaId">1</p>
+                    <p id="nivelId">1</p>
+                    <p id="fuerzaId">10</p>
+                    <p id="defensaId">5</p>
                     <p id="saludId">100</p>
                     <p id="experienciaId">0/100</p>
                     <p id="monedasId">0</p>
@@ -158,10 +158,10 @@
   import { OBJLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/OBJLoader.js";
 
   var jugadorStats = {
-    fuerza: 2,
-    defensa: 1,
+    fuerza: 10,
+    defensa: 5,
     salud: 100,
-    nivel: 0,
+    nivel: 1,
     experiencia: 0,
     monedas: 0,
   };
@@ -1214,8 +1214,8 @@
             ];
           loot.userData = {
             nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (1250 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (1250 - 1)) + 1,
+            ataque: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            defensa:(Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (100 - 1)) + 1,
             tipo: "recurso",
             categoria: "armadura",
@@ -1230,8 +1230,8 @@
             ];
           loot.userData = {
             nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (1250 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (1250 - 1)) + 1,
+            ataque: (Math.floor(Math.random() * (10 - 1)) + 1) * jugadorStats.nivel,
+            defensa: (Math.floor(Math.random() * (10 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (100 - 1)) + 1,
             tipo: "recurso",
             categoria: "arma",
@@ -1246,8 +1246,8 @@
             ];
           loot.userData = {
             nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (500 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (500 - 1)) + 1,
+            ataque: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            defensa: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (5 - 1)) + 1,
             tipo: "recurso",
             categoria: "collar",
@@ -1262,8 +1262,8 @@
             ];
           loot.userData = {
             nombre: nombreRandom,
-            ataque: Math.floor(Math.random() * (300 - 1)) + 1,
-            defensa: Math.floor(Math.random() * (300 - 1)) + 1,
+            ataque: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            defensa: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (3 - 1)) + 1,
             tipo: "recurso",
             categoria: "anillo",
@@ -1912,8 +1912,8 @@
           enemigo.userData = {
             nombre: "Enemigo",
             salud: 100,
-            ataque: 2,
-            defensa: 1,
+            ataque: (Math.floor(Math.random() * (3 - 1)) + 1) * jugadorStats.nivel,
+            defensa: (Math.floor(Math.random() * (3 - 1)) + 1) * jugadorStats.nivel,
             velocidad: velocidad,
           };
           var nombreRandomParaBorrar =
@@ -2003,9 +2003,19 @@
     }, 500);
   }
   function recibirDaño(enemigo) {
-    jugadorStats.salud -= enemigo.userData.ataque;
+
+    if((enemigo.userData.ataque - jugadorStatsConEquipo.defensa) <= 0){
+     var daño = 1
+    }else{
+     var daño = enemigo.userData.ataque - jugadorStatsConEquipo.defensa 
+    }
+
+    jugadorStats.salud -= daño;
     actualizarStatsJugador();
   }
+
+
+
   function causarDaño(index) {
     if (bufferActivado === true) {
       var extraBuffer = 2;
