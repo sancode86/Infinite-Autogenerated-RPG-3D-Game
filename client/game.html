@@ -2286,6 +2286,8 @@
     }
 
     if(jugadorStats.experiencia == 100){   
+      var audio = new Audio("audio/guerrero/levelup.mp3");
+      audio.play();
       jugadorStats.experiencia = 0;
       jugadorStats.nivel += 1
       jugadorStats.fuerza += jugadorStats.nivel
@@ -2302,10 +2304,10 @@
   function mostrarLevelUp(){
     document.getElementById("levelup").style.display = "block";
     document.getElementById("levelup").style.left =
-      window.innerWidth / 2 - 130 + "px";
+      window.innerWidth / 2 - 175 + "px";
     setTimeout(function () {
       document.getElementById("levelup").style.display = "none";
-    }, 2000);
+    }, 3000);
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
