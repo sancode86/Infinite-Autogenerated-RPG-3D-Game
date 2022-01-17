@@ -318,6 +318,12 @@
     ) {
       mostrarVidaEnemigo(objFound.parent.parent.userData.salud);
     }
+    if (
+      found.length > 0 &&
+      objFound.parent?.parent?.userData?.name == "Mercado"
+    ) {
+     abrirMercado()
+    }
   });
   window.addEventListener("mousemove", (event) => {
     moveMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -2367,5 +2373,9 @@ if(posibilidadDeCrearMercado == 7){
         camera.updateProjectionMatrix();
       });
   } }
+
+  function abrirMercado(){
+    console.log("mercado abrir")
+  }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
