@@ -166,12 +166,13 @@
     anillo: "",
   };
   var segsCoolDown = 0;
-  var cantidadObjetosRandom = 1
+  var cantidadObjetosRandom = 1;
   var coolDownFlag = 0;
   var particulasBuff = [];
   var inventario = [];
+  var arrayParedes = [];
   var bufferActivado = false;
-  var sonidoMorirFlag = 0
+  var sonidoMorirFlag = 0;
   window.verItemPuestoClose = verItemPuestoClose;
   window.verItemPuesto = verItemPuesto;
   window.sacarItemPuesto = sacarItemPuesto;
@@ -280,7 +281,7 @@
     clicMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(clicMouse, camera);
     const found = raycaster.intersectObjects(scene.children);
-    if (found.length > 0 && found[0].object.userData.draggable) {    
+    if (found.length > 0 && found[0].object.userData.draggable) {
       draggable = found[0].object;
       document.body.style.cursor = "grab";
     }
@@ -323,14 +324,14 @@
             !o.object.userData.ground &&
             o.object.userData.pared != true &&
             o.object.userData.nombre != "universo"
-          ) { 
-            if(draggable.userData.tipo != "piedra"){
+          ) {
+            if (draggable.userData.tipo != "piedra") {
               draggable.position.x = o.point.x;
               draggable.position.z = o.point.z;
             }
-            if(draggable.userData.tipo == "piedra"){
-            draggable.parent.position.x = o.point.x;
-            draggable.parent.position.z = o.point.z;
+            if (draggable.userData.tipo == "piedra") {
+              draggable.parent.position.x = o.point.x;
+              draggable.parent.position.z = o.point.z;
             }
           }
         }
@@ -390,7 +391,7 @@
   crearObjetosRandom();
   crearSkybox();
   crearEnemigos();
-  crearPiedras()
+  crearPiedras();
   function crearCajas() {
     for (let j = 0; j < cantidadCajas; j++) {
       // crear una caja
@@ -408,56 +409,59 @@
       box.userData.draggable = true;
       box.userData.name = "Caja" + j;
       box.position.x =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
+        Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+        -(spawnArea - 5);
       box.position.y = 0.5;
       box.position.z =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
+        Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+        -(spawnArea - 5);
       scene.add(box);
       arraySolidos.push(box);
     }
   }
-function crearPiedras(){ 
-  for (let j = 0; j < cantidadPiedras; j++) {
-  const geometriaPiedra = new THREE.BoxGeometry(1, 1, 1);
-    var randomSkin = Math.floor(Math.random() * (7 - 1) + 1);
-    new GLTFLoader().load("models/piedra/"+randomSkin+".glb", function (gltf) {
-        var nombrePiedra =
-          "piedra" +
-          (Math.floor(Math.random() * (999999 - 0)) + 0) *
-            (Math.floor(Math.random() * (10 - 1)) + 1);
-        var piedra = gltf.scene;
-        piedra.traverse(function (object) {
-          if (object.isMesh) object.castShadow = true;
+  function crearPiedras() {
+    for (let j = 0; j < cantidadPiedras; j++) {
+      const geometriaPiedra = new THREE.BoxGeometry(2, 2, 2);
+      var randomSkin = Math.floor(Math.random() * (7 - 1) + 1);
+      new GLTFLoader().load(
+        "models/piedra/" + randomSkin + ".glb",
+        function (gltf) {
+          var nombrePiedra =
+            "piedra" +
+            (Math.floor(Math.random() * (999999 - 0)) + 0) *
+              (Math.floor(Math.random() * (10 - 1)) + 1);
+          var piedra = gltf.scene;
+          piedra.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
 
-          object.userData.draggable = true;
-          object.name = nombrePiedra;
-          object.userData = {
-            draggable: true,
-            name: nombrePiedra,
-            tipo: "piedra"
-          };
-        });
-        var random = Math.floor(Math.random() * (250 - 0)) + 0;
-        piedra.rotation.y = random;
-        piedra.geometry = geometriaPiedra;
-        piedra.scale.set(2, 2, 2);
-        piedra.castShadow = true;
-        piedra.receiveShadow = true;  
-        piedra.position.x =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
+            object.userData.draggable = true;
+            object.name = nombrePiedra;
+            object.userData = {
+              draggable: true,
+              name: nombrePiedra,
+              tipo: "piedra",
+            };
+          });
+          var random = Math.floor(Math.random() * (250 - 0)) + 0;
+          piedra.rotation.y = random;
+          piedra.geometry = geometriaPiedra;
+          piedra.scale.set(2, 2, 2);
+          piedra.castShadow = true;
+          piedra.receiveShadow = true;
+          piedra.position.x =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
           piedra.position.y = 0;
           piedra.position.z =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
-        scene.add(piedra);     
-        arraySolidos.push(piedra);
-        camera.updateProjectionMatrix();
-      });
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          scene.add(piedra);
+          arraySolidos.push(piedra);
+          camera.updateProjectionMatrix();
+        }
+      );
     }
-}
+  }
   function crearCofres() {
     for (let j = 0; j < cantidadCofres; j++) {
       var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -521,7 +525,8 @@ function crearPiedras(){
     pared.position.y = 0;
     pared.position.z = tamañoCuarto / 2;
     scene.add(pared);
-    arraySolidos.push(pared);
+    arrayParedes.push(pared);
+    // arraySolidos.push(pared);
     camera.updateProjectionMatrix();
     //pared DERECHA
     const geoBox2 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
@@ -531,9 +536,10 @@ function crearPiedras(){
     pared2.userData.name = "Pared2";
     pared2.position.x = tamañoCuarto / 2;
     pared2.position.y = 0;
-    pared2.position.z = 0;   
+    pared2.position.z = 0;
     scene.add(pared2);
-    arraySolidos.push(pared2);
+    arrayParedes.push(pared2);
+    // arraySolidos.push(pared2);
     camera.updateProjectionMatrix();
     const geoBox3 = new THREE.BoxGeometry(1, 10, tamañoCuarto);
     const pared3 = new THREE.Mesh(geoBox3, materialPared);
@@ -544,7 +550,8 @@ function crearPiedras(){
     pared3.position.y = 0;
     pared3.position.z = 0;
     scene.add(pared3);
-    arraySolidos.push(pared3);
+    arrayParedes.push(pared3);
+    // arraySolidos.push(pared3);
     camera.updateProjectionMatrix();
     const geoBox4 = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
     const pared4 = new THREE.Mesh(geoBox4, materialPared);
@@ -555,7 +562,8 @@ function crearPiedras(){
     pared4.position.y = 0;
     pared4.position.z = -tamañoCuarto / 2;
     scene.add(pared4);
-    arraySolidos.push(pared4);
+    arrayParedes.push(pared4);
+    // arraySolidos.push(pared4);
     pared.userData.ground = false;
     pared2.userData.ground = false;
     pared3.userData.ground = false;
@@ -716,6 +724,7 @@ function crearPiedras(){
     moverEnemigos();
     chequearRecibirDaño();
     chequearMorir();
+    chequearChoqueParedes();
     stats.end();
   }
   animate();
@@ -759,25 +768,33 @@ function crearPiedras(){
     if (jugador?.position != undefined) {
       for (let index = 0; index < arraySolidos.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arraySolidos[index]);
-        if (resultado == "derecha") {
+        if (
+          resultado == "derecha" &&
+          arraySolidos[index].userData.name != "Pared2"
+        ) {
           const frenar = new THREE.Vector3(0.5, 0, 0);
           jugador.position.add(frenar);
-          console.log("D")
         }
-        if (resultado == "izquierda") {
+        if (
+          resultado == "izquierda" &&
+          arraySolidos[index].userData.name != "Pared2"
+        ) {
           const frenar = new THREE.Vector3(-0.5, 0, 0);
           jugador.position.add(frenar);
-          console.log("IZQ")
         }
-        if (resultado == "arriba") {
+        if (
+          resultado == "arriba" &&
+          arraySolidos[index].userData.name != "Pared2"
+        ) {
           const frenar = new THREE.Vector3(0, 0, -0.5);
           jugador.position.add(frenar);
-          console.log("AR")
         }
-        if (resultado == "abajo") {
+        if (
+          resultado == "abajo" &&
+          arraySolidos[index].userData.name != "Pared2"
+        ) {
           const frenar = new THREE.Vector3(0, 0, 0.5);
           jugador.position.add(frenar);
-          console.log("AB")
         }
       }
     }
@@ -1459,7 +1476,6 @@ function crearPiedras(){
   var audioMoneda = new Audio("audio/dropMoneda.mp3");
   var audioJuntar = new Audio("audio/juntar.mp3");
 
- 
   function sonidoCaminar() {
     if (sonidoCorrerFlag == 1 && morir == 0) {
       audioCaminar.play();
@@ -1467,21 +1483,17 @@ function crearPiedras(){
   }
 
   function sonidoHerirse() {
-    var random = Math.floor(Math.random() * (3 - 1)) + 1;   
-      var audio = new Audio("audio/guerrero/"+random+".mp3");
-      audio.play();  
+    var random = Math.floor(Math.random() * (3 - 1)) + 1;
+    var audio = new Audio("audio/guerrero/" + random + ".mp3");
+    audio.play();
   }
   function sonidoMorir() {
-    if(sonidoMorirFlag == 0){
-
+    if (sonidoMorirFlag == 0) {
       var audio = new Audio("audio/guerrero/morir.mp3");
-      audio.play();  
-      sonidoMorirFlag = 1
+      audio.play();
+      sonidoMorirFlag = 1;
     }
   }
-
-
-
 
   function sonidoCaminarStop() {
     audioCaminar.pause();
@@ -1994,7 +2006,7 @@ function crearPiedras(){
       var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
       var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
       crearLoot(selectedObject, randomCantidad);
-    
+
       scene.remove(selectedObject);
       var buscarEemigo = arraySolidos.indexOf(
         (elemento) => elemento.name == enemigo.name
@@ -2101,7 +2113,7 @@ function crearPiedras(){
       segs = 0;
     }
     var segs2 = Math.floor(segs);
- 
+
     if (bufferActivado === true && segs >= 30) {
       bufferActivado = false;
       segs = 0;
@@ -2162,47 +2174,72 @@ function crearPiedras(){
       arrayLuces[i].color.setHex(0x000000);
       arrayLuces[i].intensity = 5;
     }
-    document.getElementById("morirCartel").style.left = (window.innerWidth/2 - 300) + "px";
+    document.getElementById("morirCartel").style.left =
+      window.innerWidth / 2 - 300 + "px";
     document.getElementById("morirCartel").style.display = "block";
   }
 
-
-  function crearObjetosRandom(){
+  function crearObjetosRandom() {
     for (let j = 0; j < cantidadObjetosRandom; j++) {
       var randomModelos = Math.floor(Math.random() * (9 - 1)) + 1;
       var geo = new THREE.BoxGeometry(2, 2, 2);
       // crear un cofre
-      new GLTFLoader().load("models/varios/" + randomModelos + ".glb", function (gltf) {
-        var random = Math.floor(Math.random() * (800 - 0)) + 0 + j;
-        const objetoExtra = gltf.scene;
-        objetoExtra.traverse(function (object) {
-          if (object.isMesh) object.castShadow = true;
+      new GLTFLoader().load(
+        "models/varios/" + randomModelos + ".glb",
+        function (gltf) {
+          var random = Math.floor(Math.random() * (800 - 0)) + 0 + j;
+          const objetoExtra = gltf.scene;
+          objetoExtra.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
 
-          object.userData.draggable = true;
-          object.name = "objetoExtra" + random;
-          object.userData = {
-            draggable: false,
-            name: "objetoExtra" + random,
-            tipo: "objetoExtra",          
-          };
-        });
-        var random = Math.floor(Math.random() * (250 - 0)) + 0;
-        objetoExtra.rotation.y = random;
-        objetoExtra.geometry = geo;
-        objetoExtra.scale.set(1.5, 1.5, 1.5);
-        objetoExtra.castShadow = true;
-        objetoExtra.receiveShadow = true;
-        objetoExtra.position.x =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
+            object.userData.draggable = true;
+            object.name = "objetoExtra" + random;
+            object.userData = {
+              draggable: false,
+              name: "objetoExtra" + random,
+              tipo: "objetoExtra",
+            };
+          });
+          var random = Math.floor(Math.random() * (250 - 0)) + 0;
+          objetoExtra.rotation.y = random;
+          objetoExtra.geometry = geo;
+          objetoExtra.scale.set(1.5, 1.5, 1.5);
+          objetoExtra.castShadow = true;
+          objetoExtra.receiveShadow = true;
+          objetoExtra.position.x =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
           objetoExtra.position.y = 0;
           objetoExtra.position.z =
-          Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
-          -(spawnArea - 5);
-        scene.add(objetoExtra);
-        arraySolidos.push(objetoExtra);
-        camera.updateProjectionMatrix();
-      });
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          scene.add(objetoExtra);
+          arraySolidos.push(objetoExtra);
+          camera.updateProjectionMatrix();
+        }
+      );
+    }
+  }
+  function chequearChoqueParedes() {
+    for (let i = 0; i < arrayParedes.length; i++) {
+      if (jugador?.position != undefined) {
+        var resultado = checkearSiSeTocaJugador(jugador, arrayParedes[i]);
+
+
+        if (resultado != "" && arrayParedes[i].userData.name == "Pared2") {
+          jugador.position.x += -0.5;
+        }
+        if (resultado != "" && arrayParedes[i].userData.name == "Pared3") {
+          jugador.position.x += 0.5;
+        }
+        if (resultado != "" && arrayParedes[i].userData.name == "Pared4") {
+          jugador.position.z += 0.5;
+        }
+        if (resultado != "" && arrayParedes[i].userData.name == "Pared") {
+          jugador.position.z += -0.5;
+        }
+
+      }
     }
   }
 </script>
