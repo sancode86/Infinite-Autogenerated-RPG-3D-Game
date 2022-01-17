@@ -194,6 +194,7 @@
   var coolDownFlag = 0;
   var particulasBuff = [];
   var inventario = [];
+  var inventarioMercado = []
   var arrayParedes = [];
   var bufferActivado = false;
   var sonidoMorirFlag = 0;
@@ -2348,7 +2349,7 @@
   function crearMercado(){
 
 
-    var posibilidadDeCrearMercado = Math.floor(Math.random() * (10 - 0)) + 0;
+    var posibilidadDeCrearMercado = Math.floor(Math.random() * (8 - 6)) + 6;
 if(posibilidadDeCrearMercado == 7){
     var geo = new THREE.BoxGeometry(3, 3, 3);
       // crear un Mercado
@@ -2391,6 +2392,9 @@ if(posibilidadDeCrearMercado == 7){
   } }
 
   function abrirMercado(){
+    
+    var randomCantidadArticulos = Math.floor(Math.random() * (10 - 2)) + 2;
+    crearArticuloVenta(randomCantidadArticulos)
     crearItemsMercado();
    document.getElementById("mercado").style.display = "block"
   }
@@ -2402,7 +2406,7 @@ if(posibilidadDeCrearMercado == 7){
 
   function crearItemsMercado(){
     var contenedor = document.getElementById("contenedorMercado");
-for (let index = 0; index < inventario.length; index++) {
+for (let index = 0; index < inventarioMercado.length; index++) {
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown");
       div.setAttribute("id", "dropdownid");
@@ -2415,7 +2419,7 @@ for (let index = 0; index < inventario.length; index++) {
       );
       boton.setAttribute("id", "boton" + index);
       boton.style.backgroundImage =
-        "url(" + JSON.stringify(inventario[index].parent.userData.imagen) + ")";
+        "url(" + JSON.stringify(inventarioMercado[index].userData.imagen) + ")";
       boton.style.backgroundSize = "contain";
       boton.style.backgroundRepeat = "no-repeat";
       boton.style.backgroundPosition = "center";
@@ -2471,40 +2475,168 @@ for (let index = 0; index < inventario.length; index++) {
       var infoId = document.getElementById("info" + index);
       var infoItem = document.createElement("p");
       infoItem.innerHTML =
-        inventario[index].parent.userData.nombre.toUpperCase();
+      inventarioMercado[index].userData.nombre.toUpperCase();
       infoId.appendChild(infoItem);
       if (
-        inventario[index].parent.userData.categoria != "pocion" ||
-        inventario[index].parent.userData.nombre != "Pocion"
+        inventarioMercado[index].userData.categoria != "pocion" ||
+        inventarioMercado[index].userData.nombre != "Pocion"
       ) {
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
-          "⚔️ ATK: " + inventario[index].parent.userData.ataque;
+          "⚔️ ATK: " + inventarioMercado[index].userData.ataque;
         infoId.appendChild(infoItem);
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
-          "🛡️ DEF: " + inventario[index].parent.userData.defensa;
+          "🛡️ DEF: " + inventarioMercado[index].userData.defensa;
         infoId.appendChild(infoItem);
         var infoItem = document.createElement("p");
-        infoItem.innerHTML = "⚖️ WT: " + inventario[index].parent.userData.peso;
+        infoItem.innerHTML = "⚖️ WT: " + inventarioMercado[index].userData.peso;
         infoId.appendChild(infoItem);
       } else {
         var infoItem = document.createElement("p");
         infoItem.innerHTML =
-          "🍷 QTY: " + inventario[index].parent.userData.cantidad;
+          "🍷 QTY: " + inventarioMercado[index].userData.cantidad;
         infoId.appendChild(infoItem);
       }
     }
-
-
-
-
-
-
+  }
+  function crearArticuloVenta(cantidad) {  
+    for (let index = 0; index < cantidad; index++) {     
+      var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
+      var tipoDeItem = Math.floor(Math.random() * (6 - 1)) + 1;
+      if (tipoDeItem == 1) {
+        var resultadoItem = devolverItemParaLootArmadura(randomItem);      
+      }
+      if (tipoDeItem == 2) {
+        var resultadoItem = devolverItemParaLootArma(randomItem);      
+      }
+      if (tipoDeItem == 3) {
+        var resultadoItem = devolverItemParaLootAnillo(randomItem);     
+      }
+      if (tipoDeItem == 4) {
+        var resultadoItem = devolverItemParaLootCollar(randomItem);      
+      }
+      if (tipoDeItem == 5) {
+        var resultadoItem = devolverItemParaLootPocion(randomItem);       
+      }
+      if (tipoDeItem == 6) {
+        var resultadoItem = devolverItemParaLootMoneda(randomItem);      
+      }
+      new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
+        const loot = gltf.scene;
+        loot.traverse(function (object) {
+          if (object.isMesh) object.castShadow = true;
+        });  
+        var geo = new THREE.BoxGeometry(1, 1, 1);     
+        loot.geometry = geo;
+        loot.scale.set(0.8, 0.8, 0.8);
+        var random = Math.floor(Math.random() * (250 - 0)) + 0;
+        var tipo = tipoLootSegunNombreObjeto3D(loot.children[0].name);
+        if (tipo != "moneda") {
+          loot.rotation.x = -Math.PI / 2;
+          loot.rotation.z = random;
+        }
+        if (tipo == "anillo") {
+          loot.scale.set(0.4, 0.4, 0.4);
+        }
+        if (tipo == "pocion") {
+          loot.scale.set(0.4, 0.4, 0.4);
+        }
+        if (tipo == "moneda") {
+          loot.userData = {
+            nombre: "Monedas",
+            cantidad: Math.floor(Math.random() * (250 - 10)) + 10,
+            tipo: "recurso",
+            categoria: "moneda",
+            imagen: "img/item/moneda.png",
+          };
+        }
+        if (tipo == "pocion") {
+          loot.userData = {
+            nombre: "Pocion",
+            cantidad: Math.floor(Math.random() * (250 - 10)) + 10,
+            tipo: "recurso",
+            categoria: "pocion",
+            imagen: "img/item/pocion.png",
+          };
+        }
+        if (tipo == "armadura") {
+          var nombreRandom =
+            lootArrayArmadura[
+              Math.floor(Math.random() * (lootArrayArmadura.length - 0)) + 0
+            ];
+          loot.userData = {
+            nombre: nombreRandom,
+            ataque: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            defensa:(Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            peso: Math.floor(Math.random() * (100 - 1)) + 1,
+            tipo: "recurso",
+            categoria: "armadura",
+            imagen: "img/item/armadura.png",
+            glb: resultadoItem,
+          };
+        }
+        if (tipo == "arma") {
+          var nombreRandom =
+            lootArrayArma[
+              Math.floor(Math.random() * (lootArrayArma.length - 0)) + 0
+            ];
+          loot.userData = {
+            nombre: nombreRandom,
+            ataque: (Math.floor(Math.random() * (10 - 1)) + 1) * jugadorStats.nivel,
+            defensa: (Math.floor(Math.random() * (10 - 1)) + 1) * jugadorStats.nivel,
+            peso: Math.floor(Math.random() * (100 - 1)) + 1,
+            tipo: "recurso",
+            categoria: "arma",
+            imagen: "img/item/arma.png",
+            glb: resultadoItem,
+          };
+        }
+        if (tipo == "collar") {
+          var nombreRandom =
+            lootArrayCollar[
+              Math.floor(Math.random() * (lootArrayCollar.length - 0)) + 0
+            ];
+          loot.userData = {
+            nombre: nombreRandom,
+            ataque: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            defensa: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            peso: Math.floor(Math.random() * (5 - 1)) + 1,
+            tipo: "recurso",
+            categoria: "collar",
+            imagen: "img/item/collar.png",
+            glb: resultadoItem,
+          };
+        }
+        if (tipo == "anillo") {
+          var nombreRandom =
+            lootArrayAnillo[
+              Math.floor(Math.random() * (lootArrayAnillo.length - 0)) + 0
+            ];
+          loot.userData = {
+            nombre: nombreRandom,
+            ataque: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            defensa: (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+            peso: Math.floor(Math.random() * (3 - 1)) + 1,
+            tipo: "recurso",
+            categoria: "anillo",
+            imagen: "img/item/anillo.png",
+            glb: resultadoItem,
+          };
+        }
+        var nombreRandomParaBorrar =
+          "objeto" +
+          (Math.floor(Math.random() * (999999 - 0)) + 0) *
+            (Math.floor(Math.random() * (10 - 1)) + 1);
+        loot.name = nombreRandomParaBorrar;
+        inventarioMercado.push(loot)
+      });
+    }
+    console.log(inventarioMercado)
   }
   function comprar(){
 
-  }
+}
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
