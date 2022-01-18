@@ -171,3 +171,9 @@ h2 {
     padding: 0.75rem 1.5rem;
   }
 }
+
+.fondo{
+  background: rgb(87,87,87);
+background: linear-gradient(25deg, rgba(87,87,87,1) 0%, rgba(12,24,23,1) 100%);
+height: -webkit-fill-available;
+}
