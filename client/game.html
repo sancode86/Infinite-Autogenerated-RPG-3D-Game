@@ -228,8 +228,8 @@
   var statsDiv = document.getElementById("statsDiv");
   //VARIA
   var cantidadObjetosRandom = 1;
-  var tamañoCuarto = 50;
-  var spawnArea = tamañoCuarto / 2;
+  // var tamañoCuarto = 50;
+  // var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 0;
   var cantidadPiedras = 3;
   var cantidadCofres = 10;
@@ -437,21 +437,30 @@
       }
     }
   }
-  buffer();
-  crearSuelo();
-  crearLuces();
-  crearCajas();
-  crearParedes(4);
-  cargarInventario();
-  crearCofres();
-  crearObjetosRandom();
-  crearSkybox();
-  crearEnemigos();
-  crearPiedras();
-  crearMercado();
+
+  //CREACION PRINCIPAL
+  crearHabitacion(100, 0, 0);
+  
+  function crearHabitacion(tamaño, posicionX, posicionZ){
+    var tamañoCuarto = tamaño;
+    var spawnArea = tamañoCuarto / 2;
+    buffer();
+    crearSuelo(tamañoCuarto, posicionX, posicionZ);
+    crearLuces(tamañoCuarto, posicionX, posicionZ);
+    crearCajas();
+    crearLuzGeneral(posicionX, posicionZ);
+    crearParedes(tamañoCuarto, posicionX, posicionZ);
+    cargarInventario();
+    crearCofres(spawnArea, posicionX, posicionZ);
+    crearObjetosRandom(spawnArea, posicionX, posicionZ);
+    crearSkybox(tamañoCuarto, posicionX, posicionZ);
+    crearEnemigos(spawnArea, posicionX, posicionZ);
+    crearPiedras(spawnArea, posicionX, posicionZ);
+    crearMercado(spawnArea, posicionX, posicionZ);
+  }
   function crearCajas() {
     for (let j = 0; j < cantidadCajas; j++) {
-      // crear una caja
+      // crear una caja TESTING
       const geoBox = new THREE.BoxGeometry(1, 1, 1);
       var r1 = Math.floor(Math.random() * (80 - 10)) + 10;
       var r2 = Math.floor(Math.random() * (80 - 10)) + 10;
@@ -476,7 +485,7 @@
       arraySolidos.push(box);
     }
   }
-  function crearPiedras() {
+  function crearPiedras(spawnArea, posicionX, posicionZ) {
     for (let j = 0; j < cantidadPiedras; j++) {
       const geometriaPiedra = new THREE.BoxGeometry(2, 2, 2);
       var randomSkin = Math.floor(Math.random() * (7 - 1) + 1);
@@ -512,6 +521,9 @@
           piedra.position.z =
             Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
             -(spawnArea - 5);
+
+            piedra.position.x += posicionX
+            piedra.position.z += posicionZ
           scene.add(piedra);
           arraySolidos.push(piedra);
           camera.updateProjectionMatrix();
@@ -519,7 +531,7 @@
       );
     }
   }
-  function crearCofres() {
+  function crearCofres(spawnArea, posicionX, posicionZ) {
     for (let j = 0; j < cantidadCofres; j++) {
       var geo = new THREE.BoxGeometry(2, 2, 2);
       // crear un cofre
@@ -551,14 +563,16 @@
         cofre.position.z =
           Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
           -(spawnArea - 5);
+          cofre.position.x += posicionX
+          cofre.position.z += posicionZ
         scene.add(cofre);
         arraySolidos.push(cofre);
         camera.updateProjectionMatrix();
       });
     }
   }
-  function crearParedes(cantidadParedes) {
-    var cantidad = cantidadParedes;
+  function crearParedes(tamañoCuarto, posicionX, posicionZ) {
+    var cantidad = 4;
     // crear una pared
     const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
     var loader = new THREE.TextureLoader();
@@ -578,9 +592,9 @@
     pared.castShadow = true;
     pared.receiveShadow = true;
     pared.userData.name = "Pared";
-    pared.position.x = 0;
+    pared.position.x = 0 + posicionX;
     pared.position.y = 0;
-    pared.position.z = tamañoCuarto / 2;
+    pared.position.z = (tamañoCuarto / 2) + posicionZ;
     scene.add(pared);
     arrayParedes.push(pared);
     // arraySolidos.push(pared);
@@ -591,9 +605,9 @@
     pared2.castShadow = true;
     pared2.receiveShadow = true;
     pared2.userData.name = "Pared2";
-    pared2.position.x = tamañoCuarto / 2;
+    pared2.position.x = (tamañoCuarto / 2)  + posicionX;;
     pared2.position.y = 0;
-    pared2.position.z = 0;
+    pared2.position.z = 0  + posicionZ;
     scene.add(pared2);
     arrayParedes.push(pared2);
     // arraySolidos.push(pared2);
@@ -603,9 +617,9 @@
     pared3.castShadow = true;
     pared3.receiveShadow = true;
     pared3.userData.name = "Pared3";
-    pared3.position.x = -tamañoCuarto / 2;
+    pared3.position.x = (-tamañoCuarto / 2) + posicionX;;
     pared3.position.y = 0;
-    pared3.position.z = 0;
+    pared3.position.z = 0  + posicionZ;
     scene.add(pared3);
     arrayParedes.push(pared3);
     // arraySolidos.push(pared3);
@@ -615,9 +629,9 @@
     pared4.castShadow = true;
     pared4.receiveShadow = true;
     pared4.userData.name = "Pared4";
-    pared4.position.x = 0;
+    pared4.position.x = 0 + posicionX;;
     pared4.position.y = 0;
-    pared4.position.z = -tamañoCuarto / 2;
+    pared4.position.z = (-tamañoCuarto / 2) + posicionZ;
     scene.add(pared4);
     arrayParedes.push(pared4);
     // arraySolidos.push(pared4);
@@ -719,7 +733,7 @@
   }
   window.addEventListener("resize", onWindowResize);
   
-  function crearSuelo() {
+  function crearSuelo(tamañoCuarto, posicionX, posicionZ) {
     const geoPiso = new THREE.PlaneGeometry(
       tamañoCuarto,
       tamañoCuarto,
@@ -745,23 +759,28 @@
     pisoSimple.castShadow = true;
     pisoSimple.receiveShadow = true;
     pisoSimple.rotation.x = -Math.PI / 2;
-    pisoSimple.userData.ground = true;
+    pisoSimple.userData.ground = true;   
+    pisoSimple.position.set(posicionX, 0, posicionZ)
     scene.add(pisoSimple);
   }
-  const luzGeneral = new THREE.AmbientLight(0x6fa8dc, 0.8);
-  scene.add(luzGeneral);
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0);
-  dirLight.position.set(-50, 50, 0);
-  dirLight.castShadow = true;
-  dirLight.shadow.camera.top = 100;
-  dirLight.shadow.camera.bottom = -100;
-  dirLight.shadow.camera.left = -100;
-  dirLight.shadow.camera.right = 100;
-  dirLight.shadow.camera.near = 0.1;
-  dirLight.shadow.camera.far = 100;
-  dirLight.shadow.mapSize.width = 4096;
-  dirLight.shadow.mapSize.height = 4096;
-  scene.add(dirLight);
+  function crearLuzGeneral(posicionX, posicionZ){
+    var luzGeneral = new THREE.AmbientLight(0x6fa8dc, 0.8);
+    luzGeneral.position.x = posicionX 
+    luzGeneral.position.z = posicionZ
+    scene.add(luzGeneral);
+  }
+  // const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+  // dirLight.position.set(-50, 50, 0);
+  // dirLight.castShadow = true;
+  // dirLight.shadow.camera.top = 100;
+  // dirLight.shadow.camera.bottom = -100;
+  // dirLight.shadow.camera.left = -100;
+  // dirLight.shadow.camera.right = 100;
+  // dirLight.shadow.camera.near = 0.1;
+  // dirLight.shadow.camera.far = 100;
+  // dirLight.shadow.mapSize.width = 4096;
+  // dirLight.shadow.mapSize.height = 4096;  
+  // scene.add(dirLight);
   // ANIMATE
   function animate() {
     stats.begin();
@@ -796,7 +815,7 @@
     clockDiv.textContent = `${hour}:${min}`.replace(/\b\d\b/g, "0$&");
     gameTime += speed;
   }
-  function crearSkybox() {
+  function crearSkybox(tamañoCuarto, posicionX, posicionZ) {
     let materialArray = [];
     let texture_up = new THREE.TextureLoader().load("img/skybox/up.png");
     let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.png");
@@ -820,6 +839,8 @@
       nombre: "universo",
       tipo: "infinito",
     };
+    skybox.position.x = posicionX
+    skybox.position.z = posicionZ
     scene.add(skybox);
   }
   function chequearChoque() {
@@ -1627,7 +1648,7 @@
     audioMoneda.play();
   }
 
-  function crearLuces() {
+  function crearLuces(tamañoCuarto, posicionX, posicionZ){
     var anguloLuz = 1;
     var luz1 = new THREE.SpotLight(0xe69138, 0.01);
     luz1.position.set(tamañoCuarto / 2 - 1, 2, tamañoCuarto / 2 - 1);
@@ -1636,6 +1657,8 @@
     luz1.castShadow = true;
     luz1.angle = anguloLuz;
     luz1.castShadow = true;
+    luz1.position.x += posicionX
+    luz1.position.z += posicionZ
     arrayLuces.push(luz1);
     scene.add(luz1);
     var rotacion = 2 * Math.PI * (135 / 360);
@@ -1646,7 +1669,7 @@
       tamañoCuarto / 2 - 1,
       rotacion,
       despazamientoFuegoX,
-      despazamientoFuegoZ
+      despazamientoFuegoZ,posicionX,posicionZ
     );
     var luz2 = new THREE.SpotLight(0xe69138, 0.3);
     luz2.position.set(-(tamañoCuarto / 2 - 1), 2, -(tamañoCuarto / 2 - 1));
@@ -1654,6 +1677,8 @@
     luz2.shadow.camera.near = 0.01;
     luz2.angle = anguloLuz;
     luz2.castShadow = true;
+    luz2.position.x += posicionX
+    luz2.position.z += posicionZ
     arrayLuces.push(luz2);
     scene.add(luz2);
     var rotacion = 2 * Math.PI * (-45 / 360);
@@ -1664,7 +1689,7 @@
       -(tamañoCuarto / 2 - 1),
       rotacion,
       despazamientoFuegoX,
-      despazamientoFuegoZ
+      despazamientoFuegoZ,posicionX,posicionZ
     );
     var luz3 = new THREE.SpotLight(0xe69138, 1.5);
     luz3.position.set(tamañoCuarto / 2 - 1, 2, -(tamañoCuarto / 2 - 1));
@@ -1672,6 +1697,8 @@
     luz3.shadow.camera.near = 0.01;
     luz3.angle = anguloLuz;
     luz3.castShadow = true;
+    luz3.position.x += posicionX
+    luz3.position.z += posicionZ
     arrayLuces.push(luz3);
     scene.add(luz3);
     var rotacion = 2 * Math.PI * (225 / 360);
@@ -1682,7 +1709,7 @@
       -(tamañoCuarto / 2 - 1),
       rotacion,
       despazamientoFuegoX,
-      despazamientoFuegoZ
+      despazamientoFuegoZ,posicionX,posicionZ
     );
     var luz4 = new THREE.SpotLight(0xe69138, 0.7);
     luz4.position.set(-(tamañoCuarto / 2 - 1), 2, tamañoCuarto / 2 - 1);
@@ -1690,6 +1717,8 @@
     luz4.shadow.camera.near = 0.01;
     luz4.angle = anguloLuz;
     luz4.castShadow = true;
+    luz4.position.x += posicionX
+    luz4.position.z += posicionZ
     arrayLuces.push(luz4);
     scene.add(luz4);
     var rotacion = Math.PI / 4;
@@ -1700,7 +1729,7 @@
       tamañoCuarto / 2 - 1,
       rotacion,
       despazamientoFuegoX,
-      despazamientoFuegoZ
+      despazamientoFuegoZ,posicionX,posicionZ
     );
   }
   function lucesAnimar() {
@@ -1760,7 +1789,7 @@
     posZ,
     rotacion,
     despazamientoFuegoX,
-    despazamientoFuegoZ
+    despazamientoFuegoZ,posicionX,posicionZ
   ) {
     new GLTFLoader().load("models/torch.glb", function (gltf) {
       const test = gltf.scene;
@@ -1783,6 +1812,8 @@
       test.geometry = geo;
       test.position.x = posX;
       test.position.z = posZ;
+      test.position.x += posicionX;
+      test.position.z += posicionZ;
       test.position.y = 3;
       test.rotation.y = rotacion;
       test.scale.set(0.8, 0.8, 0.8);
@@ -1795,11 +1826,13 @@
     sphere.position.x = posX + despazamientoFuegoX;
     sphere.position.z = posZ + despazamientoFuegoZ;
     sphere.position.y = 3.6;
+    sphere.position.x += posicionX;
+    sphere.position.z += posicionZ;
     arrayFuegos.push(sphere);
     scene.add(sphere);
-    crearColumna(posX - despazamientoFuegoX, posZ - despazamientoFuegoZ);
+    crearColumna(posX - despazamientoFuegoX, posZ - despazamientoFuegoZ,posicionX, posicionZ);
   }
-  function crearColumna(posX, posZ) {
+  function crearColumna(posX, posZ, posicionX, posicionZ) {
     new GLTFLoader().load("models/columna.glb", function (gltf) {
       const test = gltf.scene;
       test.traverse(function (object) {
@@ -1821,6 +1854,8 @@
       test.geometry = geo;
       test.position.x = posX;
       test.position.z = posZ;
+      test.position.x += posicionX;
+      test.position.z += posicionZ;
       test.scale.set(1, 1.24, 1);
       scene.add(test);
       arraySolidos.push(test);
@@ -1948,14 +1983,14 @@
         glb: objeto.parent.userData.glb,
       };
       var nombreRandomParaBorrar =
-        "objeto" +
+        "objetoDevueltoAlMundo" +
         (Math.floor(Math.random() * (999999 - 0)) + 0) *
           (Math.floor(Math.random() * (10 - 1)) + 1);
       loot.name = nombreRandomParaBorrar;
       scene.add(loot);
     });
   }
-  function crearEnemigos() {
+  function crearEnemigos(spawnArea, posicionX, posicionZ) {
     var randomCantidadEnemigos = Math.floor(Math.random() * (5 - 0)) + 0;
     for (let w = 0; w < randomCantidadEnemigos; w++) {
       var randomSkin = Math.floor(Math.random() * (22 - 1)) + 1;
@@ -1992,6 +2027,9 @@
             (Math.floor(Math.random() * (999999 - 0)) + 0) *
               (Math.floor(Math.random() * (10 - 1)) + 1);
           enemigo.name = nombreRandomParaBorrar;
+
+          enemigo.position.x += posicionX
+          enemigo.position.z += posicionZ
           scene.add(enemigo);
           arrayEnemigos.push(enemigo);
           arraySolidos.push(enemigo);
@@ -2277,7 +2315,7 @@
     document.getElementById("morirCartel").style.display = "block";
   }
 
-  function crearObjetosRandom() {
+  function crearObjetosRandom(spawnArea, posicionX, posicionZ) {
     for (let j = 0; j < cantidadObjetosRandom; j++) {
       var randomModelos = Math.floor(Math.random() * (10 - 1)) + 1;
       var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -2315,6 +2353,9 @@
           objetoExtra.position.z =
             Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
             -(spawnArea - 5);
+
+            objetoExtra.position.x += posicionX
+            objetoExtra.position.z += posicionZ
           scene.add(objetoExtra);
           arraySolidos.push(objetoExtra);
           camera.updateProjectionMatrix();
@@ -2384,8 +2425,8 @@
     }, 3000);
   }
 
-  function crearMercado() {
-    console.log("crearMercado");
+  function crearMercado(spawnArea, posicionX, posicionZ) {
+
     var posibilidadDeCrearMercado = Math.floor(Math.random() * (8 - 6)) + 6;
     if (posibilidadDeCrearMercado == 7) {
       var randomCantidadArticulos = Math.floor(Math.random() * (10 - 2)) + 2;
@@ -2424,6 +2465,9 @@
         Mercado.position.z =
           Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
           -(spawnArea - 5);
+
+          Mercado.position.x += posicionX
+          Mercado.position.z += posicionZ
         scene.add(Mercado);
         arraySolidos.push(Mercado);
         camera.updateProjectionMatrix();
@@ -2548,7 +2592,7 @@
     }
   }
   function crearArticulosVenta(cantidad) {
-    console.log("crearArticulosVenta");
+ 
     for (let index = 0; index < cantidad; index++) {
       var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
       var tipoDeItem = Math.floor(Math.random() * (6 - 1)) + 1;
@@ -2622,9 +2666,9 @@
           loot.userData = {
             nombre: nombreRandom,
             ataque:
-              (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (15 - 1)) + 1) * jugadorStats.nivel,
             defensa:
-              (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (15 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (100 - 1)) + 1,
             tipo: "recurso",
             categoria: "armadura",
@@ -2708,7 +2752,7 @@
     rellenarMercado();
   }
   function comprar(index) { 
-    console.log("inventarioMercado[index]", inventarioMercado[index])
+ 
     if (jugadorStats.monedas >= inventarioMercado[index].userData.precio && (jugadorStats.peso + inventarioMercado[index].userData.peso <= 200) ) {
       var audio = new Audio("audio/comprar.mp3");
        audio.play();
