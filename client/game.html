@@ -2838,8 +2838,9 @@
           if(puertaUbicacion == "atras" && arrayPuertas[index].userData.creoHabitacion === false){
             arrayPuertas[index].userData.creoHabitacion = true
             var tamañoHabitacion = 100
+            var difEncaje = 0.5
             var posX = arrayPuertas[index].position.x; 
-            var posZ = arrayPuertas[index].position.z + (tamañoHabitacion/2)
+            var posZ = arrayPuertas[index].position.z + (tamañoHabitacion/2 + difEncaje)
             jugador.position.z += 5
             
             crearHabitacion(tamañoHabitacion, posX, posZ);
