@@ -2863,18 +2863,22 @@
             if(arrayPuertas[index].position.z > jugador.position.z){
               jugador.position.z += 5   
               var selectSkybox = scene.getObjectByName("skybox");
-              selectSkybox.position.z += jugador.position.z  
-              var selectLuzGeneral = scene.getObjectByName("luzGeneral"); 
-              selectLuzGeneral.position.z = jugador.position.z  
+              selectSkybox.position.x = jugador.position.x  
+              selectSkybox.position.z = jugador.position.z  
+              var selectLuzGeneral = scene.getObjectByName("luzGeneral");       
               selectLuzGeneral.position.x = jugador.position.x  
+              selectLuzGeneral.position.z = jugador.position.z  
+         
               
             }else{
               jugador.position.z -= 5   
               var selectSkybox = scene.getObjectByName("skybox");  
-              selectSkybox.position.z -= jugador.position.z  
+              selectSkybox.position.x = jugador.position.x  
+              selectSkybox.position.z = jugador.position.z  
               var selectLuzGeneral = scene.getObjectByName("luzGeneral"); 
-              selectLuzGeneral.position.z = jugador.position.z     
-              selectLuzGeneral.position.x = jugador.position.x    
+              selectLuzGeneral.position.x = jugador.position.x  
+              selectLuzGeneral.position.z = jugador.position.z   
+         
             }
           }
 
