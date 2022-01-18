@@ -674,7 +674,8 @@
     }
     if (e.keyCode == 69) {
       //E
-      characterControls.switchJuntar();
+      characterControls.switchRoll();
+      sonidoRoll();
     }
     if (e.keyCode == 73) {
       //I (inventario)
@@ -707,7 +708,7 @@
     }
     if (e.keyCode == 69) {
       //E
-      characterControls.switchJuntarStop();
+      characterControls.switchRollStop();
     }
     if (
       e.keyCode == 65 ||
@@ -1166,7 +1167,7 @@
   function abrirCofre(objeto) {
     sonidoCofre();
     acumularExperiencia("juntar");
-    var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
+    var randomCantidad = Math.floor(Math.random() * (7 - 0)) + 0;
     crearLoot(objeto, randomCantidad);
     var geo = new THREE.BoxGeometry(2, 2, 2);
     var posX = objeto.position.x;

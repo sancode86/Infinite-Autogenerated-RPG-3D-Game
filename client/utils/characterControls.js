@@ -22,7 +22,7 @@ export class CharacterControls {
   fadeDuration = 0.2;
   runVelocity = 10;
   walkVelocity = 2;
-  rollVelocity = 12;
+  rollVelocity = 18;
   constructor(
     jugador,
     mixer,
