@@ -568,3 +568,14 @@ color: white !important;
 .dineroMercado{
   color:  white !important;
 }
+
+.sinEspacio{
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  justify-content: center;
+  text-align: center;
+  font-size: 27px !important;
+  width: 305px;
+  color: red !important;
+}
