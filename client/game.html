@@ -202,6 +202,7 @@
     collar: "",
     anillo: "",
   };
+  var arrayPuertas = []
   var coolDownFlag = 0;
   var segsCoolDown = 0;
   var particulasBuff = [];
@@ -572,7 +573,7 @@
     }
   }
   function crearParedes(tamañoCuarto, posicionX, posicionZ) {
-    var cantidad = 4;
+   
     // crear una pared
     const geoBox = new THREE.BoxGeometry(tamañoCuarto, 10, 1);
     var loader = new THREE.TextureLoader();
@@ -597,6 +598,7 @@
     pared.position.z = (tamañoCuarto / 2) + posicionZ;
     scene.add(pared);
     arrayParedes.push(pared);
+    crearPuerta("atras", pared.position.x, pared.position.z)
     // arraySolidos.push(pared);
     camera.updateProjectionMatrix();
     //pared DERECHA
@@ -798,6 +800,7 @@
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
     chequearChoque();
+    chequearEntrarPuerta();
     moverEnemigos();
     chequearRecibirDaño();
     chequearMorir();
@@ -2767,6 +2770,85 @@
       setTimeout(function () {
         document.getElementById("noPuedesComprar").style.display = "none";
       }, 2000);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  function crearPuerta(ubicacion, posX, posZ){
+    // crear una puerta
+    console.log("crear puerta")
+      var geo = new THREE.BoxGeometry(2, 2, 5);
+      new GLTFLoader().load(
+        "models/puertagrande.glb",
+        function (gltf) {
+          var random = (Math.floor(Math.random() * (999999 - 0)) + 0)*(Math.floor(Math.random() * (10 - 1)) + 1);
+          const puerta = gltf.scene;
+          puerta.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
+            object.userData.draggable = true;
+            object.name = "puerta" + random;
+            object.userData = {
+              ubicacion: ubicacion,
+              creoHabitacion: false,
+              draggable: false,
+              name: "puerta" + random,
+              tipo: "puerta",
+            };
+          });        
+          puerta.geometry = geo;      
+          puerta.castShadow = true;
+          puerta.receiveShadow = true;
+          puerta.position.x = posX
+          puerta.position.y = 0;
+          puerta.position.z = posZ    
+          puerta.scale.set(1, 1, 8);
+          scene.add(puerta);
+          arrayPuertas.push(puerta);
+      })
+  }
+
+  function chequearEntrarPuerta(){
+    if (jugador?.position != undefined) {
+      for (let index = 0; index < arrayPuertas.length; index++) {
+        var resultado = checkearSiSeTocaJugador(jugador, arrayPuertas[index]);
+        if (resultado != false) {
+         console.log("toco puerta ", arrayPuertas[index])
+          var puertaUbicacion = arrayPuertas[index].userData.ubicacion
+
+          if(puertaUbicacion == "atras" && arrayPuertas[index].userData.creoHabitacion === false){
+            arrayPuertas[index].userData.creoHabitacion = true
+            var tamañoHabitacion = 100
+            var posX = arrayPuertas[index].position.x; 
+            var posZ = arrayPuertas[index].position.z + (tamañoHabitacion/2)
+            jugador.position.z += 5
+            
+            crearHabitacion(tamañoHabitacion, posX, posZ);
+          }
+
+
+
+        }     
+      }
     }
   }
 </script>
