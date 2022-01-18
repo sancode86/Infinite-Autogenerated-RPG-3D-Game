@@ -2467,7 +2467,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
         false
       );
       var link2 = document.createElement("a");
-      link2.innerHTML = "💰 " + (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel;     
+      link2.innerHTML = "💰 " + inventarioMercado[index].userData.precio;     
       desplegable2.appendChild(link2);
       var link2 = document.createElement("a");
       link2.innerHTML = "Comprar";
@@ -2556,6 +2556,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
             tipo: "recurso",
             categoria: "moneda",
             imagen: "img/item/moneda.png",
+            precio: (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel
           };
         }
         if (tipo == "pocion") {
@@ -2565,6 +2566,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
             tipo: "recurso",
             categoria: "pocion",
             imagen: "img/item/pocion.png",
+            precio: (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel
           };
         }
         if (tipo == "armadura") {
@@ -2581,6 +2583,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
             categoria: "armadura",
             imagen: "img/item/armadura.png",
             glb: resultadoItem,
+            precio: (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel
           };
         }
         if (tipo == "arma") {
@@ -2597,6 +2600,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
             categoria: "arma",
             imagen: "img/item/arma.png",
             glb: resultadoItem,
+            precio: (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel
           };
         }
         if (tipo == "collar") {
@@ -2613,6 +2617,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
             categoria: "collar",
             imagen: "img/item/collar.png",
             glb: resultadoItem,
+            precio: (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel
           };
         }
         if (tipo == "anillo") {
@@ -2629,6 +2634,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
             categoria: "anillo",
             imagen: "img/item/anillo.png",
             glb: resultadoItem,
+            precio: (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel
           };
         }
         loot.parent = {
@@ -2644,11 +2650,17 @@ for (let index = 0; index < inventarioMercado.length; index++) {
     }
     rellenarMercado();
   }
-  function comprar(index){  
-    inventario.push(inventarioMercado[index])
-    inventarioMercado.splice(index, 1);
-    cargarInventario();
-    rellenarMercado();
+  function comprar(index){
+    console.log("jugadorStats.monedas", jugadorStats.monedas)
+    console.log("inventarioMercado[index].precio", inventarioMercado[index].userData.precio)
+    if(jugadorStats.monedas >= inventarioMercado[index].precio){
+      inventario.push(inventarioMercado[index])
+      inventarioMercado.splice(index, 1);
+      cargarInventario();
+      rellenarMercado();
+    }else{
+      console.log("No tienes suficientes monedas.")
+    }
 
 }
 
