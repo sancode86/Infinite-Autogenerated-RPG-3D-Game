@@ -2346,8 +2346,11 @@
 
 
   function crearMercado(){
+    console.log("crearMercado")
     var posibilidadDeCrearMercado = Math.floor(Math.random() * (8 - 6)) + 6;
-if(posibilidadDeCrearMercado == 7){
+    if(posibilidadDeCrearMercado == 7){
+      var randomCantidadArticulos = Math.floor(Math.random() * (10 - 2)) + 2;    
+      crearArticulosVenta(randomCantidadArticulos)  
     var geo = new THREE.BoxGeometry(3, 3, 3);
       // crear un Mercado
       var nombreMercado =
@@ -2390,12 +2393,10 @@ if(posibilidadDeCrearMercado == 7){
 
 
   function abrirMercado(){   
-    var contenedor = document.getElementById("contenedorMercado");
-    contenedor.innerHTML = ""
-    document.getElementById("dineroMercado").innerHTML = "💰 " + jugadorStats.monedas   
-    var randomCantidadArticulos = Math.floor(Math.random() * (10 - 2)) + 2;
-    crearArticulosVenta(randomCantidadArticulos)
-    rellenarMercado();
+    // var contenedor = document.getElementById("contenedorMercado");
+    // contenedor.innerHTML = ""
+    rellenarMercado()
+    document.getElementById("dineroMercado").innerHTML = "💰 " + jugadorStats.monedas;      
    document.getElementById("mercado").style.display = "block"
   }
 
@@ -2407,9 +2408,10 @@ if(posibilidadDeCrearMercado == 7){
   
 
 
-  function rellenarMercado(){   
-    var contenedor = document.getElementById("contenedorMercado");  
-   
+  function rellenarMercado(){ 
+
+    var contenedor = document.getElementById("contenedorMercado");   
+    contenedor.innerHTML = "" 
 for (let index = 0; index < inventarioMercado.length; index++) {
       var div = document.createElement("div");
       div.setAttribute("class", "dropdown");
@@ -2505,7 +2507,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
     }
   }
   function crearArticulosVenta(cantidad) {  
-  
+    console.log("crearArticulosVenta")
     for (let index = 0; index < cantidad; index++) {     
       var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
       var tipoDeItem = Math.floor(Math.random() * (6 - 1)) + 1;
@@ -2640,7 +2642,7 @@ for (let index = 0; index < inventarioMercado.length; index++) {
         inventarioMercado.push(loot)
       });
     }
- 
+    rellenarMercado();
   }
   function comprar(index){  
     inventario.push(inventarioMercado[index])
