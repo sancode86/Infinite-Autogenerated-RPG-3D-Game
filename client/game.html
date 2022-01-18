@@ -202,6 +202,8 @@
     collar: "",
     anillo: "",
   };
+  var flagSkybox = 0
+  var flagLuz = 0
   var arrayPuertas = []
   var coolDownFlag = 0;
   var segsCoolDown = 0;
@@ -766,10 +768,15 @@
     scene.add(pisoSimple);
   }
   function crearLuzGeneral(posicionX, posicionZ){
-    var luzGeneral = new THREE.AmbientLight(0x6fa8dc, 0.8);
-    luzGeneral.position.x = posicionX 
-    luzGeneral.position.z = posicionZ
-    scene.add(luzGeneral);
+    if(flagLuz == 0){
+
+      var luzGeneral = new THREE.AmbientLight(0x6fa8dc, 0.8);
+      luzGeneral.position.x = posicionX 
+      luzGeneral.position.z = posicionZ
+      luzGeneral.name = "luzGeneral"
+      scene.add(luzGeneral);
+      flagLuz = 1
+    }
   }
   // const dirLight = new THREE.DirectionalLight(0xffffff, 1);
   // dirLight.position.set(-50, 50, 0);
@@ -819,6 +826,10 @@
     gameTime += speed;
   }
   function crearSkybox(tamañoCuarto, posicionX, posicionZ) {
+
+    if(flagSkybox == 0){
+
+    
     let materialArray = [];
     let texture_up = new THREE.TextureLoader().load("img/skybox/up.png");
     let texture_rt = new THREE.TextureLoader().load("img/skybox/rt.png");
@@ -838,6 +849,7 @@
     var skybox = new THREE.Mesh(skyboxGeo, materialArray);
     skybox.castShadow = true;
     skybox.receiveShadow = true;
+    skybox.name = "skybox";
     skybox.userData = {
       nombre: "universo",
       tipo: "infinito",
@@ -845,6 +857,8 @@
     skybox.position.x = posicionX
     skybox.position.z = posicionZ
     scene.add(skybox);
+    flagSkybox = 1
+  }
   }
   function chequearChoque() {
     if (jugador?.position != undefined) {
@@ -2306,8 +2320,9 @@
     }
   }
   function apagarLuces() {
-    luzGeneral.color.setHex(0x000000);
-    luzGeneral.intensity = 5;
+    var selectLuzGeneral = scene.getObjectByName("luzGeneral"); 
+    selectLuzGeneral.color.setHex(0x000000);
+    selectLuzGeneral.intensity = 5;
 
     for (let i = 0; i < arrayLuces.length; i++) {
       arrayLuces[i].color.setHex(0x000000);
@@ -2796,7 +2811,7 @@
 
   function crearPuerta(ubicacion, posX, posZ){
     // crear una puerta
-    console.log("crear puerta")
+   
       var geo = new THREE.BoxGeometry(2, 2, 5);
       new GLTFLoader().load(
         "models/puertagrande.glb",
@@ -2831,9 +2846,9 @@
     if (jugador?.position != undefined) {
       for (let index = 0; index < arrayPuertas.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arrayPuertas[index]);
-        if (resultado != false) {
-         console.log("toco puerta ", arrayPuertas[index])
+        if (resultado != false) {      
           var puertaUbicacion = arrayPuertas[index].userData.ubicacion
+
 
           if(puertaUbicacion == "atras" && arrayPuertas[index].userData.creoHabitacion === false){
             arrayPuertas[index].userData.creoHabitacion = true
@@ -2846,11 +2861,21 @@
           }
           if(puertaUbicacion == "atras" && arrayPuertas[index].userData.creoHabitacion === true){
             if(arrayPuertas[index].position.z > jugador.position.z){
-              jugador.position.z += 5       
+              jugador.position.z += 5   
+              var selectSkybox = scene.getObjectByName("skybox");
+              selectSkybox.position.z += jugador.position.z  
+              var selectLuzGeneral = scene.getObjectByName("luzGeneral"); 
+              selectLuzGeneral.position.z = jugador.position.z  
+              selectLuzGeneral.position.x = jugador.position.x  
+              
             }else{
-              jugador.position.z -= 5         
+              jugador.position.z -= 5   
+              var selectSkybox = scene.getObjectByName("skybox");  
+              selectSkybox.position.z -= jugador.position.z  
+              var selectLuzGeneral = scene.getObjectByName("luzGeneral"); 
+              selectLuzGeneral.position.z = jugador.position.z     
+              selectLuzGeneral.position.x = jugador.position.x    
             }
-
           }
 
         }     
