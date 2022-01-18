@@ -202,7 +202,7 @@
     collar: "",
     anillo: "",
   };
-var lucesSoloEnPrimerCuarto = 0
+  var lucesSoloEnPrimerCuarto = 0;
   var arrayPuertas = [];
   var coolDownFlag = 0;
   var segsCoolDown = 0;
@@ -446,8 +446,8 @@ var lucesSoloEnPrimerCuarto = 0
     var tamañoCuarto = tamaño;
     var spawnArea = tamañoCuarto / 2;
     buffer();
-    crearSuelo(tamañoCuarto, posicionX, posicionZ);  
-      crearLuces(tamañoCuarto, posicionX, posicionZ);   
+    crearSuelo(tamañoCuarto, posicionX, posicionZ);
+    crearLuces(tamañoCuarto, posicionX, posicionZ);
     // crearCajas();
     crearParedes(tamañoCuarto, posicionX, posicionZ);
     cargarInventario();
@@ -610,6 +610,7 @@ var lucesSoloEnPrimerCuarto = 0
     pared2.position.y = 0;
     pared2.position.z = 0 + posicionZ;
     scene.add(pared2);
+    crearPuerta("derecha", pared2.position.x, pared2.position.z);
     arrayParedes.push(pared2);
     // arraySolidos.push(pared2);
     camera.updateProjectionMatrix();
@@ -771,18 +772,18 @@ var lucesSoloEnPrimerCuarto = 0
   luzGeneral.name = "luzGeneral";
   scene.add(luzGeneral);
 
-  // const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-  // dirLight.position.set(-50, 50, 0);
-  // dirLight.castShadow = true;
-  // dirLight.shadow.camera.top = 100;
-  // dirLight.shadow.camera.bottom = -100;
-  // dirLight.shadow.camera.left = -100;
-  // dirLight.shadow.camera.right = 100;
-  // dirLight.shadow.camera.near = 0.1;
-  // dirLight.shadow.camera.far = 100;
-  // dirLight.shadow.mapSize.width = 4096;
-  // dirLight.shadow.mapSize.height = 4096;
-  // scene.add(dirLight);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(-50, 50, 0);
+  dirLight.castShadow = true;
+  dirLight.shadow.camera.top = 100;
+  dirLight.shadow.camera.bottom = -100;
+  dirLight.shadow.camera.left = -100;
+  dirLight.shadow.camera.right = 100;
+  dirLight.shadow.camera.near = 0.1;
+  dirLight.shadow.camera.far = 100;
+  dirLight.shadow.mapSize.width = 4096;
+  dirLight.shadow.mapSize.height = 4096;
+  scene.add(dirLight);
   // ANIMATE
   function animate() {
     stats.begin();
@@ -805,6 +806,9 @@ var lucesSoloEnPrimerCuarto = 0
     chequearRecibirDaño();
     chequearMorir();
     chequearChoqueParedes();
+    if (jugador?.position != undefined) {
+    dirLight.lookAt(jugador)
+    }
     stats.end();
   }
   animate();
@@ -1661,8 +1665,8 @@ var lucesSoloEnPrimerCuarto = 0
     luz1.position.x += posicionX;
     luz1.position.z += posicionZ;
     arrayLuces.push(luz1);
-    if(lucesSoloEnPrimerCuarto == 0){
-    scene.add(luz1);
+    if (lucesSoloEnPrimerCuarto == 0) {
+      scene.add(luz1);
     }
     var rotacion = 2 * Math.PI * (135 / 360);
     var despazamientoFuegoX = -0.5;
@@ -1685,8 +1689,8 @@ var lucesSoloEnPrimerCuarto = 0
     luz2.position.x += posicionX;
     luz2.position.z += posicionZ;
     arrayLuces.push(luz2);
-    if(lucesSoloEnPrimerCuarto == 0){
-    scene.add(luz2);
+    if (lucesSoloEnPrimerCuarto == 0) {
+      scene.add(luz2);
     }
     var rotacion = 2 * Math.PI * (-45 / 360);
     var despazamientoFuegoX = +0.5;
@@ -1709,8 +1713,8 @@ var lucesSoloEnPrimerCuarto = 0
     luz3.position.x += posicionX;
     luz3.position.z += posicionZ;
     arrayLuces.push(luz3);
-    if(lucesSoloEnPrimerCuarto == 0){
-    scene.add(luz3);
+    if (lucesSoloEnPrimerCuarto == 0) {
+      scene.add(luz3);
     }
     var rotacion = 2 * Math.PI * (225 / 360);
     var despazamientoFuegoX = -0.5;
@@ -1733,8 +1737,8 @@ var lucesSoloEnPrimerCuarto = 0
     luz4.position.x += posicionX;
     luz4.position.z += posicionZ;
     arrayLuces.push(luz4);
-    if(lucesSoloEnPrimerCuarto == 0){
-    scene.add(luz4);
+    if (lucesSoloEnPrimerCuarto == 0) {
+      scene.add(luz4);
     }
     var rotacion = Math.PI / 4;
     var despazamientoFuegoX = 0.5;
@@ -1748,7 +1752,7 @@ var lucesSoloEnPrimerCuarto = 0
       posicionX,
       posicionZ
     );
-    lucesSoloEnPrimerCuarto = 1
+    lucesSoloEnPrimerCuarto = 1;
   }
   function lucesAnimar() {
     // for (let i = 0; i < arrayLuces.length; i++) {
@@ -2821,6 +2825,9 @@ var lucesSoloEnPrimerCuarto = 0
           tipo: "puerta",
         };
       });
+      if(ubicacion == "derecha"){
+        puerta.rotation.y = Math.PI / 2;
+      }
       puerta.geometry = geo;
       puerta.castShadow = true;
       puerta.receiveShadow = true;
@@ -2840,10 +2847,11 @@ var lucesSoloEnPrimerCuarto = 0
         if (resultado != false) {
           var puertaUbicacion = arrayPuertas[index].userData.ubicacion;
 
-          if (
-            puertaUbicacion == "atras" &&
-            arrayPuertas[index].userData.creoHabitacion === false
-          ) {
+
+
+
+          //PUERTA ATRAS !!
+          if (puertaUbicacion == "atras" && arrayPuertas[index].userData.creoHabitacion === false ) {
             arrayPuertas[index].userData.creoHabitacion = true;
             var tamañoHabitacion = 50;
             var difEncaje = 0.5;
@@ -2854,25 +2862,78 @@ var lucesSoloEnPrimerCuarto = 0
             jugador.position.z += 5;
             skybox.position.x = jugador.position.x;
             skybox.position.z = jugador.position.z;
-            luzGeneral.position.set(jugador.position.x,10, jugador.position.z)
+            luzGeneral.position.set(jugador.position.x, 10, jugador.position.z);
             crearHabitacion(tamañoHabitacion, posX, posZ);
           }
-          if (
-            puertaUbicacion == "atras" &&
-            arrayPuertas[index].userData.creoHabitacion === true
-          ) {
+          if ( puertaUbicacion == "atras" && arrayPuertas[index].userData.creoHabitacion === true ) {
             if (arrayPuertas[index].position.z > jugador.position.z) {
               jugador.position.z += 5;
               skybox.position.x = jugador.position.x;
               skybox.position.z = jugador.position.z;
-               luzGeneral.position.set(jugador.position.x,10, jugador.position.z)
+              luzGeneral.position.set(
+                jugador.position.x,
+                10,
+                jugador.position.z
+              );
             } else {
               jugador.position.z -= 5;
               skybox.position.x = jugador.position.x;
               skybox.position.z = jugador.position.z;
-              luzGeneral.position.set(jugador.position.x,10, jugador.position.z)
+              luzGeneral.position.set(
+                jugador.position.x,
+                10,
+                jugador.position.z
+              );
             }
           }
+
+
+
+
+
+
+        //PUERTA DERECHA !!
+        if (puertaUbicacion == "derecha" && arrayPuertas[index].userData.creoHabitacion === false ) {
+            arrayPuertas[index].userData.creoHabitacion = true;
+            var tamañoHabitacion = 50;
+            var difEncaje = 0.5;
+            var posZ = arrayPuertas[index].position.z;
+            var posX = arrayPuertas[index].position.x + (tamañoHabitacion / 2 + difEncaje);
+            jugador.position.x += 5;
+            skybox.position.x = jugador.position.x;
+            skybox.position.z = jugador.position.z;
+            luzGeneral.position.set(jugador.position.x, 10, jugador.position.z);
+            crearHabitacion(tamañoHabitacion, posX, posZ);
+          }
+          if ( puertaUbicacion == "derecha" && arrayPuertas[index].userData.creoHabitacion === true ) {
+            if (arrayPuertas[index].position.z > jugador.position.z) {
+              jugador.position.x += 5;
+              skybox.position.x = jugador.position.x;
+              skybox.position.z = jugador.position.z;
+              luzGeneral.position.set(
+                jugador.position.x,
+                10,
+                jugador.position.z
+              );
+            } else {
+              jugador.position.x -= 5;
+              skybox.position.x = jugador.position.x;
+              skybox.position.z = jugador.position.z;
+              luzGeneral.position.set(
+                jugador.position.x,
+                10,
+                jugador.position.z
+              );
+            }
+          }
+
+
+
+
+
+
+
+
         }
       }
     }
