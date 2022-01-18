@@ -52,11 +52,11 @@
     </div>
     <div
       data-tilt
-      data-tilt-max-glare="1"
+      data-tilt-max-glare="0.1"
       data-tilt-glare="true"
       data-tilt-perspective="1000"
       data-tilt-scale="1"
-      data-tilt-speed="400"
+      data-tilt-speed="1"
       id="mercado"
       class="mercado animate__animated animate__fadeIn center"
       style="display: none"
@@ -71,11 +71,11 @@
     </div>
     <div
       data-tilt
-      data-tilt-max-glare="1"
+      data-tilt-max-glare="0.1"
       data-tilt-glare="true"
       data-tilt-perspective="1000"
       data-tilt-scale="1"
-      data-tilt-speed="400"
+      data-tilt-speed="1"
       id="optionsMenu"
       class="optionsMenu animate__animated animate__fadeIn center"
       style="display: none"
@@ -278,7 +278,7 @@
   orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
   orbitControls.update();
   new GLTFLoader().load("models/Warrior.gltf", function (gltf) {
-    // musicaPlay();
+     musicaPlay();
     jugador = gltf.scene;
     jugador.traverse(function (object) {
       if (object.isMesh) object.castShadow = true;
