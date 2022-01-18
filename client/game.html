@@ -229,11 +229,11 @@
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
   //VARIA
-  var cantidadObjetosRandom = 1;
+  
   // var tamañoCuarto = 50;
   // var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 0;
-  var cantidadPiedras = 3;
+ 
  
   var posicionActualJugador = new THREE.Vector3(0, 0, 0);
 
@@ -486,6 +486,7 @@
     }
   }
   function crearPiedras(spawnArea, posicionX, posicionZ) {
+    var cantidadPiedras = Math.floor(Math.random() * (3 - 0)) + 0;
     for (let j = 0; j < cantidadPiedras; j++) {
       const geometriaPiedra = new THREE.BoxGeometry(2, 2, 2);
       var randomSkin = Math.floor(Math.random() * (7 - 1) + 1);
@@ -2005,7 +2006,7 @@
     });
   }
   function crearEnemigos(spawnArea, posicionX, posicionZ) {
-    var randomCantidadEnemigos = Math.floor(Math.random() * (5 - 0)) + 0;
+    var randomCantidadEnemigos = Math.floor(Math.random() * (3 - 0)) + 0;
     for (let w = 0; w < randomCantidadEnemigos; w++) {
       var randomSkin = Math.floor(Math.random() * (22 - 1)) + 1;
       new GLTFLoader().load(
@@ -2331,6 +2332,7 @@
   }
 
   function crearObjetosRandom(spawnArea, posicionX, posicionZ) {
+    var cantidadObjetosRandom = Math.floor(Math.random() * (3 - 0)) + 0;;
     for (let j = 0; j < cantidadObjetosRandom; j++) {
       var randomModelos = Math.floor(Math.random() * (10 - 1)) + 1;
       var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -2441,9 +2443,9 @@
   }
 
   function crearMercado(spawnArea, posicionX, posicionZ) {
-    var posibilidadDeCrearMercado = Math.floor(Math.random() * (8 - 6)) + 6;
-    if (posibilidadDeCrearMercado == 7) {
-      var randomCantidadArticulos = Math.floor(Math.random() * (10 - 2)) + 2;
+    var posibilidadDeCrearMercado = Math.floor(Math.random() * (10 - 0)) + 0;
+    if (posibilidadDeCrearMercado == 4) {
+      var randomCantidadArticulos = Math.floor(Math.random() * (15 - 5)) + 5;
       crearArticulosVenta(randomCantidadArticulos);
       var geo = new THREE.BoxGeometry(3, 3, 3);
       // crear un Mercado
@@ -2679,16 +2681,16 @@
           loot.userData = {
             nombre: nombreRandom,
             ataque:
-              (Math.floor(Math.random() * (15 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (25 - 1)) + 1) * jugadorStats.nivel,
             defensa:
-              (Math.floor(Math.random() * (15 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (25 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (100 - 1)) + 1,
             tipo: "recurso",
             categoria: "armadura",
             imagen: "img/item/armadura.png",
             glb: resultadoItem,
             precio:
-              (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (800 - 100)) + 100) * jugadorStats.nivel,
           };
         }
         if (tipo == "arma") {
@@ -2699,16 +2701,16 @@
           loot.userData = {
             nombre: nombreRandom,
             ataque:
-              (Math.floor(Math.random() * (10 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (20 - 1)) + 1) * jugadorStats.nivel,
             defensa:
-              (Math.floor(Math.random() * (10 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (20 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (100 - 1)) + 1,
             tipo: "recurso",
             categoria: "arma",
             imagen: "img/item/arma.png",
             glb: resultadoItem,
             precio:
-              (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (800 - 100)) + 100) * jugadorStats.nivel,
           };
         }
         if (tipo == "collar") {
@@ -2719,16 +2721,16 @@
           loot.userData = {
             nombre: nombreRandom,
             ataque:
-              (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (12 - 1)) + 1) * jugadorStats.nivel,
             defensa:
-              (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (12 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (5 - 1)) + 1,
             tipo: "recurso",
             categoria: "collar",
             imagen: "img/item/collar.png",
             glb: resultadoItem,
             precio:
-              (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (800 - 100)) + 100) * jugadorStats.nivel,
           };
         }
         if (tipo == "anillo") {
@@ -2739,9 +2741,9 @@
           loot.userData = {
             nombre: nombreRandom,
             ataque:
-              (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (8 - 1)) + 1) * jugadorStats.nivel,
             defensa:
-              (Math.floor(Math.random() * (5 - 1)) + 1) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (8 - 1)) + 1) * jugadorStats.nivel,
             peso: Math.floor(Math.random() * (3 - 1)) + 1,
             tipo: "recurso",
             categoria: "anillo",
