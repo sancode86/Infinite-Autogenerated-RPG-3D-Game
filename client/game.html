@@ -2441,6 +2441,8 @@
   }
 
   function rellenarMercado() {
+    document.getElementById("dineroMercado").innerHTML =
+      "💰 " + jugadorStats.monedas;
     var contenedor = document.getElementById("contenedorMercado");
     contenedor.innerHTML = "";
     for (let index = 0; index < inventarioMercado.length; index++) {
@@ -2700,15 +2702,15 @@
     }
     rellenarMercado();
   }
-  function comprar(index) {
-    console.log("jugadorStats.monedas", jugadorStats.monedas);
-    console.log(
-      "inventarioMercado[index].precio",
-      inventarioMercado[index].userData.precio
-    );
-    if (jugadorStats.monedas >= inventarioMercado[index].precio && (jugadorStats.peso + inventarioMercado[index].peso <= 200) ) {
+  function comprar(index) { 
+    console.log("inventarioMercado[index]", inventarioMercado[index])
+    if (jugadorStats.monedas >= inventarioMercado[index].userData.precio && (jugadorStats.peso + inventarioMercado[index].userData.peso <= 200) ) {
+      var audio = new Audio("audio/comprar.mp3");
+       audio.play();
+       jugadorStats.monedas -= inventarioMercado[index].userData.precio
       inventario.push(inventarioMercado[index]);
       inventarioMercado.splice(index, 1);
+      actualizarStatsJugador();
       cargarInventario();
       rellenarMercado();
     } else {
