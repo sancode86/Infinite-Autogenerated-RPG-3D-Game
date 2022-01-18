@@ -202,33 +202,18 @@
     collar: "",
     anillo: "",
   };
-  var segsCoolDown = 0;
-  var cantidadObjetosRandom = 1;
   var coolDownFlag = 0;
+  var segsCoolDown = 0;
   var particulasBuff = [];
   var inventario = [];
   var inventarioMercado = [];
   var arrayParedes = [];
   var bufferActivado = false;
   var sonidoMorirFlag = 0;
-  window.verItemPuestoClose = verItemPuestoClose;
-  window.comprar = comprar;
-  window.cerrarMercado = cerrarMercado;
-  window.verItemPuesto = verItemPuesto;
-  window.sacarItemPuesto = sacarItemPuesto;
-  window.inventario = inventario;
-  window.jugadorEquipoEnUso = jugadorEquipoEnUso;
-  window.jugadorStats = jugadorStats;
-  window.activarBuffer = activarBuffer;
   var segs = 0;
   var jugadorAtacando = 0;
   var morir = 0;
   var draggable;
-  var tamañoCuarto = 50;
-  var spawnArea = tamañoCuarto / 2;
-  var cantidadCajas = 0;
-  var cantidadPiedras = 3;
-  var cantidadCofres = 10;
   var fg = 1;
   var jugador;
   var characterControls;
@@ -241,7 +226,24 @@
   var gameTime = 1111104000000;
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
+  //VARIA
+  var cantidadObjetosRandom = 1;
+  var tamañoCuarto = 50;
+  var spawnArea = tamañoCuarto / 2;
+  var cantidadCajas = 0;
+  var cantidadPiedras = 3;
+  var cantidadCofres = 10;
   var posicionActualJugador = new THREE.Vector3(0, 0, 0);
+  
+  window.verItemPuestoClose = verItemPuestoClose;
+  window.comprar = comprar;
+  window.cerrarMercado = cerrarMercado;
+  window.verItemPuesto = verItemPuesto;
+  window.sacarItemPuesto = sacarItemPuesto;
+  window.inventario = inventario;
+  window.jugadorEquipoEnUso = jugadorEquipoEnUso;
+  window.jugadorStats = jugadorStats;
+  window.activarBuffer = activarBuffer;
   stats.showPanel(0);
   statsDiv.appendChild(stats.domElement);
   import { CharacterControls } from "./utils/characterControls.js";
@@ -254,7 +256,7 @@
   // SCENE
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xa8def0);
-  // CAMERA
+  // CAMARA
   const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
@@ -436,6 +438,7 @@
     }
   }
   buffer();
+  crearSuelo();
   crearLuces();
   crearCajas();
   crearParedes(4);
@@ -715,8 +718,8 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
   window.addEventListener("resize", onWindowResize);
-  generateFloorBasic();
-  function generateFloorBasic() {
+  
+  function crearSuelo() {
     const geoPiso = new THREE.PlaneGeometry(
       tamañoCuarto,
       tamañoCuarto,
