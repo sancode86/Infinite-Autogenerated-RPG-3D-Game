@@ -202,7 +202,7 @@
     collar: "",
     anillo: "",
   };
-
+var lucesSoloEnPrimerCuarto = 0
   var arrayPuertas = [];
   var coolDownFlag = 0;
   var segsCoolDown = 0;
@@ -229,12 +229,11 @@
   var stats = new Stats();
   var statsDiv = document.getElementById("statsDiv");
   //VARIA
-  
+
   // var tamañoCuarto = 50;
   // var spawnArea = tamañoCuarto / 2;
   var cantidadCajas = 0;
- 
- 
+
   var posicionActualJugador = new THREE.Vector3(0, 0, 0);
 
   window.verItemPuestoClose = verItemPuestoClose;
@@ -263,7 +262,7 @@
     45,
     window.innerWidth / window.innerHeight,
     0.1,
-    5000
+    10000
   );
   camera.position.y = 15;
   camera.position.z = 15;
@@ -272,12 +271,12 @@
   const renderer = new THREE.WebGLRenderer({ antialias: false });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = false;
   // CONTROLS
   const orbitControls = new OrbitControls(camera, renderer.domElement);
   orbitControls.enableDamping = true;
   orbitControls.minDistance = 2;
-  orbitControls.maxDistance = 25;
+  orbitControls.maxDistance = 100;
   orbitControls.enablePan = false;
   orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
   orbitControls.update();
@@ -447,8 +446,8 @@
     var tamañoCuarto = tamaño;
     var spawnArea = tamañoCuarto / 2;
     buffer();
-    crearSuelo(tamañoCuarto, posicionX, posicionZ);
-    crearLuces(tamañoCuarto, posicionX, posicionZ);
+    crearSuelo(tamañoCuarto, posicionX, posicionZ);  
+      crearLuces(tamañoCuarto, posicionX, posicionZ);   
     // crearCajas();
     crearParedes(tamañoCuarto, posicionX, posicionZ);
     cargarInventario();
@@ -768,6 +767,7 @@
   }
 
   var luzGeneral = new THREE.AmbientLight(0x6fa8dc, 0.8);
+  luzGeneral.position.set(0, 10, 0);
   luzGeneral.name = "luzGeneral";
   scene.add(luzGeneral);
 
@@ -834,7 +834,7 @@
   materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
   materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
   for (let i = 0; i < 6; i++) materialArray[i].side = THREE.BackSide;
-  var tamaño = 50 * 3;
+  var tamaño = 200 * 3;
   let skyboxGeo = new THREE.BoxGeometry(tamaño, tamaño, tamaño);
   var skybox = new THREE.Mesh(skyboxGeo, materialArray);
   skybox.castShadow = true;
@@ -1661,7 +1661,9 @@
     luz1.position.x += posicionX;
     luz1.position.z += posicionZ;
     arrayLuces.push(luz1);
+    if(lucesSoloEnPrimerCuarto == 0){
     scene.add(luz1);
+    }
     var rotacion = 2 * Math.PI * (135 / 360);
     var despazamientoFuegoX = -0.5;
     var despazamientoFuegoZ = -0.5;
@@ -1683,7 +1685,9 @@
     luz2.position.x += posicionX;
     luz2.position.z += posicionZ;
     arrayLuces.push(luz2);
+    if(lucesSoloEnPrimerCuarto == 0){
     scene.add(luz2);
+    }
     var rotacion = 2 * Math.PI * (-45 / 360);
     var despazamientoFuegoX = +0.5;
     var despazamientoFuegoZ = +0.5;
@@ -1705,7 +1709,9 @@
     luz3.position.x += posicionX;
     luz3.position.z += posicionZ;
     arrayLuces.push(luz3);
+    if(lucesSoloEnPrimerCuarto == 0){
     scene.add(luz3);
+    }
     var rotacion = 2 * Math.PI * (225 / 360);
     var despazamientoFuegoX = -0.5;
     var despazamientoFuegoZ = +0.5;
@@ -1727,7 +1733,9 @@
     luz4.position.x += posicionX;
     luz4.position.z += posicionZ;
     arrayLuces.push(luz4);
+    if(lucesSoloEnPrimerCuarto == 0){
     scene.add(luz4);
+    }
     var rotacion = Math.PI / 4;
     var despazamientoFuegoX = 0.5;
     var despazamientoFuegoZ = -0.5;
@@ -1740,6 +1748,7 @@
       posicionX,
       posicionZ
     );
+    lucesSoloEnPrimerCuarto = 1
   }
   function lucesAnimar() {
     // for (let i = 0; i < arrayLuces.length; i++) {
@@ -2333,7 +2342,7 @@
   }
 
   function crearObjetosRandom(spawnArea, posicionX, posicionZ) {
-    var cantidadObjetosRandom = Math.floor(Math.random() * (3 - 0)) + 0;;
+    var cantidadObjetosRandom = Math.floor(Math.random() * (3 - 0)) + 0;
     for (let j = 0; j < cantidadObjetosRandom; j++) {
       var randomModelos = Math.floor(Math.random() * (10 - 1)) + 1;
       var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -2691,7 +2700,8 @@
             imagen: "img/item/armadura.png",
             glb: resultadoItem,
             precio:
-              (Math.floor(Math.random() * (800 - 100)) + 100) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (800 - 100)) + 100) *
+              jugadorStats.nivel,
           };
         }
         if (tipo == "arma") {
@@ -2711,7 +2721,8 @@
             imagen: "img/item/arma.png",
             glb: resultadoItem,
             precio:
-              (Math.floor(Math.random() * (800 - 100)) + 100) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (800 - 100)) + 100) *
+              jugadorStats.nivel,
           };
         }
         if (tipo == "collar") {
@@ -2731,7 +2742,8 @@
             imagen: "img/item/collar.png",
             glb: resultadoItem,
             precio:
-              (Math.floor(Math.random() * (800 - 100)) + 100) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (800 - 100)) + 100) *
+              jugadorStats.nivel,
           };
         }
         if (tipo == "anillo") {
@@ -2841,9 +2853,8 @@
               (tamañoHabitacion / 2 + difEncaje);
             jugador.position.z += 5;
             skybox.position.x = jugador.position.x;
-              skybox.position.z = jugador.position.z;
-              luzGeneral.position.x = jugador.position.x;
-              luzGeneral.position.z = jugador.position.z;  
+            skybox.position.z = jugador.position.z;
+            luzGeneral.position.set(jugador.position.x,10, jugador.position.z)
             crearHabitacion(tamañoHabitacion, posX, posZ);
           }
           if (
@@ -2854,14 +2865,12 @@
               jugador.position.z += 5;
               skybox.position.x = jugador.position.x;
               skybox.position.z = jugador.position.z;
-              luzGeneral.position.x = jugador.position.x;
-              luzGeneral.position.z = jugador.position.z;         
+               luzGeneral.position.set(jugador.position.x,10, jugador.position.z)
             } else {
               jugador.position.z -= 5;
               skybox.position.x = jugador.position.x;
               skybox.position.z = jugador.position.z;
-              luzGeneral.position.x = jugador.position.x;
-              luzGeneral.position.z = jugador.position.z;
+              luzGeneral.position.set(jugador.position.x,10, jugador.position.z)
             }
           }
         }
