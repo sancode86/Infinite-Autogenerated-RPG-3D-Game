@@ -806,6 +806,7 @@
     chequearRecibirDaño();
     chequearMorir();
     chequearChoqueParedes();
+    choqueEnemigosParedes()
     if (jugador?.position != undefined) {
     dirLight.lookAt(jugador)
     }
@@ -1356,6 +1357,7 @@
             (Math.floor(Math.random() * (10 - 1)) + 1);
         loot.name = nombreRandomParaBorrar;
         scene.add(loot);
+        console.log("loot creado", loot)
       });
     }
   }
@@ -1498,6 +1500,7 @@
         inventario.push(objeto);
         var selectedObject = scene.getObjectByName(objeto.parent.name);
         scene.remove(selectedObject);
+        console.log("Loot levantado ", objeto);
         actualizarStatsJugador();
         cargarInventario();
       }
@@ -1989,7 +1992,14 @@
   function tirarLoot(objeto) {
     var posX = jugador.position.x;
     var posZ = jugador.position.z;
-    var resultadoItem = objeto.parent.userData.glb;
+
+    if(objeto.parent.userData.glb != undefined){
+      var resultadoItem = objeto.parent.userData.glb;
+    }else{
+      var resultadoItem = objeto.userData.glb;
+    }
+    console.log("Loot tirado ", objeto);
+
     new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
       const loot = gltf.scene;
       loot.traverse(function (object) {
@@ -2504,7 +2514,6 @@
       });
     }
   }
-
   function abrirMercado() {
     // var contenedor = document.getElementById("contenedorMercado");
     // contenedor.innerHTML = ""
@@ -2513,12 +2522,10 @@
       "💰 " + jugadorStats.monedas;
     document.getElementById("mercado").style.display = "block";
   }
-
   function cerrarMercado() {
     // inventarioMercado = []
     document.getElementById("mercado").style.display = "none";
   }
-
   function rellenarMercado() {
     document.getElementById("dineroMercado").innerHTML =
       "💰 " + jugadorStats.monedas;
@@ -2806,7 +2813,6 @@
 
   function crearPuerta(ubicacion, posX, posZ) {
     // crear una puerta
-
     var geo = new THREE.BoxGeometry(2, 2, 5);
     new GLTFLoader().load("models/puertagrande.glb", function (gltf) {
       var random =
@@ -2839,15 +2845,12 @@
       arrayPuertas.push(puerta);
     });
   }
-
   function chequearEntrarPuerta() {
     if (jugador?.position != undefined) {
       for (let index = 0; index < arrayPuertas.length; index++) {
         var resultado = checkearSiSeTocaJugador(jugador, arrayPuertas[index]);
         if (resultado != false) {
           var puertaUbicacion = arrayPuertas[index].userData.ubicacion;
-
-
 
 
           //PUERTA ATRAS !!
@@ -2890,8 +2893,6 @@
 
 
 
-
-
         //PUERTA DERECHA !!
         if (puertaUbicacion == "derecha" && arrayPuertas[index].userData.creoHabitacion === false ) {
             arrayPuertas[index].userData.creoHabitacion = true;
@@ -2907,7 +2908,7 @@
           }
           if ( puertaUbicacion == "derecha" && arrayPuertas[index].userData.creoHabitacion === true ) {
             if (arrayPuertas[index].position.z > jugador.position.z) {
-              jugador.position.x += 5;
+              jugador.position.x += 2;
               skybox.position.x = jugador.position.x;
               skybox.position.z = jugador.position.z;
               luzGeneral.position.set(
@@ -2916,7 +2917,7 @@
                 jugador.position.z
               );
             } else {
-              jugador.position.x -= 5;
+              jugador.position.x -= 2;
               skybox.position.x = jugador.position.x;
               skybox.position.z = jugador.position.z;
               luzGeneral.position.set(
@@ -2930,13 +2931,36 @@
 
 
 
-
-
-
-
         }
       }
     }
+  }
+
+
+
+  function choqueEnemigosParedes(){
+
+    for (let i = 0; i < arrayParedes.length; i++) {
+      for (let w = 0; w < arrayEnemigos.length; w++) {
+          if (arrayEnemigos[w]?.position != undefined) {
+            var resultado = checkearSiSeTocaJugador(arrayEnemigos[w], arrayParedes[i]);
+            if (resultado != "" && arrayParedes[i].userData.name == "Pared2") {
+              arrayEnemigos[w].position.x += -0.5;
+            }
+            if (resultado != "" && arrayParedes[i].userData.name == "Pared3") {
+              arrayEnemigos[w].position.x += 0.5;
+            }
+            if (resultado != "" && arrayParedes[i].userData.name == "Pared4") {
+              arrayEnemigos[w].position.z += 0.5;
+            }
+            if (resultado != "" && arrayParedes[i].userData.name == "Pared") {
+              arrayEnemigos[w].position.z += -0.5;
+            }
+      }
+    }
+    }
+
+
   }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
