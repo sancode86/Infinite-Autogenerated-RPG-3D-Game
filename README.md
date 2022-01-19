@@ -8,11 +8,11 @@ Basic RPG browser game made with ThreeJs 😋
 - Chests with loot (randomly generated).
 - Items collected or bought boost your attack or defense.  
 - Enemies are generated based on your current character level.
-- Random respawn of store, where you can buy stuff (generally better than looted items).
-- Random generated rooms. They are simple of course.
+- Random spawn of store, where you can buy stuff (generally better than looted items).
+- Random generated rooms. With random models to decorate. They are simple of course, this is a demo 😅
 - Boss encounters, more loot, harder to defeat.
 - Rocks can be moved to trap enemies.
-- Buffer can be activated (with a cooldown), gives you X2 strenght. -> "☀️" button on navbar.
+- Buffer can be activated (with a cooldown), gives you X2 strength. -> "☀️" button on navbar.
 - "Rolling movement" (more movement speed) -> "E" Key ⌨️
 
 ![3d](client/1.png)
