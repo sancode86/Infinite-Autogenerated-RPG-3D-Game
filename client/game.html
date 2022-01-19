@@ -1162,6 +1162,7 @@
     cargarInventario();
   }
   function abrirInventario() {
+    console.log("inventario", inventario)
     var cartel = document.getElementById("optionsMenu");
     if (cartel.style.display == "block") {
       cartel.style.display = "none";
@@ -1211,7 +1212,9 @@
       var posX = objeto.position.x;
       var posZ = objeto.position.z;
       var randomItem = Math.floor(Math.random() * (8 - 1)) + 1;
-      var tipoDeItem = Math.floor(Math.random() * (7 - 1)) + 1;
+      var tipoDeItem = Math.floor(Math.random() * (7 - 1)) + 1;    
+
+
       if (tipoDeItem == 1) {
         var resultadoItem = devolverItemParaLootArmadura(randomItem);
         sonidoDropArmadura();
@@ -1237,6 +1240,7 @@
         sonidoDropMoneda();
       }
       new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
+        console.log("resultadoItem DENTRO DE LA CREACION", resultadoItem)
         const loot = gltf.scene;
         loot.traverse(function (object) {
           if (object.isMesh) object.castShadow = true;
@@ -1266,6 +1270,7 @@
             tipo: "recurso",
             categoria: "moneda",
             imagen: "img/item/moneda.png",
+            glb: devolverItemParaLootMoneda(randomItem),
             peso: 0,
           };
         }
@@ -1276,6 +1281,7 @@
             cantidad: Math.floor(Math.random() * (250 - 10)) + 10,
             tipo: "recurso",
             categoria: "pocion",
+            glb: devolverItemParaLootPocion(randomItem),
             imagen: "img/item/pocion.png",
           };
         }
@@ -1294,7 +1300,7 @@
             tipo: "recurso",
             categoria: "armadura",
             imagen: "img/item/armadura.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootArmadura(randomItem),
           };
         }
         if (tipo == "arma") {
@@ -1312,7 +1318,7 @@
             tipo: "recurso",
             categoria: "arma",
             imagen: "img/item/arma.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootArma(randomItem),
           };
         }
         if (tipo == "collar") {
@@ -1330,7 +1336,7 @@
             tipo: "recurso",
             categoria: "collar",
             imagen: "img/item/collar.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootCollar(randomItem),
           };
         }
         if (tipo == "anillo") {
@@ -1348,7 +1354,7 @@
             tipo: "recurso",
             categoria: "anillo",
             imagen: "img/item/anillo.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootAnillo(randomItem),
           };
         }
         var nombreRandomParaBorrar =
@@ -2677,6 +2683,7 @@
             peso: 0,
             tipo: "recurso",
             categoria: "moneda",
+            glb: devolverItemParaLootMoneda(randomItem),
             imagen: "img/item/moneda.png",
             precio:
               (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel,
@@ -2690,6 +2697,7 @@
             peso: 3,
             categoria: "pocion",
             imagen: "img/item/pocion.png",
+            glb: devolverItemParaLootPocion(randomItem),
             precio:
               (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel,
           };
@@ -2709,7 +2717,7 @@
             tipo: "recurso",
             categoria: "armadura",
             imagen: "img/item/armadura.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootArmadura(randomItem),
             precio:
               (Math.floor(Math.random() * (800 - 100)) + 100) *
               jugadorStats.nivel,
@@ -2730,7 +2738,7 @@
             tipo: "recurso",
             categoria: "arma",
             imagen: "img/item/arma.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootArma(randomItem),
             precio:
               (Math.floor(Math.random() * (800 - 100)) + 100) *
               jugadorStats.nivel,
@@ -2751,7 +2759,7 @@
             tipo: "recurso",
             categoria: "collar",
             imagen: "img/item/collar.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootCollar(randomItem),
             precio:
               (Math.floor(Math.random() * (800 - 100)) + 100) *
               jugadorStats.nivel,
@@ -2772,7 +2780,7 @@
             tipo: "recurso",
             categoria: "anillo",
             imagen: "img/item/anillo.png",
-            glb: resultadoItem,
+            glb: devolverItemParaLootAnillo(randomItem),
             precio:
               (Math.floor(Math.random() * (80 - 10)) + 10) * jugadorStats.nivel,
           };
@@ -2945,16 +2953,16 @@
           if (arrayEnemigos[w]?.position != undefined) {
             var resultado = checkearSiSeTocaJugador(arrayEnemigos[w], arrayParedes[i]);
             if (resultado != "" && arrayParedes[i].userData.name == "Pared2") {
-              arrayEnemigos[w].position.x += -0.5;
+              arrayEnemigos[w].position.x += -2.5;
             }
             if (resultado != "" && arrayParedes[i].userData.name == "Pared3") {
-              arrayEnemigos[w].position.x += 0.5;
+              arrayEnemigos[w].position.x += 2.5;
             }
             if (resultado != "" && arrayParedes[i].userData.name == "Pared4") {
-              arrayEnemigos[w].position.z += 0.5;
+              arrayEnemigos[w].position.z += 2.5;
             }
             if (resultado != "" && arrayParedes[i].userData.name == "Pared") {
-              arrayEnemigos[w].position.z += -0.5;
+              arrayEnemigos[w].position.z += -2.5;
             }
       }
     }
