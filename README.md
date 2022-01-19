@@ -6,6 +6,8 @@ Basic RPG browser game made with ThreeJs 😋
 To play, you can clone/download this repo and run it from visual code.
 If you use Windows, you could download the compiled game here:
 https://drive.google.com/drive/folders/1yP-H3mu9hh8A7m20CajcdKPeyp5MDprl
+or you can play it ONLINE here: http://sancode86.rf.gd/
+(online option may take a while to load)
 
 ## Features
 - Inventory to manage your equipment. -> "I" Key ⌨️ or from game navbar.
