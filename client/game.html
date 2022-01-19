@@ -454,6 +454,7 @@
     crearCofres(spawnArea, posicionX, posicionZ);
     crearObjetosRandom(spawnArea, posicionX, posicionZ);
     crearEnemigos(spawnArea, posicionX, posicionZ);
+    crearJefe(spawnArea, posicionX, posicionZ);
     crearPiedras(spawnArea, posicionX, posicionZ);
     crearMercado(spawnArea, posicionX, posicionZ);
   }
@@ -1162,7 +1163,6 @@
     cargarInventario();
   }
   function abrirInventario() {
-    console.log("inventario", inventario)
     var cartel = document.getElementById("optionsMenu");
     if (cartel.style.display == "block") {
       cartel.style.display = "none";
@@ -1240,7 +1240,7 @@
         sonidoDropMoneda();
       }
       new GLTFLoader().load(resultadoItem + ".glb", function (gltf) {
-        console.log("resultadoItem DENTRO DE LA CREACION", resultadoItem)
+
         const loot = gltf.scene;
         loot.traverse(function (object) {
           if (object.isMesh) object.castShadow = true;
@@ -1363,7 +1363,7 @@
             (Math.floor(Math.random() * (10 - 1)) + 1);
         loot.name = nombreRandomParaBorrar;
         scene.add(loot);
-        console.log("loot creado", loot)
+  
       });
     }
   }
@@ -2178,12 +2178,17 @@
 
     mostrarVidaEnemigo(arrayEnemigos[index].userData.salud);
 
-    verSiMonstruoMuere(index);
+    verSiEnemigoMuere(index);
   }
-  function verSiMonstruoMuere(enemigo) {
+  function verSiEnemigoMuere(enemigo) {
     if (arrayEnemigos[enemigo].userData.salud <= 0) {
       acumularExperiencia("matar");
       var randomCantidad = Math.floor(Math.random() * (5 - 0)) + 0;
+
+      if(arrayEnemigos[enemigo].userData.tipo == "JEFE"){
+        var randomCantidad = Math.floor(Math.random() * (15 - 3)) + 3;
+      }
+
       var selectedObject = scene.getObjectByName(arrayEnemigos[enemigo].name);
       crearLoot(selectedObject, randomCantidad);
 
@@ -2967,8 +2972,66 @@
       }
     }
     }
-
-
   }
+  function crearJefe(spawnArea, posicionX, posicionZ) {    
+    if(jugadorStats.nivel == 1){
+      var randomCantidadEnemigos = 0
+    }
+    if(jugadorStats.nivel > 1){     
+      var randomCantidadEnemigos = 1
+    }    
+    if(jugadorStats.nivel > 3){  
+    var randomCantidadEnemigos = Math.floor(Math.random() * (3 - 1)) + 1;
+    }
+    var randomSpawnPosibilidad = Math.floor(Math.random() * (6 - 1)) + 1;
+
+    if(randomSpawnPosibilidad == 5 && jugadorStats.nivel != 1){
+    for (let w = 0; w < randomCantidadEnemigos; w++) {
+      var randomSkin = Math.floor(Math.random() * (22 - 1)) + 1;
+      new GLTFLoader().load(
+        "models/enemigo/" + randomSkin + ".gltf",
+        function (gltf) {
+          const enemigo = gltf.scene;
+          enemigo.traverse(function (object) {
+            if (object.isMesh) object.castShadow = true;
+          });
+          var geo = new THREE.BoxGeometry(2, 2, 2);
+          enemigo.geometry = geo;
+          enemigo.position.x =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          enemigo.position.y = 0;
+          enemigo.position.z =
+            Math.floor(Math.random() * (spawnArea - 5 - -(spawnArea - 5))) +
+            -(spawnArea - 5);
+          enemigo.scale.set(2.5, 2.5, 2.5);
+          var velocidad = Math.random() * (0.06 - 0.01) + 0.01;
+
+          enemigo.userData = {
+            nombre: "Enemigo",
+            tipo:"JEFE",
+            salud: 500,
+            ataque:
+              (Math.floor(Math.random() * (15 - 5)) + 5) * jugadorStats.nivel,
+            defensa:
+              (Math.floor(Math.random() * (15 - 5)) + 5) * jugadorStats.nivel,
+            velocidad: velocidad,
+          };
+          var nombreRandomParaBorrar =
+            "enemigoJefe" +
+            (Math.floor(Math.random() * (999999 - 0)) + 0) *
+              (Math.floor(Math.random() * (10 - 1)) + 1);
+          enemigo.name = nombreRandomParaBorrar;
+
+          enemigo.position.x += posicionX;
+          enemigo.position.z += posicionZ;
+          scene.add(enemigo);
+          arrayEnemigos.push(enemigo);
+          arraySolidos.push(enemigo);
+        }
+      );
+    }
+  }
+}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
