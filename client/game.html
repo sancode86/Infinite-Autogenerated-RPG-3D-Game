@@ -486,7 +486,7 @@
     }
   }
   function crearPiedras(spawnArea, posicionX, posicionZ) {
-    var cantidadPiedras = Math.floor(Math.random() * (3 - 0)) + 0;
+    var cantidadPiedras = Math.floor(Math.random() * (4 - 0)) + 0;
     for (let j = 0; j < cantidadPiedras; j++) {
       const geometriaPiedra = new THREE.BoxGeometry(2, 2, 2);
       var randomSkin = Math.floor(Math.random() * (7 - 1) + 1);
@@ -533,7 +533,7 @@
     }
   }
   function crearCofres(spawnArea, posicionX, posicionZ) {
-    var cantidadCofres = Math.floor(Math.random() * (3 - 0)) + 0;
+    var cantidadCofres = Math.floor(Math.random() * (4 - 0)) + 0;
     for (let j = 0; j < cantidadCofres; j++) {
       var geo = new THREE.BoxGeometry(2, 2, 2);
       // crear un cofre
@@ -2037,6 +2037,10 @@
   }
   function crearEnemigos(spawnArea, posicionX, posicionZ) {
     var randomCantidadEnemigos = Math.floor(Math.random() * (3 - 0)) + 0;
+    var decidirSiNivelInfluye = Math.floor(Math.random() * (11 - 0)) + 0;
+    if(decidirSiNivelInfluye == 5){
+      randomCantidadEnemigos = randomCantidadEnemigos * jugadorStats.nivel;
+    }
     for (let w = 0; w < randomCantidadEnemigos; w++) {
       var randomSkin = Math.floor(Math.random() * (22 - 1)) + 1;
       new GLTFLoader().load(
@@ -2367,7 +2371,7 @@
   }
 
   function crearObjetosRandom(spawnArea, posicionX, posicionZ) {
-    var cantidadObjetosRandom = Math.floor(Math.random() * (3 - 0)) + 0;
+    var cantidadObjetosRandom = Math.floor(Math.random() * (5 - 0)) + 0;
     for (let j = 0; j < cantidadObjetosRandom; j++) {
       var randomModelos = Math.floor(Math.random() * (10 - 1)) + 1;
       var geo = new THREE.BoxGeometry(2, 2, 2);
@@ -3012,9 +3016,9 @@
             tipo:"JEFE",
             salud: 500,
             ataque:
-              (Math.floor(Math.random() * (15 - 5)) + 5) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (45 - 15)) + 15) * jugadorStats.nivel,
             defensa:
-              (Math.floor(Math.random() * (15 - 5)) + 5) * jugadorStats.nivel,
+              (Math.floor(Math.random() * (45 - 15)) + 15) * jugadorStats.nivel,
             velocidad: velocidad,
           };
           var nombreRandomParaBorrar =
