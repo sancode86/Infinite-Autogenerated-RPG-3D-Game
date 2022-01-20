@@ -23,7 +23,7 @@ https://drive.google.com/drive/folders/1yP-H3mu9hh8A7m20CajcdKPeyp5MDprl
 - Rocks can be moved to trap enemies.
 - Buffer can be activated (with a cooldown), gives you X2 strength. -> "☀️" button on navbar.
 - "Rolling movement" (faster movement speed) -> "E" Key ⌨️
-
+## Screenshots 
 ![3d](client/1.png)
 
 ![3d](client/2.png)
@@ -44,7 +44,7 @@ shadowMap is set to FALSE, for more performance:
 </script>
 ```
 you can change it, be careful!
-
+## Gameplay 
 Short Gameplay:
 (Notebook's zoom was set to 150% that's why everything is to "big")
 https://youtu.be/eSEeJTUqYjE
