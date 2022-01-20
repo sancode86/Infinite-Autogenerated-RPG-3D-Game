@@ -3,10 +3,13 @@
 
 Basic RPG browser game made with ThreeJs 😋
 
-To play, you can clone/download this repo and run it from visual code.
-If you use Windows, you could download the compiled game here:
+How to play?
+- You can clone/download this repo and run it from visual code.
+
+- If you use Windows, you can download the compiled game here:
 https://drive.google.com/drive/folders/1yP-H3mu9hh8A7m20CajcdKPeyp5MDprl
-or you can play it ONLINE here: https://sancode86.000webhostapp.com
+
+- Or you can play it ONLINE here: https://sancode86.000webhostapp.com
 (online option may take a while to load. If you get SSL error, 000webhostapp is fixing it)
 
 ## Features
@@ -19,7 +22,7 @@ or you can play it ONLINE here: https://sancode86.000webhostapp.com
 - Boss encounters, more loot, harder to defeat.
 - Rocks can be moved to trap enemies.
 - Buffer can be activated (with a cooldown), gives you X2 strength. -> "☀️" button on navbar.
-- "Rolling movement" (more movement speed) -> "E" Key ⌨️
+- "Rolling movement" (faster movement speed) -> "E" Key ⌨️
 
 ![3d](client/1.png)
 
@@ -29,6 +32,18 @@ or you can play it ONLINE here: https://sancode86.000webhostapp.com
 
 ![3d](client/4.png)
 
+shadowMap is set to FALSE, for more performance:
+
+```
+<script>
+  // RENDERER
+  const renderer = new THREE.WebGLRenderer({ antialias: false });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = false;
+</script>
+```
+you can change it, be careful!
 
 Short Gameplay:
 (Notebook's zoom was set to 150% that's why everything is to "big")
